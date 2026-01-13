@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+build/
+artifacts/
+cache/
+coverage/
+.env
+.env.local
+.DS_Store
+.git/
+frontend/.next/
+frontend/node_modules/
+smartcontract/artifacts/
+smartcontract/cache/
+smartcontract/node_modules/

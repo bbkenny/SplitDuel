@@ -1,0 +1,61 @@
+# Cat Daily Login - Issues
+
+This file contains all planned tasks and issues for the Cat Daily Login Mini App.
+
+## 🧠 Smart Contract Issues
+
+### Issue #1: DailyReward Dispenser (ERC-20)
+
+**Status:** ❌ PENDING
+**Labels:** `smart-contract`, `solidity`
+**Priority:** HIGH
+
+**Description:**
+Develop a `DailyReward.sol` contract.
+- **Core Logic:** Distribute ERC-20 $CAT tokens to users once every 24 hours.
+- **Admin:** Owner can withdraw tokens and update the reward amount.
+- **Events:** Emit `Claimed` event for indexers.
+
+**Acceptance Criteria:**
+- [ ] Users limited to 1 claim per 24 hours.
+- [ ] Owner functions secured.
+- [ ] Tests covering claim windows and permissions.
+
+---
+
+## 🎨 Frontend Issues
+
+### Issue #2: Single Page App with Tabs
+
+**Status:** ❌ PENDING
+**Labels:** `frontend`, `ui`, `farcaster`
+**Priority:** HIGH
+
+**Description:**
+Build a **Single Page Application** optimized for Farcaster Frames/Mini Apps.
+- **Layout:** Simple, mobile-first design.
+- **Navigation:** Use **Tabs** to switch between views without page reloads.
+  - **Tab 1: Claim:** Main logic. Connect wallet, check eligibility, "Claim Reward" button.
+  - **Tab 2: Leaderboard:** (Placeholder/Future) Top claimers or streaks.
+  - **Tab 3: Profile/Settings:** User stats or minimal settings.
+
+**Acceptance Criteria:**
+- [ ] Tab navigation works.
+- [ ] "Claim" tab effectively handles wallet connection and contract interaction.
+- [ ] Visually "wow" design (as per general guidelines) - use extensive CSS/Tailwind for premium feel.
+
+---
+
+### Issue #3: Farcaster/Wallet Integration
+
+**Status:** ❌ PENDING
+**Labels:** `frontend`, `auth`
+**Priority:** HIGH
+
+**Description:**
+Integrate Farcaster specific auth or standard `ConnectKit`/`RainbowKit` customized for the Frame environment.
+
+**Acceptance Criteria:**
+- [ ] Auto-connect capability if possible within Frame.
+- [ ] Clean "Connect" UI state.
+

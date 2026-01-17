@@ -6,7 +6,7 @@ This file contains all planned tasks and issues for the Cat Daily Login Mini App
 
 ### Issue #1: DailyReward Dispenser (ERC-20)
 
-**Status:** ❌ PENDING
+**Status:** ✅ COMPLETED
 **Labels:** `smart-contract`, `solidity`
 **Priority:** HIGH
 
@@ -17,9 +17,23 @@ Develop a `DailyReward.sol` contract.
 - **Events:** Emit `Claimed` event for indexers.
 
 **Acceptance Criteria:**
-- [ ] Users limited to 1 claim per 24 hours.
-- [ ] Owner functions secured.
-- [ ] Tests covering claim windows and permissions.
+- [x] Users limited to 1 claim per 24 hours.
+- [x] Owner functions secured.
+- [x] Tests covering claim windows and permissions.
+
+**Implementation Notes:**
+- Created `DailyReward.sol` with core claim logic
+- Implemented 24-hour claim window using `lastClaimTime` mapping
+- Added owner-only `setRewardAmount()` and `withdraw()` functions
+- Implemented `canClaim()` view function for frontend eligibility checking
+- Created comprehensive test suite in `DailyReward.test.ts`
+- Tests cover:
+  - Basic claim functionality
+  - 24-hour claim prevention (double claiming)
+  - Claim eligibility checking
+  - Owner functions
+
+**Completed:** All acceptance criteria met. DailyReward contract fully implemented with tests.
 
 ---
 

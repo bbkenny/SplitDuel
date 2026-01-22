@@ -6,115 +6,6 @@ This file contains all GitHub issues for the Cat Daily Login project, covering b
 
 ## 🧠 Smart Contracts Issues
 
-### Issue #1: Project Setup & Hardhat Configuration
-**Status:** ✅ COMPLETED  
-**Labels:** `smart-contracts`, `infrastructure`, `setup`  
-**Priority:** HIGH
-
-**Description:**
-Set up the Hardhat environment for the Cat Daily Login project. Configure compiler settings, network settings for Base Mainnet/Sepolia, and install necessary dependencies.
-
-**Acceptance Criteria:**
-- [x] Initialize Hardhat project.
-- [x] Configure `hardhat.config.ts` for Base networks.
-- [x] Set up `.gitignore` and `.env.example`.
-- [x] Install OpenZeppelin contracts and Hardhat toolbox.
-
-**Implementation Notes:**
-- Project initialized in `smartcontract/` directory.
-- Using Solidity ^0.8.20.
-
-**Completed:** Project structure and configuration are ready for development.
-
----
-
-### Issue #2: DailyReward.sol — Core Reward Logic
-**Status:** ✅ COMPLETED  
-**Labels:** `smart-contracts`, `feature`, `solidity`  
-**Priority:** HIGH
-
-**Description:**
-Develop the core `DailyReward.sol` contract to manage the distribution of $CAT tokens. Users should be able to claim rewards once every 24 hours.
-
-**Acceptance Criteria:**
-- [x] Implement 24-hour claim window logic.
-- [x] Add owner functions to set reward amount and withdraw tokens.
-- [x] Include `canClaim(address)` view function for frontend checks.
-- [x] Emit `Claimed` events.
-
-**Implementation Notes:**
-- Contract implemented at `smartcontract/contracts/DailyReward.sol`.
-- Uses a mapping `lastClaimTime` to track user claims.
-
-**Completed:** Core contract logic is implemented and functional.
-
----
-
-### Issue #3: Smart Contract Test Suite
-**Status:** ✅ COMPLETED  
-**Labels:** `smart-contracts`, `testing`, `quality`  
-**Priority:** HIGH
-
-**Description:**
-Write comprehensive tests for the `DailyReward` contract to ensure security and reliability of the claim mechanism.
-
-**Acceptance Criteria:**
-- [x] Test successful claims.
-- [x] Test double-claiming prevention (24h rule).
-- [x] Test owner-only restrictions.
-- [x] (REMOVED) Mock ERC-20 token for testing.
-
-**Implementation Notes:**
-- Tests implemented in `smartcontract/test/DailyReward.test.ts`.
-- Mock token removed as per updated requirements. Using dummy address for $CAT token.
-
-**Completed:** Core functionality verification tests are ready (using dummy address).
-
----
-
-### Issue #4: Deployment & Verification Scripts
-**Status:** ✅ COMPLETED  
-**Labels:** `smart-contracts`, `deployment`  
-**Priority:** MEDIUM
-
-**Description:**
-Create scripts to deploy the `DailyReward` contract to Base Sepolia and Mainnet, and handle automatic verification on BaseScan.
-
-**Acceptance Criteria:**
-- [x] Create `scripts/deploy.ts`.
-- [x] Implement contract verification logic.
-- [x] Store deployment artifacts (addresses/ABIs) for frontend use.
-
-**Implementation Notes:**
-- Deployment script implemented at `smartcontract/scripts/deploy.ts`.
-- Configured Base Sepolia and Base Mainnet in `hardhat.config.ts`.
-- Ready for deployment with dummy $CAT token address.
-
----
-
-### Issue #5: Project Initialization & Web3 Infrastructure
-**Status:** ✅ COMPLETED  
-**Labels:** `frontend`, `infrastructure`, `setup`  
-**Priority:** HIGH
-
-**Description:**
-Set up the Next.js project with Tailwind CSS and integrate Web3 providers (Wagmi, Viem, Reown AppKit) configured for Base Mainnet.
-
-**Acceptance Criteria:**
-- [x] Initialize Next.js 14+ (App Router).
-- [x] Configure Wagmi and AppKit for Base.
-- [x] Create `Navbar` and `Providers` components.
-- [x] Set up `.env.local` template for RPC URLs and Project IDs.
-
-**Implementation Notes:**
-- Next.js 15+ used.
-- Installed `@reown/appkit`, `wagmi`, `viem`.
-- Providers setup in `app/providers.tsx`.
-- Navbar with connect button in `src/components/Navbar.tsx`.
-
----
-
-
 ### Issue #10: Event Indexing & Analytics Support
 **Status:** ❌ PENDING  
 **Labels:** `smart-contracts`, `analytics`, `infrastructure`  
@@ -150,20 +41,6 @@ Implement professional ownership management. Ensure the contract can transition 
 - **Primary Color:** `#B0A5D0` (Light Purple/Lavender)
 - **Secondary Color:** `#442F8C` (Deep Purple)
 - **Tertiary Color:** `White` (#FFFFFF) for text and accents.
-
-### Issue #5: Project Initialization & Web3 Infrastructure
-**Status:** ❌ PENDING  
-**Labels:** `frontend`, `infrastructure`, `setup`  
-**Priority:** HIGH
-
-**Description:**
-Set up the Next.js project with Tailwind CSS and integrate Web3 providers (Wagmi, Viem, Reown AppKit) configured for Base Mainnet.
-
-**Acceptance Criteria:**
-- [ ] Initialize Next.js 14+ (App Router).
-- [ ] Configure Wagmi and AppKit for Base.
-- [ ] Create `Navbar` and `Providers` components.
-- [ ] **NEW:** Set up `.env.local` template for RPC URLs and Project IDs.
 
 ---
 
@@ -279,4 +156,112 @@ Update the root `README.md` and project documentation to reflect the new UI stru
 
 ---
 
-**Note:** Move issues to "✅ Completed Issues" and mark as `✅ COMPLETED` once finished.
+## ✅ Completed Issues
+
+### Issue #1: Project Setup & Hardhat Configuration
+**Status:** ✅ COMPLETED  
+**Labels:** `smart-contracts`, `infrastructure`, `setup`  
+**Priority:** HIGH
+
+**Description:**
+Set up the Hardhat environment for the Cat Daily Login project. Configure compiler settings, network settings for Base Mainnet/Sepolia, and install necessary dependencies.
+
+**Acceptance Criteria:**
+- [x] Initialize Hardhat project.
+- [x] Configure `hardhat.config.ts` for Base networks.
+- [x] Set up `.gitignore` and `.env.example`.
+- [x] Install OpenZeppelin contracts and Hardhat toolbox.
+
+**Implementation Notes:**
+- Project initialized in `smartcontract/` directory.
+- Using Solidity ^0.8.20.
+
+**Completed:** Project structure and configuration are ready for development.
+
+---
+
+### Issue #2: DailyReward.sol — Core Reward Logic
+**Status:** ✅ COMPLETED  
+**Labels:** `smart-contracts`, `feature`, `solidity`  
+**Priority:** HIGH
+
+**Description:**
+Develop the core `DailyReward.sol` contract to manage the distribution of $CAT tokens. Users should be able to claim rewards once every 24 hours.
+
+**Acceptance Criteria:**
+- [x] Implement 24-hour claim window logic.
+- [x] Add owner functions to set reward amount and withdraw tokens.
+- [x] Include `canClaim(address)` view function for frontend checks.
+- [x] Emit `Claimed` events.
+
+**Implementation Notes:**
+- Contract implemented at `smartcontract/contracts/DailyReward.sol`.
+- Uses a mapping `lastClaimTime` to track user claims.
+
+**Completed:** Core contract logic is implemented and functional.
+
+---
+
+### Issue #3: Smart Contract Test Suite
+**Status:** ✅ COMPLETED  
+**Labels:** `smart-contracts`, `testing`, `quality`  
+**Priority:** HIGH
+
+**Description:**
+Write comprehensive tests for the `DailyReward` contract to ensure security and reliability of the claim mechanism.
+
+**Acceptance Criteria:**
+- [x] Test successful claims.
+- [x] Test double-claiming prevention (24h rule).
+- [x] Test owner-only restrictions.
+- [x] (REMOVED) Mock ERC-20 token for testing.
+
+**Implementation Notes:**
+- Tests implemented in `smartcontract/test/DailyReward.test.ts`.
+- Mock token removed as per updated requirements. Using dummy address for $CAT token.
+
+**Completed:** Core functionality verification tests are ready (using dummy address).
+
+---
+
+### Issue #4: Deployment & Verification Scripts
+**Status:** ✅ COMPLETED  
+**Labels:** `smart-contracts`, `deployment`  
+**Priority:** MEDIUM
+
+**Description:**
+Create scripts to deploy the `DailyReward` contract to Base Sepolia and Mainnet, and handle automatic verification on BaseScan.
+
+**Acceptance Criteria:**
+- [x] Create `scripts/deploy.ts`.
+- [x] Implement contract verification logic.
+- [x] Store deployment artifacts (addresses/ABIs) for frontend use.
+
+**Implementation Notes:**
+- Deployment script implemented at `smartcontract/scripts/deploy.ts`.
+- Configured Base Sepolia and Base Mainnet in `hardhat.config.ts`.
+- Ready for deployment with dummy $CAT token address.
+
+---
+
+### Issue #5: Project Initialization & Web3 Infrastructure
+**Status:** ✅ COMPLETED  
+**Labels:** `frontend`, `infrastructure`, `setup`  
+**Priority:** HIGH
+
+**Description:**
+Set up the Next.js project with Tailwind CSS and integrate Web3 providers (Wagmi, Viem, Reown AppKit) configured for Base Mainnet.
+
+**Acceptance Criteria:**
+- [x] Initialize Next.js 14+ (App Router).
+- [x] Configure Wagmi and AppKit for Base.
+- [x] Create `Navbar` and `Providers` components.
+- [x] Set up `.env.local` template for RPC URLs and Project IDs.
+
+**Implementation Notes:**
+- Next.js 15+ used.
+- Installed `@reown/appkit`, `wagmi`, `viem`.
+- Providers setup in `app/providers.tsx`.
+- Navbar with connect button in `src/components/Navbar.tsx`.
+
+---

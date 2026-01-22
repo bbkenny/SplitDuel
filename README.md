@@ -38,8 +38,15 @@ cat-daily-login/
 ### Frontend
 - **Framework:** Next.js 14 (App Router)
 - **Platform:** Farcaster Mini App (Frames v2)
-- **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS (Primary: #B0A5D0, Secondary: #442F8C)
 - **Web3:** Wagmi, Viem, ConnectKit/RainbowKit
+
+## Design & Aesthetic
+
+The application uses a "Cat" themed aesthetic with the following color palette:
+- **Primary:** `#B0A5D0` (Light Purple/Lavender)
+- **Secondary:** `#442F8C` (Deep Purple)
+- **Accents:** `White` (#FFFFFF) for text and highlights.
 
 ## Getting Started
 

@@ -118,6 +118,11 @@ Implement professional ownership management. Ensure the contract can transition 
 
 ## 🎨 Frontend Issues
 
+### Design Specifications:
+- **Primary Color:** `#B0A5D0` (Light Purple/Lavender)
+- **Secondary Color:** `#442F8C` (Deep Purple)
+- **Tertiary Color:** `White` (#FFFFFF) for text and accents.
+
 ### Issue #5: Project Initialization & Web3 Infrastructure
 **Status:** ❌ PENDING  
 **Labels:** `frontend`, `infrastructure`, `setup`  
@@ -194,6 +199,10 @@ Apply a modern, visually "wow" design using Tailwind CSS. Ensure the app is perf
 - [ ] Implement "Cat" themed aesthetic (colors, icons).
 - [ ] Add toast notifications for user feedback.
 - [ ] Optimize for mobile viewport heights.
+
+**Implementation Notes:**
+- Use the defined color palette: Primary (#B0A5D0), Secondary (#442F8C), and White.
+- Ensure high contrast for accessibility.
 
 ---
 

@@ -87,6 +87,35 @@ Create scripts to deploy the `DailyReward` contract to Base Sepolia and Mainnet,
 
 ---
 
+### Issue #10: Event Indexing & Analytics Support
+**Status:** ❌ PENDING  
+**Labels:** `smart-contracts`, `analytics`, `infrastructure`  
+**Priority:** LOW
+
+**Description:**
+Define an indexing strategy (e.g., Goldsky, The Graph, or custom indexer) to track all `Claimed` events. This will enable historical data visualization on the frontend.
+
+**Acceptance Criteria:**
+- [ ] Ensure all necessary events are emitted with `indexed` parameters.
+- [ ] Create a configuration for a subgraph or an event listener.
+- [ ] Expose an endpoint or query for fetching user claim history.
+
+---
+
+### Issue #11: Security Polish & Ownership Management
+**Status:** ❌ PENDING  
+**Labels:** `smart-contracts`, `security`  
+**Priority:** MEDIUM
+
+**Description:**
+Implement professional ownership management. Ensure the contract can transition to a Multi-sig or be renounced for true decentralization.
+
+**Acceptance Criteria:**
+- [ ] Implement `Ownable2Step` for secure ownership transfers.
+- [ ] Document the process for emergency token withdrawal by the community/DAO.
+
+---
+
 ## 🎨 Frontend Issues
 
 ### Issue #5: Project Initialization & Web3 Infrastructure
@@ -101,6 +130,7 @@ Set up the Next.js project with Tailwind CSS and integrate Web3 providers (Wagmi
 - [ ] Initialize Next.js 14+ (App Router).
 - [ ] Configure Wagmi and AppKit for Base.
 - [ ] Create `Navbar` and `Providers` components.
+- [ ] **NEW:** Set up `.env.local` template for RPC URLs and Project IDs.
 
 ---
 
@@ -119,9 +149,6 @@ Implement a simple, high-quality one-page UI with a tab-based navigation system,
   - **Leaderboard:** Display top claimers/streaks.
   - **Profile:** Show user stats and wallet info.
 - [ ] Ensure smooth transitions between tabs.
-
-**Implementation Notes:**
-- Follow the pattern in `BlocxTacToe/blocxtactoe-frontend/src/app/page.tsx`.
 
 ---
 
@@ -167,6 +194,51 @@ Apply a modern, visually "wow" design using Tailwind CSS. Ensure the app is perf
 - [ ] Implement "Cat" themed aesthetic (colors, icons).
 - [ ] Add toast notifications for user feedback.
 - [ ] Optimize for mobile viewport heights.
+
+---
+
+### Issue #12: Design Assets & Branding
+**Status:** ❌ PENDING  
+**Labels:** `frontend`, `design`, `branding`  
+**Priority:** MEDIUM
+
+**Description:**
+Source or create high-quality "Cat" themed assets (icons, animations, logo). Ensure the branding is consistent with a "premium" feel.
+
+**Acceptance Criteria:**
+- [ ] Create SVG icons for Claim, Leaderboard, and Profile tabs.
+- [ ] Add a high-resolution logo and favicon.
+- [ ] (Optional) Add Lottie animations for "Successful Claim".
+
+---
+
+### Issue #13: Transaction History & Activity Feed
+**Status:** ❌ PENDING  
+**Labels:** `frontend`, `feature`, `history`  
+**Priority:** MEDIUM
+
+**Description:**
+Implement an activity feed in the **Profile** tab that shows the user's historical claims (e.g., "Claimed 100 $CAT on Jan 20th").
+
+**Acceptance Criteria:**
+- [ ] Fetch historical events from the blockchain or indexer.
+- [ ] Display list of past claims with date and transaction hash.
+- [ ] Show total $CAT claimed by the user.
+
+---
+
+### Issue #14: Comprehensive Project Documentation
+**Status:** ❌ PENDING  
+**Labels:** `docs`, `project-wide`  
+**Priority:** MEDIUM
+
+**Description:**
+Update the root `README.md` and project documentation to reflect the new UI structure, Frame v2 capabilities, and deployment instructions.
+
+**Acceptance Criteria:**
+- [ ] Update `README.md` with new features and screenshots (placeholders).
+- [ ] Add a "Contribution Guide" for future developers.
+- [ ] Document the smart contract addresses for Base Mainnet.
 
 ---
 

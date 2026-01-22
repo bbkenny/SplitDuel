@@ -102,6 +102,11 @@ const config: HardhatUserConfig = {
             chainId: 8453,
             accounts: [deployerPrivateKey],
         },
+        baseSepolia: {
+            url: "https://sepolia.base.org",
+            chainId: 84532,
+            accounts: [deployerPrivateKey],
+        },
         scrollSepolia: {
             url: "https://sepolia-rpc.scroll.io",
             accounts: [deployerPrivateKey],
@@ -125,6 +130,7 @@ const config: HardhatUserConfig = {
             mainnet: etherscanApiKey,
             sepolia: etherscanApiKey,
             base: etherscanApiKey,
+            baseSepolia: etherscanApiKey,
             celo: process.env.CELOSCAN_API_KEY || etherscanApiKey, // Celo uses Celoscan
             celoAlfajores: process.env.CELOSCAN_API_KEY || etherscanApiKey,
         },

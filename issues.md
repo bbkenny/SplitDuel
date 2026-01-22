@@ -62,18 +62,18 @@ Write comprehensive tests for the `DailyReward` contract to ensure security and 
 - [x] Test successful claims.
 - [x] Test double-claiming prevention (24h rule).
 - [x] Test owner-only restrictions.
-- [x] Mock ERC-20 token for testing.
+- [x] (REMOVED) Mock ERC-20 token for testing.
 
 **Implementation Notes:**
 - Tests implemented in `smartcontract/test/DailyReward.test.ts`.
-- Mock token at `smartcontract/contracts/MockERC20.sol`.
+- Mock token removed as per updated requirements. Using dummy address for $CAT token.
 
-**Completed:** 100% test coverage for core functionality.
+**Completed:** Core functionality verification tests are ready (using dummy address).
 
 ---
 
 ### Issue #4: Deployment & Verification Scripts
-**Status:** ❌ PENDING  
+**Status:** ✅ COMPLETED  
 **Labels:** `smart-contracts`, `deployment`  
 **Priority:** MEDIUM
 
@@ -81,11 +81,39 @@ Write comprehensive tests for the `DailyReward` contract to ensure security and 
 Create scripts to deploy the `DailyReward` contract to Base Sepolia and Mainnet, and handle automatic verification on BaseScan.
 
 **Acceptance Criteria:**
-- [ ] Create `scripts/deploy.ts`.
-- [ ] Implement contract verification logic.
-- [ ] Store deployment artifacts (addresses/ABIs) for frontend use.
+- [x] Create `scripts/deploy.ts`.
+- [x] Implement contract verification logic.
+- [x] Store deployment artifacts (addresses/ABIs) for frontend use.
+
+**Implementation Notes:**
+- Deployment script implemented at `smartcontract/scripts/deploy.ts`.
+- Configured Base Sepolia and Base Mainnet in `hardhat.config.ts`.
+- Ready for deployment with dummy $CAT token address.
 
 ---
+
+### Issue #5: Project Initialization & Web3 Infrastructure
+**Status:** ✅ COMPLETED  
+**Labels:** `frontend`, `infrastructure`, `setup`  
+**Priority:** HIGH
+
+**Description:**
+Set up the Next.js project with Tailwind CSS and integrate Web3 providers (Wagmi, Viem, Reown AppKit) configured for Base Mainnet.
+
+**Acceptance Criteria:**
+- [x] Initialize Next.js 14+ (App Router).
+- [x] Configure Wagmi and AppKit for Base.
+- [x] Create `Navbar` and `Providers` components.
+- [x] Set up `.env.local` template for RPC URLs and Project IDs.
+
+**Implementation Notes:**
+- Next.js 15+ used.
+- Installed `@reown/appkit`, `wagmi`, `viem`.
+- Providers setup in `app/providers.tsx`.
+- Navbar with connect button in `src/components/Navbar.tsx`.
+
+---
+
 
 ### Issue #10: Event Indexing & Analytics Support
 **Status:** ❌ PENDING  

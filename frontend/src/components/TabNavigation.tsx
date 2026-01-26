@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { Gift, Trophy, User } from 'lucide-react'
+import { Gift, Trophy, User, History } from 'lucide-react'
 
-type Tab = 'claim' | 'leaderboard' | 'profile'
+type Tab = 'claim' | 'leaderboard' | 'history' | 'profile'
 
 interface TabNavigationProps {
   activeTab: Tab
@@ -14,6 +14,7 @@ export const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) =
   const tabs = [
     { id: 'claim', label: 'Claim', icon: Gift },
     { id: 'leaderboard', label: 'Leaders', icon: Trophy },
+    { id: 'history', label: 'History', icon: History },
     { id: 'profile', label: 'Profile', icon: User },
   ] as const
 

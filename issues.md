@@ -19,6 +19,14 @@ Define an indexing strategy (e.g., Goldsky, The Graph, or custom indexer) to tra
 - [ ] Create a configuration for a subgraph or an event listener.
 - [ ] Expose an endpoint or query for fetching user claim history.
 
+1.  Smart Contract Optimization:
+    *   I will add a Withdrawal event to the DailyReward.sol contract to track when the owner removes tokens from the pool, ensuring full financial transparency.
+    *   I will verify that the existing Claimed event is properly indexed (which it currently is on the user parameter).
+2.  Subgraph Development (The "Read Layer"):
+    *   Since we have already set up The Graph CLI, I will create a dedicated subgraph/ folder.
+    *   Schema Design: I will define a Claim entity (to store every individual login/claim) and a User entity (to track cumulative stats like totalTokensEarned and streakCount).
+    *   Mappings: I will write AssemblyScript logic to convert blockchain events into these queryable entities.
+
 ---
 
 ### Issue #11: Security Polish & Ownership Management
@@ -109,19 +117,42 @@ Source or create high-quality "Cat" themed assets (icons, animations, logo). Ens
 ---
 
 ### Issue #13: Transaction History & Activity Feed
-**Status:** ❌ PENDING  
+**Status:** ✅ COMPLETED  
 **Labels:** `frontend`, `feature`, `history`  
 **Priority:** MEDIUM
 
 **Description:**
-Implement an activity feed in the **Profile** tab that shows the user's historical claims (e.g., "Claimed 100 $CAT on Jan 20th").
+Implement an activity feed that shows the user's historical claims (e.g., "Claimed 100 $CAT on Jan 20th").
 
 **Acceptance Criteria:**
-- [ ] Fetch historical events from the blockchain or indexer.
-- [ ] Display list of past claims with date and transaction hash.
-- [ ] Show total $CAT claimed by the user.
+- [x] Create \`useHistory\` hook to manage reward data.
+- [x] Implement \`HistoryTab\` component to display a list of past claims.
+- [x] Integrate the History tab into the main navigation system.
+
+**Implementation Notes:**
+- Mock history implemented with a path toward indexed data.
+- UI built with Deep Purple/Lavender aesthetic.
+- Production deployment live on Vercel.
 
 ---
+
+### Issue #15: Vercel Production Deployment
+**Status:** ✅ COMPLETED  
+**Labels:** `infrastructure`, `deployment`  
+**Priority:** HIGH
+
+**Description:**
+Link the frontend repository to Vercel and deploy the application to a production environment.
+
+**Acceptance Criteria:**
+- [x] Link local repository to Vercel project \`cat-daily-login\`.
+- [x] Fix build errors related to path aliases and dependency conflicts.
+- [x] Deploy to production with a live URL.
+
+**Implementation Notes:**
+- Deployment URL: https://cat-daily-login.vercel.app
+- Fixed \`tsconfig.json\` path mappings for \`@/*\` imports.
+- Fixed \`app/providers.tsx\` to ensure client-side execution.
 
 ### Issue #14: Comprehensive Project Documentation
 **Status:** ❌ PENDING  

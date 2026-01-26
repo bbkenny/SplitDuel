@@ -5,8 +5,9 @@ import { TabNavigation } from '@/components/TabNavigation'
 import { ClaimTab } from '@/components/tabs/ClaimTab'
 import { LeaderboardTab } from '@/components/tabs/LeaderboardTab'
 import { ProfileTab } from '@/components/tabs/ProfileTab'
+import { HistoryTab } from '@/components/tabs/HistoryTab'
 
-type Tab = 'claim' | 'leaderboard' | 'profile'
+type Tab = 'claim' | 'leaderboard' | 'history' | 'profile'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('claim')
@@ -17,6 +18,8 @@ export default function Home() {
         return <ClaimTab />
       case 'leaderboard':
         return <LeaderboardTab />
+      case 'history':
+        return <HistoryTab />
       case 'profile':
         return <ProfileTab />
       default:

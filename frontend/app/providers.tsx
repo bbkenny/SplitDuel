@@ -1,4 +1,4 @@
-'use strict'
+'use client'
 
 import React, { ReactNode } from 'react'
 import { createAppKit } from '@reown/appkit/react'

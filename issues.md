@@ -68,7 +68,7 @@ Integrate Farcaster Frames v2 (Mini App) capabilities to allow the app to be lau
 ---
 
 ### Issue #8: Claim Logic & Contract Interaction
-**Status:** ❌ PENDING  
+**Status:** ✅ COMPLETED  
 **Labels:** `frontend`, `feature`, `web3`  
 **Priority:** HIGH
 
@@ -76,9 +76,14 @@ Integrate Farcaster Frames v2 (Mini App) capabilities to allow the app to be lau
 Connect the "Claim" tab to the `DailyReward` smart contract. Handle eligibility checking and transaction execution.
 
 **Acceptance Criteria:**
-- [ ] Fetch `canClaim` status on load.
-- [ ] Implement `claim()` function with transaction feedback (loading/success/error).
-- [ ] Show a countdown timer if the user has already claimed.
+- [x] Fetch `canClaim` status on load.
+- [x] Implement `claim()` function with transaction feedback (loading/success/error).
+- [x] Show a countdown timer if the user has already claimed.
+
+**Implementation Notes:**
+- Implemented `useDailyReward` hook for state management.
+- Added countdown timer with auto-refetch on expiration.
+- Integrated Loading/Success/Error states with Tailwind animations.
 
 ---
 

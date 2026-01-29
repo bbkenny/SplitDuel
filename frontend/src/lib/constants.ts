@@ -1,0 +1,10 @@
+export const CONTRACT_ADDRESSES = {
+  8453: { // Base Mainnet
+    DAILY_REWARD: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", // Deployed address from scripts
+    CAT_TOKEN: "0x8C8Ab21D53EbFD5df68bc85Aa5538A7114d33F02"   // Dummy CAT token
+  },
+  84532: { // Base Sepolia
+    DAILY_REWARD: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    CAT_TOKEN: "0x8C8Ab21D53EbFD5df68bc85Aa5538A7114d33F02"
+  }
+} as const;

@@ -19,8 +19,8 @@ export const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) =
   ] as const
 
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/80 backdrop-blur-xl border border-[#B0A5D0]/20 rounded-3xl p-2 shadow-2xl z-50">
-      <div className="flex justify-between items-center">
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/80 backdrop-blur-xl border border-[#B0A5D0]/20 rounded-3xl p-3 shadow-2xl z-50">
+      <div className="flex justify-between items-center gap-3">
         {tabs.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id

@@ -58,86 +58,73 @@ export const ClaimTab = () => {
   }
 
   return (
-    <div className="flex flex-col items-center p-6 space-y-8 bg-white rounded-3xl border border-[#B0A5D0]/20 shadow-xl min-h-[400px]">
-      
-      {/* Header Section */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-black text-[#442F8C] tracking-tight">
-          Daily Reward
-        </h1>
-        <p className="text-[#B0A5D0] font-medium">
-          Claim 100 $CAT every 24 hours
-        </p>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-[500px]">
+      <div className="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl flex flex-col items-center space-y-6">
+        
+        {/* Icon & Header */}
+        <div className="flex flex-col items-center text-center space-y-4">
+          <div className="w-20 h-20 bg-[#F3F0FF] rounded-full flex items-center justify-center">
+            <Gift className="w-10 h-10 text-[#442F8C]" strokeWidth={2.5} />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold text-[#442F8C]">Daily Rewards</h2>
+            <p className="text-sm text-[#B0A5D0] font-medium leading-relaxed max-w-[240px]">
+              Claim your daily $CAT tokens and build your streak!
+            </p>
+          </div>
+        </div>
 
-      {/* Main Action Area */}
-      <div className="w-full max-w-xs">
-        {canClaim ? (
-          <button
-            onClick={() => handleClaim()}
-            disabled={isClaiming || isConfirming}
-            className="group relative w-full overflow-hidden rounded-2xl bg-[#442F8C] p-1 transition-all hover:scale-105 active:scale-95 disabled:opacity-70 disabled:pointer-events-none"
-          >
-            <div className="relative flex items-center justify-center gap-3 rounded-xl bg-[#442F8C] py-4 px-8 text-white transition-all group-hover:bg-[#5338A8]">
+        {/* Claim Button */}
+        <div className="w-full">
+          {canClaim ? (
+            <button
+              onClick={() => handleClaim()}
+              disabled={isClaiming || isConfirming}
+              className="w-full bg-[#442F8C] hover:bg-[#362473] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#442F8C]/30 transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-2"
+            >
               {isClaiming || isConfirming ? (
                 <>
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                  <span className="font-bold">
-                    {isClaiming ? 'Signing...' : 'Confirming...'}
-                  </span>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Processing...</span>
                 </>
               ) : (
-                <>
-                  <Gift className="w-6 h-6 animate-bounce" />
-                  <span className="font-bold text-lg">Claim Reward</span>
-                </>
+                <span>Claim 100 $CAT</span>
               )}
-            </div>
-          </button>
-        ) : (
-          <div className="flex flex-col items-center justify-center p-6 bg-[#F8F7FF] rounded-2xl border-2 border-[#B0A5D0]/20">
-            <Timer className="w-8 h-8 text-[#B0A5D0] mb-2" />
-            <p className="text-sm font-bold text-[#442F8C] uppercase tracking-wide mb-1">
-              Next Claim In
+            </button>
+          ) : (
+            <button disabled className="w-full bg-[#EAE6F5] text-[#B0A5D0] font-bold py-4 rounded-2xl cursor-not-allowed">
+              Claimed
+            </button>
+          )}
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <div className="bg-[#F8F7FF] rounded-2xl p-4 text-center border border-[#EAE6F5]">
+            <p className="text-[10px] uppercase tracking-wider font-bold text-[#B0A5D0] mb-1">Current Streak</p>
+            <p className="text-xl font-black text-[#442F8C]">5 Days</p>
+          </div>
+          <div className="bg-[#F8F7FF] rounded-2xl p-4 text-center border border-[#EAE6F5]">
+            <p className="text-[10px] uppercase tracking-wider font-bold text-[#B0A5D0] mb-1">Next Claim</p>
+            <p className="text-xl font-black text-[#442F8C] font-mono tracking-tight">
+              {canClaim ? 'Now' : timeLeft || '...'}
             </p>
-            <p className="text-2xl font-mono font-black text-[#442F8C]">
-              {timeLeft || "Loading..."}
-            </p>
           </div>
-        )}
+        </div>
+
       </div>
 
-      {/* Status Messages */}
-      <div className="w-full">
-        {isConfirmed && (
-          <div className="flex items-center gap-3 p-4 bg-green-50 text-green-700 rounded-xl border border-green-200 animate-in fade-in slide-in-from-bottom-4">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
-            <div className="text-sm">
-              <span className="font-bold block">Success!</span>
-              Your 100 $CAT has been sent to your wallet.
-            </div>
-          </div>
-        )}
-
-        {error && (
-          <div className="flex items-center gap-3 p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 animate-in fade-in slide-in-from-bottom-4">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <div className="text-sm">
-              <span className="font-bold block">Transaction Failed</span>
-              {error.message.includes('User denied') 
-                ? 'You rejected the transaction.' 
-                : 'Something went wrong. Please try again.'}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Footer Info */}
-      <div className="text-center space-y-1">
-        <p className="text-xs text-[#B0A5D0] font-medium">
-          Contract: <span className="font-mono bg-[#F8F7FF] px-1 py-0.5 rounded text-[#442F8C]">0xe7f1...0512</span>
-        </p>
-      </div>
+      {/* Toast Notifications */}
+      {isConfirmed && (
+        <div className="mt-6 flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-full text-sm font-bold shadow-lg animate-in slide-in-from-bottom-4 fade-in">
+          <CheckCircle2 className="w-4 h-4" /> Claim Successful!
+        </div>
+      )}
+      {error && (
+        <div className="mt-6 flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-full text-sm font-bold shadow-lg animate-in slide-in-from-bottom-4 fade-in">
+          <AlertCircle className="w-4 h-4" /> Failed
+        </div>
+      )}
     </div>
   )
 }

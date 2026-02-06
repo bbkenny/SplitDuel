@@ -18,7 +18,7 @@ export const Navbar = () => {
         <div className="p-2 bg-[#442F8C] rounded-xl shadow-lg shadow-[#442F8C]/20">
           <Cat className="w-6 h-6 text-white" />
         </div>
-        <span className="text-xl font-bold text-[var(--foreground)] transition-colors">
+        <span className="hidden sm:block text-xl font-bold text-[var(--foreground)] transition-colors">
           Cat Daily
         </span>
       </div>

@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AutoSplit — Payment Routing Miniapp
 
-## Getting Started
+<div align="center">
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com)
+[![Network](https://img.shields.io/badge/Celo-Testnet-16D14E?style=flat-square&logo=celo)](https://celo.org)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Next.js 14 frontend for **AutoSplit** — automatic stablecoin payment routing on Celo.
+
+**[Live Miniapp](https://autosplit.vercel.app/) · [GitHub](https://github.com/bbkenny/autosplit)**
+
+</div>
+
+---
+
+## 🚀 What is AutoSplit?
+
+**One transaction. Multiple outcomes.**
+
+AutoSplit is a smart contract-based payment router that lets users automatically split and route stablecoin payments in a single action. Send once, and your money splits, saves, and routes instantly.
+
+### Use Cases
+
+- **Freelancers**: Auto-split payments (50% savings, 30% ops, 20% personal)
+- **DAOs**: Route treasury funds to multiple vaults in one tx
+- **Businesses**: Split revenue across team, savings, and growth
+- **Emerging Markets**: Programmable stablecoin distribution
+
+---
+
+## 🎨 Features
+
+- **Multi-Recipient Routing**: Send to multiple addresses in one tx
+- **Vault Integration**: Optional routing to yield protocols
+- **Custom Splits**: Define percentage-based distribution rules
+- **Real-Time Preview**: See distribution before execution
+- **Celo-Native**: Built for Celo stablecoins (cUSD, cEUR)
+
+---
+
+## 📁 Project Structure
+
+```
+frontend/
+├── app/
+│   └── page.tsx                 # Main dashboard
+│
+└── package.json                # Dependencies
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚦 Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route | Description |
+|-------|-------------|
+| `/` | Split creation & execution dashboard |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🧩 Components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Component | Description |
+|-----------|-------------|
+| Main Dashboard | Split config, preview, execution |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ⚙️ Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Install dependencies
+npm install
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Run dev server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linting
+npm run lint
+```
+
+### Environment Variables
+
+Create `.env.local`:
+
+```env
+NEXT_PUBLIC_CELO_RPC_URL=https://alfajores-forno.celo-testnet.org
+```
+
+---
+
+## 🔗 Links
+
+- [Live Miniapp](https://autosplit.vercel.app/)
+- [Smart Contracts](https://github.com/bbkenny/autosplit/tree/main/smartcontract)
+- [Celo Alfajores Faucet](https://faucet.celo.org/alfajores)
+
+---
+
+## 📄 License
+
+MIT © AutoSplit Protocol

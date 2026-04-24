@@ -1,31 +1,19 @@
 {
-  "name": "autosplit-contracts",
+  "name": "autosplit-smartcontract",
   "version": "1.0.0",
-  "description": "AutoSplit router & vault contracts for Celo",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "hardhat compile",
-    "test": "hardhat test",
-    "deploy": "hardhat run scripts/deploy.js --network alfajores"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "autosplit",
-    "celo",
-    "defi"
-  ],
-  "author": "bbkenny",
-  "license": "MIT",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
-    "@nomicfoundation/hardhat-verify": "^2.0.0",
-    "chai": "^4.3.10",
-    "hardhat": "^2.19.0",
-    "prettier": "^3.1.1",
-    "prettier-plugin-solidity": "^1.3.1"
-  },
-  "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0",
-    "dotenv": "^16.3.1"
-  },
-  "type": "module"
+    "@nomicfoundation/hardhat-verify": "^1.0.2",
+    "@typechain/hardhat": "^8.0.2",
+    "hardhat": "^2.19.4",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.4"
+  }
 }

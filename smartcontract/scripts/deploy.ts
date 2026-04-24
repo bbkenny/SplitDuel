@@ -1,40 +1,82 @@
 import { ethers, run } from "hardhat";
 
 async function main() {
-  console.log("Starting deployment of DailyReward...");
+  console.log("Deploying AutoSplitRouter...");
 
-  // Placeholder for CAT Token Address (Address Zero for now)
-  const CAT_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
-  const REWARD_AMOUNT = ethers.parseEther("100");
+  const AutoSplitRouter = await ethers.getContractFactory("AutoSplitRouter");
+  const autoSplitRouter = await AutoSplitRouter.deploy();
 
-  const DailyReward = await ethers.getContractFactory("DailyReward");
-  const dailyReward = await DailyReward.deploy(CAT_TOKEN_ADDRESS, REWARD_AMOUNT);
+  await autoSplitRouter.waitForDeployment();
 
-  await dailyReward.waitForDeployment();
+  const routerAddress = await autoSplitRouter.getAddress();
+  console.log(`AutoSplitRouter deployed to: ${routerAddress}`);
 
-  const address = await dailyReward.getAddress();
-  console.log(`DailyReward deployed to: ${address}`);
+  console.log("Deploying VaultAdapter...");
+  const VaultAdapter = await ethers.getContractFactory("VaultAdapter");
+  const vaultAdapter = await VaultAdapter.deploy(
+    ethers.ZeroAddress,
+    "AutoSplit Vault"
+  );
+
+  await vaultAdapter.waitForDeployment();
+
+  const adapterAddress = await vaultAdapter.getAddress();
+  console.log(`VaultAdapter deployed to: ${adapterAddress}`);
 
   // Wait for block confirmations before verification
   if (process.env.HARDHAT_NETWORK !== "hardhat" && process.env.HARDHAT_NETWORK !== "localhost") {
     console.log("Waiting for block confirmations...");
-    await dailyReward.deploymentTransaction()?.wait(5);
+    await autoSplitRouter.deploymentTransaction()?.wait(5);
+    await vaultAdapter.deploymentTransaction()?.wait(5);
 
-    console.log("Verifying contract...");
+    console.log("Verifying contracts...");
     try {
       await run("verify:verify", {
-        address: address,
-        constructorArguments: [CAT_TOKEN_ADDRESS, REWARD_AMOUNT],
+        address: routerAddress,
+        constructorArguments: [],
       });
-      console.log("Contract verified successfully!");
+      console.log("AutoSplitRouter verified successfully!");
     } catch (error: any) {
       if (error.message.toLowerCase().includes("already verified")) {
-        console.log("Contract is already verified!");
+        console.log("AutoSplitRouter is already verified!");
       } else {
-        console.log("Verification failed:", error);
+        console.log("AutoSplitRouter verification failed:", error);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: adapterAddress,
+        constructorArguments: [ethers.ZeroAddress, "AutoSplit Vault"],
+      });
+      console.log("VaultAdapter verified successfully!");
+    } catch (error: any) {
+      if (error.message.toLowerCase().includes("already verified")) {
+        console.log("VaultAdapter is already verified!");
+      } else {
+        console.log("VaultAdapter verification failed:", error);
       }
     }
   }
+
+  // Save addresses for frontend
+  const fs = require("fs");
+  const addresses = {
+    celo: {
+      AUTO_SPLIT_ROUTER: routerAddress,
+      VAULT_ADAPTER: adapterAddress,
+    },
+    celoAlfajores: {
+      AUTO_SPLIT_ROUTER: routerAddress,
+      VAULT_ADAPTER: adapterAddress,
+    },
+  };
+
+  fs.writeFileSync(
+    "../frontend/src/lib/deployed-addresses.json",
+    JSON.stringify(addresses, null, 2)
+  );
+  console.log("Addresses saved to frontend/src/lib/deployed-addresses.json");
 }
 
 main().catch((error) => {

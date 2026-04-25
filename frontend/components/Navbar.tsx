@@ -1,37 +1,44 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react'
-import { Moon, Sun } from 'lucide-react'
-import { useTheme } from 'next-themes'
-import Image from 'next/image'
-import autosplitLogo from '@/public/autosplit-logo.png'
-import { SplitIcon, VaultIcon } from '@/components/icons'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAccount } from "wagmi";
+import ThemeToggle from "./ThemeToggle";
 
-export const Navbar = () => {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => { setMounted(true) }, [])
+export default function Navbar() {
+  const pathname = usePathname();
+  const { isConnected } = useAccount();
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 bg-[#031F1C] backdrop-blur-sm">
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-[#2FD07A] rounded-xl shadow-lg shadow-[#2FD07A]/30 flex items-center justify-center">
-          <Image src={autosplitLogo} alt="AutoSplit Logo" width={28} height={28} className="drop-shadow-[0_0_8px_rgba(47,208,122,0.6)]" />
-        </div>
-        <span className="hidden sm:block text-xl font-bold text-[var(--foreground)] transition-colors">AutoSplit</span>
-      </div>
-
-      <div className="flex items-center gap-4">
-        {mounted && (
-          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-2.5 rounded-xl bg-black/20 dark:bg-white/10 hover:bg-black/30 dark:hover:bg-white/20 border border-white/10 transition-colors backdrop-blur-sm cursor-pointer"
-            aria-label="Toggle theme"
+    <header
+      style={{
+        background: "color-mix(in srgb, var(--background) 80%, transparent)",
+        borderBottom: "1px solid var(--border)",
+      }}
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl"
+    >
+      <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-6">
+        {/* Logo + Wordmark */}
+        <Link href="/" className="flex items-center gap-3 shrink-0 group">
+          <span
+            style={{ letterSpacing: "0.16em", lineHeight: 1 }}
+            className="text-2xl font-black uppercase"
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5 text-[#F4D935]" /> : <Moon className="w-5 h-5 text-[#E6F2EF]" />}
-          </button>
-        )}
-        <appkit-button />
+            <span style={{ color: "var(--primary)" }}>AUTO</span>
+            <span
+              style={{ color: "var(--foreground-muted)" }}
+              className="mx-1.5"
+            >
+              SPLIT
+            </span>
+          </span>
+        </Link>
+
+        {/* Right: theme toggle */}
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+        </div>
       </div>
-    </nav>
-  )
+    </header>
+  );
 }

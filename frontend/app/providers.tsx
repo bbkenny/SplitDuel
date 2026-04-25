@@ -1,31 +1,32 @@
-'use client'
+"use client";
 
-import React, { ReactNode } from 'react'
-import { createAppKit } from '@reown/appkit/react'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { base, celo } from '@reown/appkit/networks'
-import { WagmiProvider } from 'wagmi'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ThemeProvider } from 'next-themes'
+import React, { ReactNode } from "react";
+import { createAppKit } from "@reown/appkit/react";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { base, celo } from "@reown/appkit/networks";
+import { WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "next-themes";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
-const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'b56816460394348a735c02450371424c'
+const projectId =
+  process.env.NEXT_PUBLIC_PROJECT_ID || "b56816460394348a735c02450371424c";
 
 const metadata = {
-  name: 'AutoSplit',
-  description: 'Send once. Split automatically on Celo.',
-  url: 'https://autosplit.celo',
-  icons: ['/autosplit.svg']
-}
+  name: "AutoSplit",
+  description: "Send once. Split automatically on Celo.",
+  url: "https://autosplit.celo",
+  icons: ["/autosplit.svg"],
+};
 
-const networks = [base, celo]
+const networks = [base, celo];
 
 const wagmiAdapter = new WagmiAdapter({
   networks,
   projectId,
-  ssr: true
-})
+  ssr: true,
+});
 
 createAppKit({
   adapters: [wagmiAdapter],
@@ -33,8 +34,8 @@ createAppKit({
   projectId,
   metadata,
   features: { analytics: true },
-  themeMode: 'dark'
-})
+  themeMode: "dark",
+});
 
 export function Web3Providers({ children }: { children: ReactNode }) {
   return (
@@ -45,5 +46,5 @@ export function Web3Providers({ children }: { children: ReactNode }) {
         </QueryClientProvider>
       </WagmiProvider>
     </ThemeProvider>
-  )
+  );
 }

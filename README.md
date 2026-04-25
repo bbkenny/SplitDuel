@@ -1,238 +1,138 @@
-# AutoSplit — Intent-Based Payment Protocol
+# AutoSplit
 
-<div align="center">
+## 🟢 Product Name
+AutoSplit
 
-![AutoSplit](https://img.shields.io/badge/AutoSplit-Protocol-8FA828?style=for-the-badge&logo=ethereum&logoColor=white)
+A mobile-first payment routing miniapp that allows users to automatically split and route stablecoin transactions in a single action.
 
-[![Network](https://img.shields.io/badge/Celo-Testnet-16D14E?style=flat-square&logo=celo)](https://celo.org)
-[![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-363636?style=flat-square&logo=solidity)](https://soliditylang.org)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+## 🧠 One-Line Summary
+Send once, and your money automatically splits, saves, and invests in real time.
 
-**[Live Miniapp](https://autoSplit.vercel.app) · [GitHub](https://github.com/bbkenny/autoSplit)**
+## 🎯 Problem Statement
+Sending money today is fragmented:
+- Users manually split payments
+- Savings require separate actions
+- Investing requires additional steps
 
-</div>
+This creates friction, especially in mobile-first economies where users:
+- Manage multiple obligations (family, savings, business)
+- Operate with stablecoins (cUSD, cEUR)
+- Need automation, not complexity
 
----
+## 💡 Solution
+A smart contract-based payment router that:
+- Automatically splits incoming or outgoing funds
+- Routes portions to recipients, savings vaults, or yield strategies
+- Executes all actions in a single transaction
 
-> **The Problem:** Payments today are manual, trust-based, and non-conditional. Users rely on verbal agreements, manual follow-ups, and third-party intermediaries — creating friction, disputes, and inefficiency.
-> 
-> **The Solution:** AutoSplit is an intent-based payment protocol that allows users to define conditions under which funds are automatically executed on-chain. Instead of sending money immediately, users define rules — and the protocol enforces them.
+## 🎯 Target Users
+- Freelancers / gig workers
+- Small business owners
+- DAOs / small teams
+- Crypto-native users on Celo
+- Emerging market users using stablecoins
 
----
+## 🔥 Core Value Proposition
+- One transaction → multiple financial outcomes
+- Eliminates manual money management steps
+- Enables programmable finance for everyday users
 
-## 🎯 Overview
+## ⚙️ Core Features
 
-AutoSplit transforms **user intent** into **enforceable on-chain payment logic**:
+### 1. Payment Routing Engine
+- Input: amount + routing rules
+- Output: automatic distribution
+- Example:
+  100 cUSD →
+    50 to recipient
+    30 to savings vault
+    20 to yield strategy
 
-- "Send when delivery is confirmed"
-- "Pay every Friday"  
-- "Release funds after milestone completion"
+### 2. Rule Configuration
+- Users define:
+  - Percentage splits
+  - Destination addresses
+  - Optional yield allocation
 
-The system holds funds in escrow, monitors conditions, and executes automatically — no intermediaries, no manual intervention.
+### 3. Vault Integration (Optional)
+- Connect to DeFi protocols (e.g. Aave-like)
+- Route funds into yield strategies
 
----
+### 4. One-Click Execution
+- Single transaction handles all logic
+- No multi-step flows
 
-## 🧩 Core Features
+### 5. Transaction Transparency
+- Display breakdown before execution
+- Show post-transaction distribution
 
-### 1. Conditional Payment Contracts
-- Create payments with custom conditions
-- Funds locked securely in escrow
-- Automatic execution when conditions are met
-- Refund logic if conditions fail
+## 🧩 User Flow
+1. User inputs amount
+2. User defines split rules
+3. System calculates distribution
+4. User confirms transaction
+5. Smart contract executes routing
+6. UI displays results
 
-### 2. Supported Conditions
+## 🏗️ Technical Architecture
 
-**Time-based**
-- Execute at specific timestamp
-- Recurring payments (weekly/monthly)
-
-**Manual Trigger**
-- Recipient confirms delivery
-- Multi-party approval flows
-
-**Oracle-based** (Phase 2)
-- GPS/location verification
-- API-based external triggers
-
-### 3. Payment Types
-- One-time conditional payments
-- Recurring subscriptions
-- Group contributions (threshold unlock)
-
-### 4. Escrow System
-- Funds locked in audited smart contracts
-- Timeout-based refunds
-- Optional dispute resolution period
-- Non-custodial — users always control their keys
-
----
-
-## 🏗️ Architecture
-
-| Layer | Technology | Purpose |
-|-------|-----------|----------|
-| **Smart Contracts** | Solidity 0.8.20, Hardhat | Conditional payments, escrow, condition registry |
-| **Frontend** | Next.js 16, React 19, Tailwind | Mobile-first miniapp UI |
-| **Network** | Celo (Alfajores) | EVM-compatible, mobile-first L2 |
-
-### Smart Contracts
-
-#### `PaymentFactory.sol`
-- Creates new conditional payment contracts
-- Tracks all active payments
-- Manages payment lifecycle
-
-#### `ConditionalPayment.sol`
-- Core escrow contract
-- Stores sender, recipient, amount, condition logic
-- Handles execution, refunds, and disputes
-
-#### `ConditionRegistry.sol` (optional)
-- Standardized condition handlers
-- Reusable trigger patterns
-
----
-
-## 🎨 Frontend Miniapp
-
-Lightweight, mobile-first interface:
-
-- **Create Payment**: Set amount, recipient, condition type
-- **View Status**: Active, pending, completed, refunded
-- **Trigger Execution**: Manual approval or auto-execute
-- **Real-time Updates**: Live contract state via Web3
-
-**Routes:**
-- `/` — Landing & payment creation
-- `/payments` — View all your payments
-- `/create` — Step-by-step payment setup
-- `/history` — Past payments & execution log
-
----
-
-## 🔐 Security
-
-- Reentrancy protection (Checks-Effects-Interactions)
-- Escrow fund safety (pull vs push patterns)
-- Condition validation (on-chain verification)
-- Timeout fallback logic (automatic refunds)
-- Auditable on-chain execution (full transparency)
-- CEI pattern compliance
-
----
-
-## 🚀 Development
-
-### Prerequisites
-
-- Node.js 18+
-- npm/yarn
-- Celo Alfajores testnet funds
-
-### Smart Contracts
-
-```bash
-cd smartcontract
-
-# Install dependencies
-npm install
-
-# Compile
-npx hardhat compile
-
-# Run tests
-npx hardhat test
-
-# Deploy to Celo Alfajores
-npx hardhat run scripts/deploy.js --network alfajores
-```
+### Smart Contracts (Solidity)
+- Router Contract
+  - Accepts funds
+  - Applies split logic
+  - Executes transfers
+- Vault Adapter (optional)
+  - Integrates with DeFi protocols
+  - Handles deposits
 
 ### Frontend
+- Framework: Next.js
+- Wallet: Wagmi / WalletConnect
+- UI: Tailwind CSS
 
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Run dev server
-npm run dev
-
-# Build for production
-npm run build
-```
-
-### Configuration
-
-Contract addresses are configured in `frontend/lib/constants.ts`:
-
-```typescript
-export const PAYMENT_FACTORY_ADDRESS = "0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c" // Celo Mainnet
-```
-
-### Deployed Addresses
-
-| Network | PaymentFactory | Block Explorer |
-|---------|---------------|----------------|
-| Celo Mainnet | `0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c` | [celoscan.io](https://celoscan.io/address/0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c) |
-| Celo Alfajores | *(deploy when ready)* | — |
-
-To deploy to Alfajores testnet:
-```bash
-npx hardhat run scripts/deploy.ts --network celoAlfajores
-```
-
----
+## 🔐 Security Considerations
+- Reentrancy protection
+- Input validation (percentages ≤ 100%)
+- Safe transfer patterns
+- Access control (user-specific configs)
 
 ## 📊 Success Metrics
+- Number of transactions executed
+- Total volume routed (cUSD)
+- Number of active users
+- Average splits per transaction
+- Vault participation rate
 
-- Number of payments created
-- Total transaction volume
-- Unique users
-- Execution success rate
-- Average time-to-execution
+## 🚀 MVP Scope
+- Basic split routing
+- Fixed percentage rules
+- Single recipient + optional vault
+- Simple UI
 
----
-
-## 🗺️ Roadmap
-
-### Phase 1 (MVP)
-- Time-based payments
-- Manual trigger
-- Simple miniapp UI
-- Basic escrow with refunds
-
-### Phase 2
-- Oracle integrations (Chainlink)
+## 🔮 Future Enhancements
 - Recurring payments
-- Email/SMS notifications
-- Multi-signature approvals
+- AI-based financial suggestions
+- Social/group splitting
+- Multi-token support
+- Farcaster miniapp integration
 
-### Phase 3
-- SDK for developers
-- API integrations (Zapier, IFTTT)
-- Cross-app triggers
-- Mobile app (Celo Wallet integration)
+## 🧠 "Wow" Moment
+User sends money once → sees it automatically:
+- Delivered
+- Saved
+- Invested
 
----
+## ⚠️ Risks
+- Overcomplication of UI
+- Low user understanding of splits
+- Integration complexity with DeFi
 
-## 🔗 Links
+## ✅ Out of Scope (MVP)
+- Cross-chain routing
+- Advanced analytics dashboards
+- Token swapping
 
-- [Live Miniapp](https://autoSplit.vercel.app/)
-- [GitHub Repository](https://github.com/bbkenny/autoSplit)
-- [Celo Alfajores Faucet](https://faucet.celo.org/alfajores)
+## 📌 Positioning
+AutoSplit is not a wallet.
 
----
-
-### 🤝 Contributing
-
-Pull requests welcome! Please ensure:
-- All tests pass
-- Code follows existing style
-- New features include tests
-- Security best practices followed
-
-### 📄 License
-
-MIT © AutoSplit Protocol
+It is: 👉 A programmable payment primitive for stablecoins.

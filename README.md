@@ -166,14 +166,14 @@ It is: 👉 A programmable payment primitive for stablecoins. .... this is th re
 
 ```typescript
 export const PAYMENT_FACTORY_ADDRESS =
-  "0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c"; // Celo Mainnet
+  "0x00b3297E8D92a3229F180Bc191aE0E48350ab41D"; // Celo Mainnet
 ```
 
 ### Deployed Addresses
 
 | Network        | PaymentFactory                               | Block Explorer                                                                        |
 | -------------- | -------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Celo Mainnet   | `0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c` | [celoscan.io](https://celoscan.io/address/0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c) |
+| Celo Mainnet   | `0x00b3297E8D92a3229F180Bc191aE0E48350ab41D` | [celoscan.io](https://celoscan.io/address/0x00b3297E8D92a3229F180Bc191aE0E48350ab41D) |
 | Celo Alfajores | _(deploy when ready)_                        | —                                                                                     |
 
 To deploy to Alfajores testnet:

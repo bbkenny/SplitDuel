@@ -49,10 +49,10 @@ A smart contract-based payment router that:
     20 to yield strategy
 
 ### 2. Rule Configuration
-- Users define:
-  - Percentage splits
-  - Destination addresses
-  - Optional yield allocation
+Users define:
+- Percentage splits
+- Destination addresses
+- Optional yield allocation
 
 ### 3. Vault Integration (Optional)
 - Connect to DeFi protocols (e.g. Aave-like)

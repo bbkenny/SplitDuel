@@ -162,22 +162,81 @@ User sends money once → sees it automatically:
 
 AutoSplit is not a wallet.
 
-It is: 👉 A programmable payment primitive for stablecoins. .... this is th readme content for the autosplit readme.. Contract addresses are configured in `frontend/lib/constants.ts`:
+It is: 👉 A programmable payment primitive for stablecoins.
+
+## 🚀 Development
+
+### Prerequisites
+
+- Node.js 18+
+- npm/yarn
+- Celo Alfajores testnet funds
+
+### Smart Contracts
+
+```bash
+cd smartcontract
+
+# Install dependencies
+npm install
+
+# Compile
+npx hardhat compile
+
+# Run tests
+npx hardhat test
+
+# Deploy to Celo Alfajores
+npx hardhat run scripts/deploy.js --network alfajores
+```
+
+### Frontend
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run dev server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### Configuration
+
+Contract addresses are configured in `frontend/lib/constants.ts`:
 
 ```typescript
-export const PAYMENT_FACTORY_ADDRESS =
-  "0x00b3297E8D92a3229F180Bc191aE0E48350ab41D"; // Celo Mainnet
+export const CONTRACT_ADDRESSES = {
+  celo: {
+    AUTO_SPLIT_ROUTER: "0x00b3297E8D92a3229F180Bc191aE0E48350ab41D",
+    VAULT_ADAPTER: "0x8c9fAC38516C02568280afa54688e87763BD62CA",
+  },
+  celoAlfajores: {
+    AUTO_SPLIT_ROUTER: "0x00b3297E8D92a3229F180Bc191aE0E48350ab41D",
+    VAULT_ADAPTER: "0x8c9fAC38516C02568280afa54688e87763BD62CA",
+  },
+} as const
 ```
 
 ### Deployed Addresses
 
-| Network        | PaymentFactory                               | Block Explorer                                                                        |
-| -------------- | -------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Celo Mainnet   | `0x00b3297E8D92a3229F180Bc191aE0E48350ab41D` | [celoscan.io](https://celoscan.io/address/0x00b3297E8D92a3229F180Bc191aE0E48350ab41D) |
-| Celo Alfajores | _(deploy when ready)_                        | —                                                                                     |
+| Network        | PaymentFactory                               | VAULT_ADAPTER                             | Block Explorer                                                                 |
+| -------------- | -------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------ |
+| Celo Mainnet   | `0x00b3297E8D92a3229F180Bc191aE0E48350ab41D` | `0x8c9fAC38516C02568280afa54688e87763BD62CA` | [celoscan.io](https://celoscan.io/address/0x00b3297E8D92a3229F180Bc191aE0E48350ab41D) |
+| Celo Alfajores | `0x00b3297E8D92a3229F180Bc191aE0E48350ab41D` | `0x8c9fAC38516C02568280afa54688e87763BD62CA` | —                                                                              |
 
 To deploy to Alfajores testnet:
 
 ```bash
 npx hardhat run scripts/deploy.ts --network celoAlfajores
 ```
+
+---
+
+## 📄 License
+
+MIT © AutoSplit Protocol

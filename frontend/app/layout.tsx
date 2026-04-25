@@ -4,7 +4,7 @@ import { Navbar } from '@/components/Navbar'
 
 export const metadata: Metadata = {
   title: 'AutoSplit',
-  description: 'Send once. Split automatically on Celo.',
+  description: 'Send once, and your money automatically splits, saves, and invests in real time.',
 }
 
 export const viewport: Viewport = {

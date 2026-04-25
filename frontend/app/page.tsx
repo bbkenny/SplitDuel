@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { AutoSplitProvider } from '@/components/AutoSplitProvider'
-import { Navbar } from '@/components/Navbar'
+import Navbar from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 
 export default function Home() {

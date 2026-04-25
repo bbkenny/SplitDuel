@@ -1,15 +1,15 @@
-# PayWhen — Intent-Based Payment Protocol
+# AutoSplit — Intent-Based Payment Protocol
 
 <div align="center">
 
-![PayWhen](https://img.shields.io/badge/PayWhen-Protocol-8FA828?style=for-the-badge&logo=ethereum&logoColor=white)
+![AutoSplit](https://img.shields.io/badge/AutoSplit-Protocol-8FA828?style=for-the-badge&logo=ethereum&logoColor=white)
 
 [![Network](https://img.shields.io/badge/Celo-Testnet-16D14E?style=flat-square&logo=celo)](https://celo.org)
 [![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-363636?style=flat-square&logo=solidity)](https://soliditylang.org)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-**[Live Miniapp](https://paywhen.vercel.app) · [GitHub](https://github.com/BitBand-Labs/paywhen)**
+**[Live Miniapp](https://autoSplit.vercel.app) · [GitHub](https://github.com/bbkenny/autoSplit)**
 
 </div>
 
@@ -17,13 +17,13 @@
 
 > **The Problem:** Payments today are manual, trust-based, and non-conditional. Users rely on verbal agreements, manual follow-ups, and third-party intermediaries — creating friction, disputes, and inefficiency.
 > 
-> **The Solution:** PayWhen is an intent-based payment protocol that allows users to define conditions under which funds are automatically executed on-chain. Instead of sending money immediately, users define rules — and the protocol enforces them.
+> **The Solution:** AutoSplit is an intent-based payment protocol that allows users to define conditions under which funds are automatically executed on-chain. Instead of sending money immediately, users define rules — and the protocol enforces them.
 
 ---
 
 ## 🎯 Overview
 
-PayWhen transforms **user intent** into **enforceable on-chain payment logic**:
+AutoSplit transforms **user intent** into **enforceable on-chain payment logic**:
 
 - "Send when delivery is confirmed"
 - "Pay every Friday"  
@@ -219,8 +219,8 @@ npx hardhat run scripts/deploy.ts --network celoAlfajores
 
 ## 🔗 Links
 
-- [Live Miniapp](https://paywhen.vercel.app/)
-- [GitHub Repository](https://github.com/BitBand-Labs/paywhen)
+- [Live Miniapp](https://autoSplit.vercel.app/)
+- [GitHub Repository](https://github.com/bbkenny/autoSplit)
 - [Celo Alfajores Faucet](https://faucet.celo.org/alfajores)
 
 ---
@@ -235,4 +235,4 @@ Pull requests welcome! Please ensure:
 
 ### 📄 License
 
-MIT © PayWhen Protocol
+MIT © AutoSplit Protocol

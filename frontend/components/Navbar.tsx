@@ -1,14 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useAccount } from "wagmi";
-import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
-  const pathname = usePathname();
-  const { isConnected } = useAccount();
-
   return (
     <header
       style={{
@@ -18,7 +12,6 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl"
     >
       <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-6">
-        {/* Logo + Wordmark */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
           <span
             style={{ letterSpacing: "0.16em", lineHeight: 1 }}
@@ -33,11 +26,7 @@ export default function Navbar() {
             </span>
           </span>
         </Link>
-
-        {/* Right: theme toggle */}
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-        </div>
+        <div className="flex items-center gap-3" />
       </div>
     </header>
   );

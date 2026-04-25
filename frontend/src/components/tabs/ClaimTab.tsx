@@ -4,99 +4,23 @@ import React, { useEffect, useState } from 'react'
 import { Gift, Timer, CheckCircle2, Loader2, AlertCircle } from 'lucide-react'
 import { useAccount } from 'wagmi'
 import { CONTRACT_ADDRESSES } from '@/lib/constants'
-import { ethers } from 'ethers'
-
-// AutoSplit Router ABI (simplified - replace with actual ABI)
-const AUTO_SPLIT_ABI = [
-  "function canClaim(address) view returns (bool)",
-  "function nextClaimTime(address) view returns (uint256)",
-  "function handleClaim() external",
-  "function getStreak(address) view returns (uint256)"
-]
-
-export const AutoSplitContext = React.createContext(null)
-
-export function AutoSplitProvider({ children, address }) {
-  const { address: connectedAddress } = useAccount()
-  const targetAddress = address || connectedAddress
-  const [state, setState] = useState({
-    canClaim: false,
-    nextClaimTime: null,
-    isClaiming: false,
-    isConfirming: false,
-    isConfirmed: false,
-    error: null,
-    streak: 0
-  })
-
-  const refetchStatus = async () => {
-    if (!targetAddress) return
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum)
-      const contract = new ethers.Contract(targetAddress, AUTO_SPLIT_ABI, provider)
-      const [canClaim, nextClaim, streak] = await Promise.all([
-        contract.canClaim(targetAddress),
-        contract.nextClaimTime(targetAddress),
-        contract.getStreak(targetAddress)
-      ])
-      setState(prev => ({ ...prev, canClaim, nextClaimTime: nextClaim.toNumber() ? new Date(nextClaim.toNumber() * 1000) : null, streak }))
-    } catch (error) {
-      setState(prev => ({ ...prev, error: error.message }))
-    }
-  }
-
-  const handleClaim = async () => {
-    if (!targetAddress) return
-    setState(prev => ({ ...prev, isClaiming: true, error: null }))
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum)
-      const signer = await provider.getSigner()
-      const contract = new ethers.Contract(targetAddress, AUTO_SPLIT_ABI, signer)
-      const tx = await contract.handleClaim()
-      await tx.wait()
-      setState(prev => ({ ...prev, isConfirming: true }))
-      await new Promise(r => setTimeout(r, 2000))
-      setState(prev => ({ ...prev, isConfirmed: true, isClaiming: false }))
-      await refetchStatus()
-    } catch (error) {
-      setState(prev => ({ ...prev, error: error.message, isClaiming: false }))
-    }
-  }
-
-  useEffect(() => {
-    refetchStatus()
-  }, [targetAddress])
-
-  return (
-    <AutoSplitContext.Provider value={{ ...state, handleClaim, refetchStatus }}>
-      {children}
-    </AutoSplitContext.Provider>
-  )
-}
-
-export const useAutoSplit = () => {
-  const context = React.useContext(AutoSplitContext)
-  if (!context) {
-    throw new Error('useAutoSplit must be used within AutoSplitProvider')
-  }
-  return context
-}
+import { useAutoSplit } from '@/components/AutoSplitProvider'
 
 export const ClaimTab = () => {
   const { isConnected } = useAccount()
-  const { 
-    canClaim, 
-    nextClaimTime, 
-    handleClaim, 
-    isClaiming, 
-    isConfirming, 
+  const {
+    canClaim,
+    nextClaimTime,
+    handleClaim,
+    isClaiming,
+    isConfirming,
     isConfirmed,
     error,
     refetchStatus,
     streak
   } = useAutoSplit()
 
-  const [timeLeft, setTimeLeft] = useState('')
+  const [timeLeft, setTimeLeft] = useState<string>('')
 
   useEffect(() => {
     if (!nextClaimTime) return
@@ -149,9 +73,9 @@ export const ClaimTab = () => {
         <div className="w-full">
           {canClaim ? (
             <button
-              onClick={() => handleClaim()}
+              onClick={handleClaim}
               disabled={isClaiming || isConfirming}
-              className="w-full bg-[#442F8C] hover:bg-[#362473] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#442F8C]/30 transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-2"
+              className="w-full bg-[#2FD07A] hover:bg-[#23b866] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#2FD07A]/30 transition-all active:scale-95 disabled:opacity-70 disabled:pointer-events-none flex items-center justify-center gap-2"
             >
               {isClaiming || isConfirming ? (
                 <>

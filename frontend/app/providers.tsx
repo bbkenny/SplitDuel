@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 
 const queryClient = new QueryClient()
+
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || 'b56816460394348a735c02450371424c'
 
 const metadata = {
@@ -32,14 +33,7 @@ createAppKit({
   projectId,
   metadata,
   features: { analytics: true },
-  themeMode: 'dark',
-  themeVariables: {
-    '--w3m-accent': '#2FD07A',
-    '--w3m-color-mix': '#F4D935',
-    '--w3m-background': '#031F1C',
-    '--w3m-foreground': '#E6F2EF',
-    '--w3m-muted': '#7FA9A3'
-  }
+  themeMode: 'dark'
 })
 
 export function Web3Providers({ children }: { children: ReactNode }) {

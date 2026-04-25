@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 
 interface SplitState {
+  canClaim: boolean
+  nextClaimTime: Date | null
+  handleClaim: () => void
+  isClaiming: boolean
+  isConfirming: boolean
+  isConfirmed: boolean
+  error: Error | null
+  refetchStatus: () => void
+  streak: number
   splits: { recipient: string; percent: number; isVault: boolean }[]
   amount: string
   token: string
@@ -21,6 +30,12 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
   ])
   const [amount, setAmount] = useState('')
   const [token, setToken] = useState('USDC')
+  const [nextClaimTime, setNextClaimTime] = useState<Date | null>(null)
+  const [isClaiming, setIsClaiming] = useState(false)
+  const [isConfirming, setIsConfirming] = useState(false)
+  const [isConfirmed, setIsConfirmed] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+  const [streak, setStreak] = useState(0)
 
   const updateSplit = (index: number, field: string, value: any) => {
     const newSplits = splits.map((s, i) =>
@@ -37,9 +52,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
   }
 
   const addSplit = () => {
-    if (splits.length < 10) {
-      setSplits([...splits, { recipient: '', percent: 0, isVault: false }])
-    }
+    if (splits.length < 10) setSplits([...splits, { recipient: '', percent: 0, isVault: false }])
   }
 
   const removeSplit = (index: number) => {
@@ -48,16 +61,27 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
       const remainingPercent = 100 - newSplits.reduce((sum, s) => sum + Number(s.percent || 0), 0)
       const perSplit = Math.floor(remainingPercent / newSplits.length)
       const remainder = remainingPercent % newSplits.length
-      newSplits.forEach((s, i) => {
-        s.percent = perSplit + (i < remainder ? 1 : 0)
-      })
+      newSplits.forEach((s, i) => { s.percent = perSplit + (i < remainder ? 1 : 0) })
       setSplits(newSplits)
     }
   }
 
+  const canClaim = splits.every(s => !!s.recipient && s.percent > 0)
   const totalPercent = splits.reduce((sum, s) => sum + Number(s.percent || 0), 0)
 
+  const handleClaim = () => {}
+  const refetchStatus = () => {}
+
   const value: SplitState = {
+    canClaim,
+    nextClaimTime,
+    handleClaim,
+    isClaiming,
+    isConfirming,
+    isConfirmed,
+    error,
+    refetchStatus,
+    streak,
     splits,
     amount,
     token,
@@ -69,20 +93,11 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
     totalPercent
   }
 
-  return (
-    <AutoSplitContext.Provider value={value}>
-      {children}
-    </AutoSplitContext.Provider>
-  )
+  return <AutoSplitContext.Provider value={value}>{children}</AutoSplitContext.Provider>
 }
 
 export const useAutoSplit = (): SplitState => {
   const context = useContext(AutoSplitContext)
-  if (!context) {
-    throw new Error('useAutoSplit must be used within AutoSplitProvider')
-  }
+  if (!context) throw new Error('useAutoSplit must be used within AutoSplitProvider')
   return context
 }
-
-// Re-export for convenience
-export type { SplitState }

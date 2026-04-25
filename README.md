@@ -1,52 +1,49 @@
 # AutoSplit
 
-## 🟢 Product Name
-AutoSplit
+<div align="center">
 
-A mobile-first payment routing miniapp that allows users to automatically split and route stablecoin transactions in a single action.
+![AutoSplit](https://img.shields.io/badge/AutoSplit-Protocol-8FA828?style=for-the-badge&logo=ethereum&logoColor=white)
 
-## 🧠 One-Line Summary
-Send once, and your money automatically splits, saves, and invests in real time.
+[![Network](https://img.shields.io/badge/Celo-Testnet-16D14E?style=flat-square&logo=celo)](https://celo.org)
+[![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-363636?style=flat-square&logo=solidity)](https://soliditylang.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-## 🎯 Problem Statement
-Sending money today is fragmented:
-- Users manually split payments
-- Savings require separate actions
-- Investing requires additional steps
+**[Live Miniapp](https://auto-split.vercel.app) · [GitHub](https://github.com/bbkenny/autosplit)**
 
-This creates friction, especially in mobile-first economies where users:
-- Manage multiple obligations (family, savings, business)
-- Operate with stablecoins (cUSD, cEUR)
-- Need automation, not complexity
+</div>
 
-## 💡 Solution
-A smart contract-based payment router that:
-- Automatically splits incoming or outgoing funds
-- Routes portions to recipients, savings vaults, or yield strategies
-- Executes all actions in a single transaction
+---
 
-## 🎯 Target Users
-- Freelancers / gig workers
-- Small business owners
-- DAOs / small teams
-- Crypto-native users on Celo
-- Emerging market users using stablecoins
+> **The Problem:** Payments today are manual, trust-based, and non-conditional. Users rely on verbal agreements, manual follow-ups, and third-party intermediaries — creating friction, disputes, and inefficiency.
+> 
+> **The Solution:** AutoSplit is an intent-based payment protocol that allows users to define conditions under which funds are automatically executed on-chain. Instead of sending money immediately, users define rules — and the protocol enforces them.
 
-## 🔥 Core Value Proposition
-- One transaction → multiple financial outcomes
-- Eliminates manual money management steps
-- Enables programmable finance for everyday users
+---
 
-## ⚙️ Core Features
+## 🎯 Overview
+
+AutoSplit transforms **user intent** into **enforceable on-chain payment logic**:
+
+- "Send when delivery is confirmed"
+- "Pay every Friday"  
+- "Release funds after milestone completion"
+
+The system holds funds in escrow, monitors conditions, and executes automatically — no intermediaries, no manual intervention.
+
+---
+
+## 🧩 Core Features
 
 ### 1. Payment Routing Engine
 - Input: amount + routing rules
 - Output: automatic distribution
 - Example:
-  100 cUSD →
-    50 to recipient
-    30 to savings vault
-    20 to yield strategy
+
+100 cUSD →
+  50 to recipient
+  30 to savings vault
+  20 to yield strategy
 
 ### 2. Rule Configuration
 Users define:
@@ -66,6 +63,8 @@ Users define:
 - Display breakdown before execution
 - Show post-transaction distribution
 
+---
+
 ## 🧩 User Flow
 1. User inputs amount
 2. User defines split rules
@@ -74,27 +73,36 @@ Users define:
 5. Smart contract executes routing
 6. UI displays results
 
+---
+
 ## 🏗️ Technical Architecture
 
-### Smart Contracts (Solidity)
-- Router Contract
-  - Accepts funds
-  - Applies split logic
-  - Executes transfers
-- Vault Adapter (optional)
-  - Integrates with DeFi protocols
-  - Handles deposits
+| Layer | Technology | Purpose |
+|-------|-----------|----------|
+| **Smart Contracts** | Solidity 0.8.20, Hardhat | Conditional payments, escrow, condition registry |
+| **Frontend** | Next.js 16, React 19, Tailwind | Mobile-first miniapp UI |
+| **Network** | Celo (Alfajores) | EVM-compatible, mobile-first L2 |
 
-### Frontend
-- Framework: Next.js
-- Wallet: Wagmi / WalletConnect
-- UI: Tailwind CSS
+### Smart Contracts
+
+#### `PaymentRouter.sol`
+- Accepts funds
+- Applies split logic
+- Executes transfers
+
+#### `VaultAdapter.sol` (optional)
+- Integrates with DeFi protocols
+- Handles deposits
+
+---
 
 ## 🔐 Security Considerations
 - Reentrancy protection
 - Input validation (percentages ≤ 100%)
 - Safe transfer patterns
 - Access control (user-specific configs)
+
+---
 
 ## 📊 Success Metrics
 - Number of transactions executed
@@ -103,11 +111,15 @@ Users define:
 - Average splits per transaction
 - Vault participation rate
 
+---
+
 ## 🚀 MVP Scope
 - Basic split routing
 - Fixed percentage rules
 - Single recipient + optional vault
 - Simple UI
+
+---
 
 ## 🔮 Future Enhancements
 - Recurring payments
@@ -116,23 +128,96 @@ Users define:
 - Multi-token support
 - Farcaster miniapp integration
 
+---
+
 ## 🧠 "Wow" Moment
 User sends money once → sees it automatically:
 - Delivered
 - Saved
 - Invested
 
+---
+
 ## ⚠️ Risks
 - Overcomplication of UI
 - Low user understanding of splits
 - Integration complexity with DeFi
+
+---
 
 ## ✅ Out of Scope (MVP)
 - Cross-chain routing
 - Advanced analytics dashboards
 - Token swapping
 
+---
+
 ## 📌 Positioning
 AutoSplit is not a wallet.
 
 It is: 👉 A programmable payment primitive for stablecoins.
+
+## 🚀 Development
+
+### Prerequisites
+- Node.js 18+
+- npm/yarn
+- Celo Alfajores testnet funds
+
+### Smart Contracts
+
+```bash
+cd smartcontract
+
+# Install dependencies
+npm install
+
+# Compile
+npx hardhat compile
+
+# Run tests
+npx hardhat test
+
+# Deploy to Celo Alfajores
+npx hardhat run scripts/deploy.js --network alfajores
+```
+
+### Frontend
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run dev server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### Configuration
+Contract addresses are configured in `frontend/lib/constants.ts`:
+
+```typescript
+export const PAYMENT_FACTORY_ADDRESS = "0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c" // Celo Mainnet
+```
+
+### Deployed Addresses
+
+| Network | PaymentFactory | Block Explorer |
+|---------|---------------|----------------|
+| Celo Mainnet | `0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c` | [celoscan.io](https://celoscan.io/address/0x8D6259A4138032Df3FB6594012ff38Db1d1aB96c) |
+| Celo Alfajores | *(deploy when ready)* | — |
+
+To deploy to Alfajores testnet:
+```bash
+npx hardhat run scripts/deploy.ts --network celoAlfajores
+```
+
+---
+
+## 📄 License
+
+MIT © AutoSplit Protocol

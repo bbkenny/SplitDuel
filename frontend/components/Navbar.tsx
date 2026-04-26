@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 
+import { useMiniPay } from "@/hooks/useMiniPay";
+
 export default function Navbar() {
+  const { isMiniPay } = useMiniPay();
+
   return (
     <header
       style={{
@@ -28,7 +32,7 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex items-center gap-4">
-          <appkit-button />
+          {!isMiniPay && <appkit-button />}
         </div>
       </div>
     </header>

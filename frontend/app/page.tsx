@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { AutoSplitProvider } from '@/components/AutoSplitProvider'
+import { AutoSplitProvider, useAutoSplit } from '@/components/AutoSplitProvider'
 import Navbar from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 

@@ -1,168 +1,93 @@
-# AutoSplit
+# AutoSplit — Automated Payment Routing Protocol
 
-## 🟢 Product Name
+<div align="center">
 
-AutoSplit
+![AutoSplit](https://img.shields.io/badge/AutoSplit-Protocol-022D2B?style=for-the-badge&logo=ethereum&logoColor=white)
 
-A mobile-first payment routing miniapp that allows users to automatically split and route stablecoin transactions in a single action.
+[![Network](https://img.shields.io/badge/Celo-Mainnet-16D14E?style=flat-square&logo=celo)](https://celo.org)
+[![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-363636?style=flat-square&logo=solidity)](https://soliditylang.org)
+[![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-## 🧠 One-Line Summary
+**[Live Miniapp](https://auto-splits.vercel.app) · [GitHub](https://github.com/bbkenny/autosplit)**
 
-Send once, and your money automatically splits, saves, and invests in real time.
+</div>
 
-## 🎯 Problem Statement
+---
 
-Sending money today is fragmented:
+> **The Problem:** Sending money today is fragmented and manual. Users have to manually split payments between family, savings, and business obligations, creating friction and missing opportunities for automatic yield.
+> 
+> **The Solution:** AutoSplit is a programmable payment primitive for stablecoins. It allows one transaction to result in multiple financial outcomes — automatically splitting, saving, and investing in real time.
 
-- Users manually split payments
-- Savings require separate actions
-- Investing requires additional steps
+---
 
-This creates friction, especially in mobile-first economies where users:
+## 🎯 Overview
 
-- Manage multiple obligations (family, savings, business)
-- Operate with stablecoins (cUSD, cEUR)
-- Need automation, not complexity
+AutoSplit transforms a **single send** into a **diversified financial action**:
 
-## 💡 Solution
+- **Split & Pay:** Direct 50% to a recipient and 50% to another.
+- **Save & Invest:** Route a percentage of every incoming payment into a savings vault.
+- **Business Automation:** Automatically set aside tax or operating expenses from revenue.
 
-A smart contract-based payment router that:
+The system uses a smart contract router to execute all distributions in a single atomic transaction.
 
-- Automatically splits incoming or outgoing funds
-- Routes portions to recipients, savings vaults, or yield strategies
-- Executes all actions in a single transaction
+---
 
-## 🎯 Target Users
-
-- Freelancers / gig workers
-- Small business owners
-- DAOs / small teams
-- Crypto-native users on Celo
-- Emerging market users using stablecoins
-
-## 🔥 Core Value Proposition
-
-- One transaction → multiple financial outcomes
-- Eliminates manual money management steps
-- Enables programmable finance for everyday users
-
-## ⚙️ Core Features
+## 🧩 Core Features
 
 ### 1. Payment Routing Engine
-
-- Input: amount + routing rules
-- Output: automatic distribution
-- Example:
-  100 cUSD →
-  50 to recipient
-  30 to savings vault
-  20 to yield strategy
+- Supports percentage-based split rules (basis points).
+- Precision-based distribution (prevents dust accumulation).
+- Supports direct ERC20 transfers and Vault Adapter routing.
 
 ### 2. Rule Configuration
+- Users define their own split destinations.
+- Mapping of up to 10 recipients per user (gas optimized).
+- Real-time preview of payment distribution.
 
-Users define:
+### 3. Vault Integration
+- `VaultAdapter.sol` interface for yield protocols.
+- 1:1 share accounting (MVP implementation).
+- Automatic yield generation for routed portions.
 
-- Percentage splits
-- Destination addresses
-- Optional yield allocation
+### 4. Safety & Efficiency
+- Zero-amount validation.
+- Basis point math (10000 = 100%).
+- Atomic execution — all splits happen or none do.
 
-### 3. Vault Integration (Optional)
+---
 
-- Connect to DeFi protocols (e.g. Aave-like)
-- Route funds into yield strategies
+## 🏗️ Architecture
 
-### 4. One-Click Execution
+| Layer | Technology | Purpose |
+|-------|-----------|----------|
+| **Smart Contracts** | Solidity 0.8.20, OpenZeppelin | Payment routing, vault adapters, ownership |
+| **Frontend** | Next.js 15, Tailwind, Reown AppKit | Mobile-first dashboard & rule builder |
+| **Network** | Celo (Mainnet & Alfajores) | High-speed, low-fee stablecoin infrastructure |
 
-- Single transaction handles all logic
-- No multi-step flows
+### Smart Contracts
 
-### 5. Transaction Transparency
+#### `AutoSplitRouter.sol`
+- Main entry point for routed payments.
+- Manages user-specific split rules.
+- Executes multi-transfer logic.
 
-- Display breakdown before execution
-- Show post-transaction distribution
+#### `VaultAdapter.sol`
+- Standardized bridge to yield protocols.
+- Handles deposits/withdrawals for routed funds.
 
-## 🧩 User Flow
+---
 
-1. User inputs amount
-2. User defines split rules
-3. System calculates distribution
-4. User confirms transaction
-5. Smart contract executes routing
-6. UI displays results
+## 🎨 Frontend Dashboard
 
-## 🏗️ Technical Architecture
+Professional, mobile-first interface designed for clarity:
 
-### Smart Contracts (Solidity)
+- **Configure Rules:** Set your default split percentages and recipients.
+- **Execute Payment:** Input amount and watch the protocol route your funds.
+- **View History:** Track your total volume and transaction count.
+- **Portfolio Preview:** Real-time calculation of where your money goes.
 
-- Router Contract
-  - Accepts funds
-  - Applies split logic
-  - Executes transfers
-- Vault Adapter (optional)
-  - Integrates with DeFi protocols
-  - Handles deposits
-
-### Frontend
-
-- Framework: Next.js
-- Wallet: Wagmi / WalletConnect
-- UI: Tailwind CSS
-
-## 🔐 Security Considerations
-
-- Reentrancy protection
-- Input validation (percentages ≤ 100%)
-- Safe transfer patterns
-- Access control (user-specific configs)
-
-## 📊 Success Metrics
-
-- Number of transactions executed
-- Total volume routed (cUSD)
-- Number of active users
-- Average splits per transaction
-- Vault participation rate
-
-## 🚀 MVP Scope
-
-- Basic split routing
-- Fixed percentage rules
-- Single recipient + optional vault
-- Simple UI
-
-## 🔮 Future Enhancements
-
-- Recurring payments
-- AI-based financial suggestions
-- Social/group splitting
-- Multi-token support
-- Farcaster miniapp integration
-
-## 🧠 "Wow" Moment
-
-User sends money once → sees it automatically:
-
-- Delivered
-- Saved
-- Invested
-
-## ⚠️ Risks
-
-- Overcomplication of UI
-- Low user understanding of splits
-- Integration complexity with DeFi
-
-## ✅ Out of Scope (MVP)
-
-- Cross-chain routing
-- Advanced analytics dashboards
-- Token swapping
-
-## 📌 Positioning
-
-AutoSplit is not a wallet.
-
-It is: 👉 A programmable payment primitive for stablecoins.
+---
 
 ## 🚀 Development
 
@@ -170,73 +95,54 @@ It is: 👉 A programmable payment primitive for stablecoins.
 
 - Node.js 18+
 - npm/yarn
-- Celo Alfajores testnet funds
+- Celo testnet funds (cUSD/cEUR)
 
-### Smart Contracts
+### Setup
+
+```bash
+# Clone
+git clone https://github.com/bbkenny/autosplit
+cd autosplit
+
+# Install all dependencies
+npm install
+```
+
+### Smart Contract Management
 
 ```bash
 cd smartcontract
-
-# Install dependencies
-npm install
-
-# Compile
 npx hardhat compile
-
-# Run tests
 npx hardhat test
-
-# Deploy to Celo Alfajores
-npx hardhat run scripts/deploy.js --network alfajores
+npx hardhat run scripts/deploy.js --network celo
 ```
 
-### Frontend
+### Frontend Development
 
 ```bash
 cd frontend
-
-# Install dependencies
-npm install
-
-# Run dev server
 npm run dev
-
-# Build for production
-npm run build
-```
-
-### Configuration
-
-Contract addresses are configured in `frontend/lib/constants.ts`:
-
-```typescript
-export const CONTRACT_ADDRESSES = {
-  celo: {
-    AUTO_SPLIT_ROUTER: "0x00b3297E8D92a3229F180Bc191aE0E48350ab41D",
-    VAULT_ADAPTER: "0x8c9fAC38516C02568280afa54688e87763BD62CA",
-  },
-  celoAlfajores: {
-    AUTO_SPLIT_ROUTER: "0x00b3297E8D92a3229F180Bc191aE0E48350ab41D",
-    VAULT_ADAPTER: "0x8c9fAC38516C02568280afa54688e87763BD62CA",
-  },
-} as const
-```
-
-### Deployed Addresses
-
-| Network        | PaymentFactory                               | VAULT_ADAPTER                             | Block Explorer                                                                 |
-| -------------- | -------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------ |
-| Celo Mainnet   | `0x00b3297E8D92a3229F180Bc191aE0E48350ab41D` | `0x8c9fAC38516C02568280afa54688e87763BD62CA` | [celoscan.io](https://celoscan.io/address/0x00b3297E8D92a3229F180Bc191aE0E48350ab41D) |
-| Celo Alfajores | `0x00b3297E8D92a3229F180Bc191aE0E48350ab41D` | `0x8c9fAC38516C02568280afa54688e87763BD62CA` | —                                                                              |
-
-To deploy to Alfajores testnet:
-
-```bash
-npx hardhat run scripts/deploy.ts --network celoAlfajores
 ```
 
 ---
 
-## 📄 License
+## 🔐 Security
+
+- **Reentrancy Guards:** Strictly enforced on all state-changing functions.
+- **Checks-Effects-Interactions (CEI):** Compliance throughout routing logic.
+- **Pull over Push:** Safe fund withdrawal patterns for vault adapters.
+- **Non-Custodial:** The router only handles funds during the transaction lifecycle.
+
+---
+
+## 🔗 Links
+
+- [Live Application](https://auto-splits.vercel.app/)
+- [Smart Contract Code](https://github.com/bbkenny/autosplit/tree/main/smartcontract)
+- [Celo Documentation](https://docs.celo.org/)
+
+---
+
+### 📄 License
 
 MIT © AutoSplit Protocol

@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     images: ["/autosplit-logo.png"],
   },
   icons: {
-    icon: "/autosplit.svg",
-    shortcut: "/autosplit.svg",
-    apple: "/autosplit.svg",
+    icon: "/autosplit-logo.png",
+    shortcut: "/autosplit-logo.png",
+    apple: "/autosplit-logo.png",
   },
   robots: { index: true, follow: true },
   other: {
@@ -57,6 +57,8 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+import { AutoSplitProvider } from "@/components/AutoSplitProvider";
+
 export default function AppLayout({
   children,
 }: Readonly<{
@@ -66,8 +68,10 @@ export default function AppLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Web3Providers>
-          <Navbar />
-          <main>{children}</main>
+          <AutoSplitProvider>
+            <Navbar />
+            <main>{children}</main>
+          </AutoSplitProvider>
         </Web3Providers>
       </body>
     </html>

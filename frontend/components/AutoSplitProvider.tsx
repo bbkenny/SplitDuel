@@ -1,29 +1,58 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+
+interface Split {
+  recipient: string
+  basisPoints: number
+  isVault: boolean
+}
+
+interface Transaction {
+  id: string
+  token: string
+  amount: string
+  recipients: string[]
+  amounts: string[]
+  timestamp: number
+}
 
 interface SplitState {
-  splits: { recipient: string; basisPoints: number; isVault: boolean }[]
+  splits: Split[]
   amount: string
   token: string
+  history: Transaction[]
   setAmount: (value: string) => void
   setToken: (value: string) => void
-  updateSplit: (index: number, field: string, value: any) => void
+  updateSplit: (index: number, field: keyof Split, value: any) => void
   addSplit: () => void
   removeSplit: (index: number) => void
   totalBasisPoints: number
   isReady: boolean
+  addTransaction: (tx: Transaction) => void
 }
 
 const AutoSplitContext = createContext<SplitState | undefined>(undefined)
 
 export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [splits, setSplits] = useState<{ recipient: string; basisPoints: number; isVault: boolean }[]>([
+  const [splits, setSplits] = useState<Split[]>([
     { recipient: '', basisPoints: 5000, isVault: false },
     { recipient: '', basisPoints: 5000, isVault: false }
   ])
   const [amount, setAmount] = useState('')
   const [token, setToken] = useState('cUSD')
+  const [history, setHistory] = useState<Transaction[]>([])
 
-  const updateSplit = (index: number, field: string, value: any) => {
+  useEffect(() => {
+    const saved = localStorage.getItem('autosplit_history')
+    if (saved) setHistory(JSON.parse(saved))
+  }, [])
+
+  const addTransaction = (tx: Transaction) => {
+    const newHistory = [tx, ...history].slice(0, 50)
+    setHistory(newHistory)
+    localStorage.setItem('autosplit_history', JSON.stringify(newHistory))
+  }
+
+  const updateSplit = (index: number, field: keyof Split, value: any) => {
     const newSplits = [...splits]
     newSplits[index] = { ...newSplits[index], [field]: value }
     setSplits(newSplits)
@@ -46,13 +75,15 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
     splits,
     amount,
     token,
+    history,
     setAmount,
     setToken,
     updateSplit,
     addSplit,
     removeSplit,
     totalBasisPoints,
-    isReady
+    isReady,
+    addTransaction
   }
 
   return <AutoSplitContext.Provider value={value}>{children}</AutoSplitContext.Provider>

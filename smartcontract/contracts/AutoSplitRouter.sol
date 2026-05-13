@@ -3,11 +3,12 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 // AutoSplitRouter
 // Payment routing miniapp - splits stablecoin payments automatically
 // One transaction -> multiple financial outcomes
-contract AutoSplitRouter is Ownable {
+contract AutoSplitRouter is Ownable, ReentrancyGuard {
     // Split destination configuration
 
     constructor() Ownable(msg.sender) {
@@ -51,26 +52,25 @@ contract AutoSplitRouter is Ownable {
         uint256[] calldata basisPoints,
         bool[] calldata isVault
     ) external {
-        require(recipients.length == basisPoints.length, "Length mismatch");
-        require(recipients.length == isVault.length, "Length mismatch");
-        require(recipients.length > 0, "Empty splits");
-        require(recipients.length <= 10, "Too many splits"); // Gas limit
+        uint256 len = recipients.length;
+        require(len == basisPoints.length, "Length mismatch");
+        require(len == isVault.length, "Length mismatch");
+        require(len > 0, "Empty splits");
+        require(len <= 10, "Too many splits"); // Gas limit
 
         uint256 totalBasisPoints;
-        for (uint256 i; i < basisPoints.length; i++) {
+        for (uint256 i; i < len; i++) {
             require(basisPoints[i] > 0, "Zero basis points");
             require(recipients[i] != address(0), "Invalid recipient");
-            // If vault, check it's registered
             if (isVault[i]) {
                 require(vaultAdapters[recipients[i]], "Not a vault adapter");
             }
             totalBasisPoints += basisPoints[i];
         }
-        require(totalBasisPoints == 10000, "Must sum to 100%"); // 10000 = 100%
+        require(totalBasisPoints == 10000, "Must sum to 100%"); 
 
-        // Clear old and set new
         delete userSplits[msg.sender];
-        for (uint256 i; i < recipients.length; i++) {
+        for (uint256 i; i < len; i++) {
             userSplits[msg.sender].push(SplitDestination({
                 recipient: recipients[i],
                 basisPoints: basisPoints[i],
@@ -81,68 +81,64 @@ contract AutoSplitRouter is Ownable {
         emit SplitRuleUpdated(msg.sender, recipients, basisPoints, isVault);
     }
 
-    // Execute split payment (caller must approve token first)
+    // Execute split payment
     function routePayment(
         address token,
         uint256 amount
-    ) external {
-        SplitDestination[] memory splits = userSplits[msg.sender];
-        require(splits.length > 0, "No split rules");
+    ) external nonReentrant {
+        SplitDestination[] storage splits = userSplits[msg.sender];
+        uint256 len = splits.length;
+        require(len > 0, "No split rules");
         require(amount > 0, "Zero amount");
 
         // Pull tokens from sender
-        uint256 balanceBefore = IERC20(token).balanceOf(address(this));
         require(
             IERC20(token).transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
-        uint256 balanceAfter = IERC20(token).balanceOf(address(this));
-        uint256 actualAmount = balanceAfter - balanceBefore;
+        
+        uint256 actualAmount = amount; // Assuming non-fee-on-transfer for simplicity
+        address[] memory recipients = new address[](len);
+        uint256[] memory amounts = new uint256[](len);
 
-        address[] memory recipients = new address[](splits.length);
-        uint256[] memory amounts = new uint256[](splits.length);
+        totalTransactions++;
+        totalVolume += actualAmount;
 
         // Distribute to each destination
-        for (uint256 i; i < splits.length; i++) {
-            uint256 splitAmount = (actualAmount * splits[i].basisPoints) / 10000;
-            // Last recipient gets remainder to avoid dust
-            if (i == splits.length - 1) {
-                uint256 alreadySent;
-                for (uint256 j; j < i; j++) {
-                    alreadySent += amounts[j];
-                }
+        uint256 alreadySent;
+        for (uint256 i; i < len; i++) {
+            uint256 splitAmount;
+            
+            if (i == len - 1) {
                 splitAmount = actualAmount - alreadySent;
+            } else {
+                splitAmount = (actualAmount * splits[i].basisPoints) / 10000;
+                alreadySent += splitAmount;
             }
 
             recipients[i] = splits[i].recipient;
             amounts[i] = splitAmount;
 
             if (splits[i].isVault) {
-                // Route to vault adapter
                 require(
                     IERC20(token).approve(splits[i].recipient, splitAmount),
                     "Vault approve failed"
                 );
-                // Vault adapter expected interface: deposit(address,uint256)
                 (bool vaultSuccess, ) = splits[i].recipient.call(
                     abi.encodeWithSelector(
-                        0xb6b55f25, // deposit(address,uint256) selector
+                        0xb6b55f25, // deposit(address,uint256)
                         msg.sender,
                         splitAmount
                     )
                 );
                 require(vaultSuccess, "Vault deposit failed");
             } else {
-                // Direct transfer
                 require(
                     IERC20(token).transfer(splits[i].recipient, splitAmount),
                     "Transfer failed"
                 );
             }
         }
-
-        totalTransactions++;
-        totalVolume += actualAmount;
 
         emit PaymentRouted(msg.sender, token, actualAmount, recipients, amounts);
     }
@@ -159,12 +155,13 @@ contract AutoSplitRouter is Ownable {
         uint256[] memory basisPoints,
         bool[] memory isVault
     ) {
-        SplitDestination[] memory splits = userSplits[user];
-        recipients = new address[](splits.length);
-        basisPoints = new uint256[](splits.length);
-        isVault = new bool[](splits.length);
+        SplitDestination[] storage splits = userSplits[user];
+        uint256 len = splits.length;
+        recipients = new address[](len);
+        basisPoints = new uint256[](len);
+        isVault = new bool[](len);
 
-        for (uint256 i; i < splits.length; i++) {
+        for (uint256 i; i < len; i++) {
             recipients[i] = splits[i].recipient;
             basisPoints[i] = splits[i].basisPoints;
             isVault[i] = splits[i].isVault;
@@ -176,3 +173,4 @@ contract AutoSplitRouter is Ownable {
         revert("Use ERC20 tokens for splits");
     }
 }
+

@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-
+import { useAccount } from "wagmi";
+import { useAppKit } from "@reown/appkit/react";
 import { useMiniPay } from "@/hooks/useMiniPay";
 
 export default function Navbar() {
+  const { address, isConnected } = useAccount();
   const { isMiniPay } = useMiniPay();
+  const { open } = useAppKit();
 
   return (
     <header
@@ -17,7 +20,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <img src="/autosplit.svg" alt="AutoSplit Logo" className="w-8 h-8 group-hover:scale-110 transition-transform" />
+          <img src="/autosplit-logo.png" alt="AutoSplit Logo" className="w-8 h-8 rounded-full group-hover:scale-110 transition-transform" />
           <span
             style={{ letterSpacing: "0.16em", lineHeight: 1 }}
             className="text-2xl font-black uppercase hidden sm:block"
@@ -32,7 +35,14 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex items-center gap-4">
-          {!isMiniPay && <appkit-button />}
+          {!isMiniPay && (
+            <button
+              onClick={() => open()}
+              className="bg-[#2FD07A] text-black font-bold py-2 px-4 rounded-xl text-xs sm:text-sm hover:opacity-90 transition-opacity"
+            >
+              {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : 'CONNECT WALLET'}
+            </button>
+          )}
         </div>
       </div>
     </header>

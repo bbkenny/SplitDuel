@@ -20,7 +20,7 @@ async function main() {
 
   console.log("Deploying VaultAdapter...");
   const VaultAdapter = await hre.ethers.getContractFactory("VaultAdapter");
-  const vaultAdapter = await VaultAdapter.deploy(cUSDAddress, "AutoSplit Vault");
+  const vaultAdapter = await VaultAdapter.deploy("AutoSplit Vault");
   await vaultAdapter.waitForDeployment();
   const adapterAddress = await vaultAdapter.getAddress();
   console.log(`VaultAdapter deployed to: ${adapterAddress}`);
@@ -55,7 +55,7 @@ async function main() {
     try {
       await hre.run("verify:verify", {
         address: adapterAddress,
-        constructorArguments: [cUSDAddress, "AutoSplit Vault"],
+        constructorArguments: ["AutoSplit Vault"],
       });
       console.log("VaultAdapter verified successfully!");
     } catch (error: any) {

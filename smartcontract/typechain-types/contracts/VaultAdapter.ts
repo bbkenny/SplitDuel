@@ -33,7 +33,6 @@ export interface VaultAdapterInterface extends Interface {
       | "name"
       | "owner"
       | "renounceOwnership"
-      | "token"
       | "totalDeposits"
       | "transferOwnership"
       | "withdraw"
@@ -45,19 +44,19 @@ export interface VaultAdapterInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [AddressLike]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "balances",
-    values: [AddressLike]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [AddressLike, BigNumberish]
+    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "emergencyWithdraw",
-    values?: undefined
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -65,10 +64,9 @@ export interface VaultAdapterInterface extends Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalDeposits",
-    values?: undefined
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -76,7 +74,7 @@ export interface VaultAdapterInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [BigNumberish]
+    values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -92,7 +90,6 @@ export interface VaultAdapterInterface extends Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalDeposits",
     data: BytesLike
@@ -107,12 +104,19 @@ export interface VaultAdapterInterface extends Interface {
 export namespace DepositedEvent {
   export type InputTuple = [
     user: AddressLike,
+    token: AddressLike,
     amount: BigNumberish,
     shares: BigNumberish
   ];
-  export type OutputTuple = [user: string, amount: bigint, shares: bigint];
+  export type OutputTuple = [
+    user: string,
+    token: string,
+    amount: bigint,
+    shares: bigint
+  ];
   export interface OutputObject {
     user: string;
+    token: string;
     amount: bigint;
     shares: bigint;
   }
@@ -138,12 +142,19 @@ export namespace OwnershipTransferredEvent {
 export namespace WithdrawnEvent {
   export type InputTuple = [
     user: AddressLike,
+    token: AddressLike,
     amount: BigNumberish,
     shares: BigNumberish
   ];
-  export type OutputTuple = [user: string, amount: bigint, shares: bigint];
+  export type OutputTuple = [
+    user: string,
+    token: string,
+    amount: bigint,
+    shares: bigint
+  ];
   export interface OutputObject {
     user: string;
+    token: string;
     amount: bigint;
     shares: bigint;
   }
@@ -196,17 +207,29 @@ export interface VaultAdapter extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  balanceOf: TypedContractMethod<[user: AddressLike], [bigint], "view">;
-
-  balances: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
-
-  deposit: TypedContractMethod<
-    [user: AddressLike, amount: BigNumberish],
+  balanceOf: TypedContractMethod<
+    [user: AddressLike, token: AddressLike],
     [bigint],
-    "nonpayable"
+    "view"
   >;
 
-  emergencyWithdraw: TypedContractMethod<[], [void], "nonpayable">;
+  balances: TypedContractMethod<
+    [arg0: AddressLike, arg1: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  deposit: TypedContractMethod<
+    [user: AddressLike, token: AddressLike, amount: BigNumberish],
+    [bigint],
+    "payable"
+  >;
+
+  emergencyWithdraw: TypedContractMethod<
+    [token: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
   name: TypedContractMethod<[], [string], "view">;
 
@@ -214,9 +237,7 @@ export interface VaultAdapter extends BaseContract {
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
-  token: TypedContractMethod<[], [string], "view">;
-
-  totalDeposits: TypedContractMethod<[], [bigint], "view">;
+  totalDeposits: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -224,7 +245,11 @@ export interface VaultAdapter extends BaseContract {
     "nonpayable"
   >;
 
-  withdraw: TypedContractMethod<[shares: BigNumberish], [bigint], "nonpayable">;
+  withdraw: TypedContractMethod<
+    [token: AddressLike, shares: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -232,20 +257,28 @@ export interface VaultAdapter extends BaseContract {
 
   getFunction(
     nameOrSignature: "balanceOf"
-  ): TypedContractMethod<[user: AddressLike], [bigint], "view">;
+  ): TypedContractMethod<
+    [user: AddressLike, token: AddressLike],
+    [bigint],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "balances"
-  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: AddressLike],
+    [bigint],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "deposit"
   ): TypedContractMethod<
-    [user: AddressLike, amount: BigNumberish],
+    [user: AddressLike, token: AddressLike, amount: BigNumberish],
     [bigint],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "emergencyWithdraw"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+  ): TypedContractMethod<[token: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "name"
   ): TypedContractMethod<[], [string], "view">;
@@ -256,17 +289,18 @@ export interface VaultAdapter extends BaseContract {
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "token"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "totalDeposits"
-  ): TypedContractMethod<[], [bigint], "view">;
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "withdraw"
-  ): TypedContractMethod<[shares: BigNumberish], [bigint], "nonpayable">;
+  ): TypedContractMethod<
+    [token: AddressLike, shares: BigNumberish],
+    [bigint],
+    "nonpayable"
+  >;
 
   getEvent(
     key: "Deposited"
@@ -291,7 +325,7 @@ export interface VaultAdapter extends BaseContract {
   >;
 
   filters: {
-    "Deposited(address,uint256,uint256)": TypedContractEvent<
+    "Deposited(address,address,uint256,uint256)": TypedContractEvent<
       DepositedEvent.InputTuple,
       DepositedEvent.OutputTuple,
       DepositedEvent.OutputObject
@@ -313,7 +347,7 @@ export interface VaultAdapter extends BaseContract {
       OwnershipTransferredEvent.OutputObject
     >;
 
-    "Withdrawn(address,uint256,uint256)": TypedContractEvent<
+    "Withdrawn(address,address,uint256,uint256)": TypedContractEvent<
       WithdrawnEvent.InputTuple,
       WithdrawnEvent.OutputTuple,
       WithdrawnEvent.OutputObject

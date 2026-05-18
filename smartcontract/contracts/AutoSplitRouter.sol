@@ -6,13 +6,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 // AutoSplitRouter
-// Payment routing miniapp - splits stablecoin payments automatically
+// Payment routing miniapp - splits stablecoin & native CELO payments automatically
 // One transaction -> multiple financial outcomes
 contract AutoSplitRouter is Ownable, ReentrancyGuard {
-    // Split destination configuration
 
-    constructor() Ownable(msg.sender) {
-    }
+    constructor() Ownable(msg.sender) {}
+
     struct SplitDestination {
         address recipient;
         uint256 basisPoints; // 10000 = 100%
@@ -85,19 +84,23 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
     function routePayment(
         address token,
         uint256 amount
-    ) external nonReentrant {
+    ) external payable nonReentrant {
         SplitDestination[] storage splits = userSplits[msg.sender];
         uint256 len = splits.length;
         require(len > 0, "No split rules");
         require(amount > 0, "Zero amount");
 
-        // Pull tokens from sender
-        require(
-            IERC20(token).transferFrom(msg.sender, address(this), amount),
-            "Transfer failed"
-        );
+        if (token == address(0)) {
+            require(msg.value == amount, "Amount mismatch with msg.value");
+        } else {
+            require(msg.value == 0, "Do not send native CELO for ERC20 splits");
+            require(
+                IERC20(token).transferFrom(msg.sender, address(this), amount),
+                "Transfer failed"
+            );
+        }
         
-        uint256 actualAmount = amount; // Assuming non-fee-on-transfer for simplicity
+        uint256 actualAmount = amount;
         address[] memory recipients = new address[](len);
         uint256[] memory amounts = new uint256[](len);
 
@@ -120,23 +123,42 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
             amounts[i] = splitAmount;
 
             if (splits[i].isVault) {
-                require(
-                    IERC20(token).approve(splits[i].recipient, splitAmount),
-                    "Vault approve failed"
-                );
-                (bool vaultSuccess, ) = splits[i].recipient.call(
-                    abi.encodeWithSelector(
-                        0xb6b55f25, // deposit(address,uint256)
-                        msg.sender,
-                        splitAmount
-                    )
-                );
-                require(vaultSuccess, "Vault deposit failed");
+                if (token == address(0)) {
+                    // Send native CELO to VaultAdapter
+                    (bool vaultSuccess, ) = splits[i].recipient.call{value: splitAmount}(
+                        abi.encodeWithSignature(
+                            "deposit(address,address,uint256)",
+                            msg.sender,
+                            address(0),
+                            splitAmount
+                        )
+                    );
+                    require(vaultSuccess, "Vault native deposit failed");
+                } else {
+                    require(
+                        IERC20(token).approve(splits[i].recipient, splitAmount),
+                        "Vault approve failed"
+                    );
+                    (bool vaultSuccess, ) = splits[i].recipient.call(
+                        abi.encodeWithSignature(
+                            "deposit(address,address,uint256)",
+                            msg.sender,
+                            token,
+                            splitAmount
+                        )
+                    );
+                    require(vaultSuccess, "Vault deposit failed");
+                }
             } else {
-                require(
-                    IERC20(token).transfer(splits[i].recipient, splitAmount),
-                    "Transfer failed"
-                );
+                if (token == address(0)) {
+                    (bool success, ) = splits[i].recipient.call{value: splitAmount}("");
+                    require(success, "Native CELO transfer failed");
+                } else {
+                    require(
+                        IERC20(token).transfer(splits[i].recipient, splitAmount),
+                        "Transfer failed"
+                    );
+                }
             }
         }
 
@@ -168,9 +190,8 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
         }
     }
 
-    // Prevent accidental ETH sends
+    // Revert direct native sends to prevent user errors (must go through routePayment)
     receive() external payable {
-        revert("Use ERC20 tokens for splits");
+        revert("Use routePayment for splits");
     }
 }
-

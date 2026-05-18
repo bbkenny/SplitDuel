@@ -270,7 +270,7 @@ export interface AutoSplitRouter extends BaseContract {
   routePayment: TypedContractMethod<
     [token: AddressLike, amount: BigNumberish],
     [void],
-    "nonpayable"
+    "payable"
   >;
 
   setSplitRules: TypedContractMethod<
@@ -341,7 +341,7 @@ export interface AutoSplitRouter extends BaseContract {
   ): TypedContractMethod<
     [token: AddressLike, amount: BigNumberish],
     [void],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "setSplitRules"

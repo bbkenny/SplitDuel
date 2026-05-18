@@ -39,8 +39,8 @@ export const metadata: Metadata = {
     images: ["/autosplit-logo.png"],
   },
   icons: {
-    icon: "/autosplit-logo.png",
-    shortcut: "/autosplit-logo.png",
+    icon: "/autosplit.svg",
+    shortcut: "/autosplit.svg",
     apple: "/autosplit-logo.png",
   },
   robots: { index: true, follow: true },

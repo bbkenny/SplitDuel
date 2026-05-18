@@ -6,7 +6,7 @@ async function main() {
 
   let cUSDAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1".toLowerCase(); // Default to Celo Alfajores Testnet
   if (networkName === "celo") {
-    cUSDAddress = "0x765DE81E75624D24eB7477D1c0308c7322F2B482".toLowerCase(); // Celo Mainnet cUSD
+    cUSDAddress = "0x765de816845861e75a25fca122bb6898b8b1282a".toLowerCase(); // Celo Mainnet cUSD
   }
 
   console.log(`Using cUSD Address: ${cUSDAddress}`);

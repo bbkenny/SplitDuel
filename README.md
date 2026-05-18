@@ -91,11 +91,11 @@ Professional, mobile-first interface designed for clarity:
 
 The AutoSplit Protocol is successfully deployed on Celo Mainnet:
 
-*   **AutoSplitRouter**: [`0xf39362Ff383A23981A63467f5f4f43274C5d370E`](https://celoscan.io/address/0xf39362Ff383A23981A63467f5f4f43274C5d370E)
-*   **VaultAdapter**: [`0xAeb4dd4e1212190bb042a8F63199B9184C8a1c2b`](https://celoscan.io/address/0xAeb4dd4e1212190bb042a8F63199B9184C8a1c2b)
-*   **cUSD Stablecoin Target**: [`0x765de81e75624d24eb7477d1c0308c7322f2b482`](https://celoscan.io/address/0x765de81e75624d24eb7477d1c0308c7322f2b482)
+*   **AutoSplitRouter**: [`0x8774Fdee9fBde0B2D855CB5B929590EF57930231`](https://celoscan.io/address/0x8774Fdee9fBde0B2D855CB5B929590EF57930231)
+*   **VaultAdapter (Multi-Token)**: [`0x565c7EfBB49895a66fBA203401d4E2623B2FE5c2`](https://celoscan.io/address/0x565c7EfBB49895a66fBA203401d4E2623B2FE5c2)
+*   **Supported Tokens**: Natively supports routing and vaulting of **both cUSD stablecoin and native CELO**!
 
-> 💡 **On-Chain Vault Authorization**: The `VaultAdapter` has been fully authorized inside the `AutoSplitRouter` on-chain (via `setVaultAdapter(0xAeb4dd4e1212190bb042a8F63199B9184C8a1c2b, true)`), enabling instant vault routing out-of-the-box.
+> 💡 **On-Chain Vault Authorization**: The multi-token `VaultAdapter` has been fully authorized inside the `AutoSplitRouter` on-chain (via `setVaultAdapter(0x565c7EfBB49895a66fBA203401d4E2623B2FE5c2, true)`), enabling instant vault routing out-of-the-box.
 
 ---
 

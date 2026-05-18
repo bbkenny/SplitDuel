@@ -1,4 +1,10 @@
+"use client";
+
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import { useAccount, useWriteContract, useReadContract } from 'wagmi'
+import { parseUnits } from 'viem'
+import { CONTRACT_ADDRESSES } from '@/lib/constants'
+import { AutoSplitRouterABI, ERC20ABI } from '@/lib/abi'
 
 interface Split {
   recipient: string
@@ -20,6 +26,7 @@ interface SplitState {
   amount: string
   token: string
   history: Transaction[]
+  loading: boolean
   setAmount: (value: string) => void
   setToken: (value: string) => void
   updateSplit: (index: number, field: keyof Split, value: any) => void
@@ -28,11 +35,20 @@ interface SplitState {
   totalBasisPoints: number
   isReady: boolean
   addTransaction: (tx: Transaction) => void
+  saveOnChainRules: () => Promise<void>
+  executeRoutePayment: () => Promise<void>
 }
 
 const AutoSplitContext = createContext<SplitState | undefined>(undefined)
 
 export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { address, isConnected } = useAccount()
+  const { writeContractAsync } = useWriteContract()
+
+  // Dynamic chain target detection (defaults to celoAlfajores if unknown)
+  const routerAddress = CONTRACT_ADDRESSES.celoAlfajores.AUTO_SPLIT_ROUTER
+  const tokenAddress = CONTRACT_ADDRESSES.celoAlfajores.cUSD
+
   const [splits, setSplits] = useState<Split[]>([
     { recipient: '', basisPoints: 5000, isVault: false },
     { recipient: '', basisPoints: 5000, isVault: false }
@@ -40,6 +56,31 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [amount, setAmount] = useState('')
   const [token, setToken] = useState('cUSD')
   const [history, setHistory] = useState<Transaction[]>([])
+  const [loading, setLoading] = useState(false)
+
+  // Fetch On-Chain Rules if connected
+  const { data: onChainRules } = useReadContract({
+    address: routerAddress,
+    abi: AutoSplitRouterABI,
+    functionName: 'getSplitRules',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address,
+    }
+  })
+
+  useEffect(() => {
+    const rules = onChainRules as any;
+    if (rules && Array.isArray(rules[0]) && rules[0].length > 0) {
+      const [recipients, basisPoints, isVaultFlags] = rules
+      const loadedSplits = (recipients as string[]).map((r, i) => ({
+        recipient: r,
+        basisPoints: Number(basisPoints[i]),
+        isVault: isVaultFlags[i]
+      }))
+      setSplits(loadedSplits)
+    }
+  }, [onChainRules])
 
   useEffect(() => {
     const saved = localStorage.getItem('autosplit_history')
@@ -69,13 +110,88 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
   }
 
   const totalBasisPoints = splits.reduce((sum, s) => sum + Number(s.basisPoints || 0), 0)
-  const isReady = totalBasisPoints === 10000 && splits.every(s => s.recipient.startsWith('0x'))
+  const isReady = totalBasisPoints === 10000 && splits.every(s => s.recipient.startsWith('0x') && s.recipient.length === 42)
+
+  // 1. Save local configurations onchain using setSplitRules
+  const saveOnChainRules = async () => {
+    if (!isReady || !isConnected) return
+    setLoading(true)
+    try {
+      const recipients = splits.map(s => s.recipient)
+      const basisPoints = splits.map(s => BigInt(s.basisPoints))
+      const isVault = splits.map(s => s.isVault)
+
+      console.log("Setting split rules on-chain...", { recipients, basisPoints, isVault })
+
+      const tx = await writeContractAsync({
+        address: routerAddress,
+        abi: AutoSplitRouterABI,
+        functionName: 'setSplitRules',
+        args: [recipients, basisPoints, isVault],
+        type: 'legacy', // CRITICAL: MiniPay EIP-1559 compatibility override
+      })
+      console.log("Splits rules set successfully. Tx Hash:", tx)
+    } catch (err) {
+      console.error("Failed to set split rules:", err)
+      alert("Error setting split rules. Please ensure you are connected.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 2. Approve cUSD and route payment
+  const executeRoutePayment = async () => {
+    if (!amount || !isReady || !isConnected) return
+    setLoading(true)
+    try {
+      const parsedAmount = parseUnits(amount, 18) // cUSD uses 18 decimals
+
+      // 2a. Approve Router
+      console.log("Approving cUSD for Router...", tokenAddress)
+      const approveTx = await writeContractAsync({
+        address: tokenAddress,
+        abi: ERC20ABI,
+        functionName: 'approve',
+        args: [routerAddress, parsedAmount],
+        type: 'legacy', // CRITICAL: MiniPay EIP-1559 compatibility override
+      })
+      console.log("Approval transaction submitted:", approveTx)
+
+      // 2b. Execute routing
+      console.log("Initiating payment split routing...")
+      const routeTx = await writeContractAsync({
+        address: routerAddress,
+        abi: AutoSplitRouterABI,
+        functionName: 'routePayment',
+        args: [tokenAddress, parsedAmount],
+        type: 'legacy', // CRITICAL: MiniPay EIP-1559 compatibility override
+      })
+      console.log("Split route successful. Tx Hash:", routeTx)
+
+      // Log success locally
+      addTransaction({
+        id: routeTx,
+        token,
+        amount,
+        recipients: splits.map(s => s.recipient),
+        amounts: splits.map(s => ((Number(amount) * s.basisPoints) / 10000).toFixed(2)),
+        timestamp: Date.now()
+      })
+      setAmount('')
+    } catch (err) {
+      console.error("Failed to execute split payment:", err)
+      alert("Payment routing failed. Make sure you have approved the rules on-chain first.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const value: SplitState = {
     splits,
     amount,
     token,
     history,
+    loading,
     setAmount,
     setToken,
     updateSplit,
@@ -83,7 +199,9 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({ children 
     removeSplit,
     totalBasisPoints,
     isReady,
-    addTransaction
+    addTransaction,
+    saveOnChainRules,
+    executeRoutePayment
   }
 
   return <AutoSplitContext.Provider value={value}>{children}</AutoSplitContext.Provider>

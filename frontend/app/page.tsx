@@ -9,7 +9,8 @@ export default function Home() {
   const { 
     splits, amount, setAmount, token, setToken, 
     updateSplit, addSplit, removeSplit, 
-    totalBasisPoints, isReady, history 
+    totalBasisPoints, isReady, history,
+    loading, saveOnChainRules, executeRoutePayment
   } = useAutoSplit()
 
   return (
@@ -41,12 +42,21 @@ export default function Home() {
                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                    Split Configuration
                  </h2>
-                 <button 
-                   onClick={addSplit}
-                   className="text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(47,208,122,0.2)]"
-                 >
-                   + ADD DESTINATION
-                 </button>
+                 <div className="flex gap-2">
+                   <button 
+                     onClick={saveOnChainRules}
+                     disabled={loading || !isReady}
+                     className="text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-black py-2.5 px-6 rounded-xl transition-all disabled:opacity-40"
+                   >
+                     {loading ? "SAVING..." : "SAVE ON-CHAIN"}
+                   </button>
+                   <button 
+                     onClick={addSplit}
+                     className="text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(47,208,122,0.2)]"
+                   >
+                     + ADD DESTINATION
+                   </button>
+                 </div>
                </div>
 
                <div className="space-y-6 relative z-10">
@@ -158,14 +168,15 @@ export default function Home() {
                    />
                  </div>
 
-                 <button 
-                   disabled={!isReady || !amount}
-                   className="w-full bg-black text-emerald-400 font-black py-6 rounded-2xl flex items-center justify-center gap-3 hover:translate-y-[-2px] active:translate-y-[0] transition-all disabled:opacity-20 disabled:pointer-events-none group shadow-2xl"
-                 >
-                   <Shield className="w-5 h-5" />
-                   INITIATE AUTO-SPLIT
-                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                 </button>
+                  <button 
+                    onClick={executeRoutePayment}
+                    disabled={!isReady || !amount || loading}
+                    className="w-full bg-black text-emerald-400 font-black py-6 rounded-2xl flex items-center justify-center gap-3 hover:translate-y-[-2px] active:translate-y-[0] transition-all disabled:opacity-20 disabled:pointer-events-none group shadow-2xl"
+                  >
+                    <Shield className="w-5 h-5" />
+                    {loading ? "ROUTING PAYMENTS..." : "INITIATE AUTO-SPLIT"}
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
                </div>
             </div>
 

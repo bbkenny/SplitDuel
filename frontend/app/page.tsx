@@ -143,8 +143,8 @@ export default function Home() {
                </div>
 
                <div className="space-y-6 relative z-10">
-                 <div className="grid grid-cols-3 gap-3">
-                   {['cUSD', 'cEUR', 'CELO'].map(t => (
+                 <div className="grid grid-cols-2 gap-3">
+                   {['cUSD', 'CELO'].map(t => (
                      <button 
                        key={t}
                        onClick={() => setToken(t)}

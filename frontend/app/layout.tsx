@@ -58,6 +58,8 @@ export const viewport: Viewport = {
 };
 
 import { AutoSplitProvider } from "@/components/AutoSplitProvider";
+import OnboardingTour from "@/components/onboarding/OnboardingTour";
+import { SplitToaster } from "@/components/ui/Toast";
 
 export default function AppLayout({
   children,
@@ -66,11 +68,13 @@ export default function AppLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="bg-black text-white antialiased">
         <Web3Providers>
           <AutoSplitProvider>
             <Navbar />
             <main>{children}</main>
+            <OnboardingTour />
+            <SplitToaster />
           </AutoSplitProvider>
         </Web3Providers>
       </body>

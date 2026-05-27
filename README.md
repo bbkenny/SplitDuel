@@ -84,6 +84,7 @@ Professional, mobile-first interface designed for clarity:
 
 - **Configure Rules:** Set your default split percentages and recipients.
 - **Execute Payment:** Input amount and watch the protocol route your funds.
+- **On-Chain Reliability:** Built for atomic execution and precision math.
 - **View History:** Track your total volume and transaction count.
 - **Portfolio Preview:** Real-time calculation of where your money goes.
 

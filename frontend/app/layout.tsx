@@ -28,7 +28,12 @@ export const metadata: Metadata = {
       "Send once, split automatically. One transaction, multiple outcomes on Celo.",
     siteName: "AutoSplit",
     images: [
-      { url: "/autosplit-logo.png", width: 1200, height: 630, alt: "AutoSplit Logo" },
+      {
+        url: "/autosplit-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "AutoSplit Logo",
+      },
     ],
   },
   twitter: {

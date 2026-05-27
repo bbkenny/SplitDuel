@@ -32,7 +32,10 @@ export const SplitRuleSkeleton = () => (
 export const VaultStatsSkeleton = () => (
   <div className="relative overflow-hidden grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
     {[1, 2, 3].map((i) => (
-      <div key={i} className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-[1.5rem] space-y-3">
+      <div
+        key={i}
+        className="bg-zinc-900/60 border border-zinc-800 p-6 rounded-[1.5rem] space-y-3"
+      >
         <div className="h-3 w-20 bg-zinc-800/70 rounded uppercase tracking-widest" />
         <div className="h-10 w-32 bg-zinc-800 rounded-lg" />
         <Shimmer />
@@ -44,7 +47,10 @@ export const VaultStatsSkeleton = () => (
 export const HistoryListSkeleton = ({ count = 3 }: { count?: number }) => (
   <div className="flex flex-col gap-3 w-full">
     {Array.from({ length: count }).map((_, i) => (
-      <div key={i} className="relative overflow-hidden h-16 bg-zinc-900/30 border border-zinc-800/50 rounded-xl px-4 flex items-center justify-between">
+      <div
+        key={i}
+        className="relative overflow-hidden h-16 bg-zinc-900/30 border border-zinc-800/50 rounded-xl px-4 flex items-center justify-between"
+      >
         <div className="flex gap-3 items-center">
           <div className="w-8 h-8 bg-zinc-800 rounded-lg" />
           <div className="h-4 w-24 bg-zinc-800 rounded" />

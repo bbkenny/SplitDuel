@@ -34,7 +34,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <img src="/autosplit-logo.png" alt="AutoSplit Logo" className="w-14 h-14 rounded-full group-hover:scale-110 transition-transform" />
+          <img src="/autosplit-logo.png" alt="AutoSplit Logo" className="h-14 w-auto object-contain group-hover:scale-110 transition-transform" />
           <span
             style={{ letterSpacing: "0.16em", lineHeight: 1 }}
             className="text-2xl font-black uppercase hidden sm:block"

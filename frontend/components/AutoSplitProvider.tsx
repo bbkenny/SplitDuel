@@ -8,7 +8,7 @@ import React, {
   useEffect,
 } from "react";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
-import { parseUnits } from "viem";
+import { parseUnits, formatUnits } from "viem";
 import { CONTRACT_ADDRESSES } from "@/lib/constants";
 import { AutoSplitRouterABI, ERC20ABI } from "@/lib/abi";
 import { splitToast } from "@/components/ui/Toast";
@@ -112,10 +112,10 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
 
   const balances = {
     cUSD: cUSDBalanceData
-      ? Number(parseUnits(cUSDBalanceData as any, 18).toString()) / 1e18
+      ? Number(formatUnits(cUSDBalanceData as bigint, 18))
       : 0,
     CELO: celoBalanceData
-      ? Number(parseUnits(celoBalanceData as any, 18).toString()) / 1e18
+      ? Number(formatUnits(celoBalanceData as bigint, 18))
       : 0,
   };
 

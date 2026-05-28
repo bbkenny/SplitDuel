@@ -7,7 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { useAccount, useWriteContract, useReadContract } from "wagmi";
+import { useAccount, useWriteContract, useReadContract, useBalance } from "wagmi";
 import { parseUnits, formatUnits } from "viem";
 import { CONTRACT_ADDRESSES } from "@/lib/constants";
 import { AutoSplitRouterABI, ERC20ABI } from "@/lib/abi";
@@ -102,20 +102,18 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     args: address ? [address] : undefined,
     query: { enabled: !!address },
   });
-  const { data: celoBalanceData } = useReadContract({
-    address: tokenAddresses.CELO,
-    abi: ERC20ABI,
-    functionName: "balanceOf",
-    args: address ? [address] : undefined,
+  // Fetch native CELO balance
+  const { data: celoBalanceResult } = useBalance({
+    address,
     query: { enabled: !!address },
   });
-
+ 
   const balances = {
     cUSD: cUSDBalanceData
       ? Number(formatUnits(cUSDBalanceData as bigint, 18))
       : 0,
-    CELO: celoBalanceData
-      ? Number(formatUnits(celoBalanceData as bigint, 18))
+    CELO: celoBalanceResult
+      ? Number(formatUnits(celoBalanceResult.value, celoBalanceResult.decimals))
       : 0,
   };
 

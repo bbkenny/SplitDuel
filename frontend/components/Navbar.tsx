@@ -4,12 +4,25 @@ import Link from "next/link";
 import { useAccount, useBalance } from "wagmi";
 import { useAppKit } from "@reown/appkit/react";
 import { useMiniPay } from "@/hooks/useMiniPay";
+import { useState } from "react";
+import { Copy, Check, Wallet } from "lucide-react";
+import { formatUnits } from "viem";
 
 export default function Navbar() {
   const { address, isConnected } = useAccount();
   const { isMiniPay } = useMiniPay();
   const { open } = useAppKit();
   const { data: balanceData } = useBalance({ address });
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (address) {
+      navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <header
@@ -35,20 +48,51 @@ export default function Navbar() {
             </span>
           </span>
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {isConnected && balanceData && (
-            <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold text-[#2FD07A]">
-              <span>{parseFloat(balanceData.formatted).toFixed(4)}</span>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold text-[#2FD07A]">
+              <span>{parseFloat(formatUnits(balanceData.value, balanceData.decimals)).toFixed(4)}</span>
               <span>{balanceData.symbol}</span>
             </div>
           )}
-          {!isMiniPay && (
-            <button
-              onClick={() => open()}
-              className="bg-[#2FD07A] text-black font-bold py-2 px-4 rounded-xl text-xs sm:text-sm hover:opacity-90 transition-opacity"
-            >
-              {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : 'CONNECT WALLET'}
-            </button>
+
+          {isConnected && address ? (
+            <div className="flex items-center gap-2">
+              {/* Copyable Wallet Address styled in Celo Emerald Green */}
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-2 px-3 py-2 bg-[#2FD07A]/10 hover:bg-[#2FD07A]/20 active:scale-95 transition-all rounded-xl border border-[#2FD07A]/25 text-xs font-black text-[#2FD07A] font-mono select-none"
+                title="Copy wallet address"
+              >
+                <span>{`${address.slice(0, 6)}...${address.slice(-4)}`}</span>
+                {copied ? (
+                  <Check size={14} className="text-[#2FD07A]" />
+                ) : (
+                  <Copy size={14} className="opacity-70 hover:opacity-100" />
+                )}
+              </button>
+
+              {/* Wallet Options Modal Trigger (only outside MiniPay) */}
+              {!isMiniPay && (
+                <button
+                  onClick={() => open()}
+                  className="p-2 bg-white/5 hover:bg-white/10 active:scale-95 transition-all rounded-xl border border-white/10 text-[#2FD07A] flex items-center justify-center"
+                  title="Wallet options"
+                >
+                  <Wallet size={15} />
+                </button>
+              )}
+            </div>
+          ) : (
+            // Only show Connect button outside MiniPay environment
+            !isMiniPay && (
+              <button
+                onClick={() => open()}
+                className="bg-[#2FD07A] text-black font-bold py-2 px-4 rounded-xl text-xs sm:text-sm hover:opacity-90 transition-opacity"
+              >
+                CONNECT WALLET
+              </button>
+            )
           )}
         </div>
       </div>

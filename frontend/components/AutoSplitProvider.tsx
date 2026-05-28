@@ -51,12 +51,26 @@ const AutoSplitContext = createContext<SplitState | undefined>(undefined);
 export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
   // Dynamic chain target detection (defaults to celoAlfajores if unknown)
-  const routerAddress = CONTRACT_ADDRESSES.celoAlfajores.AUTO_SPLIT_ROUTER;
-  const tokenAddress = CONTRACT_ADDRESSES.celoAlfajores.cUSD;
+  const getActiveAddresses = () => {
+    if (chainId === 42220) {
+      return {
+        router: CONTRACT_ADDRESSES.celo.AUTO_SPLIT_ROUTER,
+        cUSD: CONTRACT_ADDRESSES.celo.cUSD,
+      };
+    }
+    return {
+      router: CONTRACT_ADDRESSES.celoAlfajores.AUTO_SPLIT_ROUTER,
+      cUSD: CONTRACT_ADDRESSES.celoAlfajores.cUSD,
+    };
+  };
+
+  const activeAddrs = getActiveAddresses();
+  const routerAddress = activeAddrs.router;
+  const tokenAddress = activeAddrs.cUSD;
 
   const [splits, setSplits] = useState<Split[]>([
     { recipient: "", basisPoints: 5000, isVault: false },
@@ -68,14 +82,12 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(false);
 
   // Token contract addresses mapping
-  const tokenAddresses: Record<string, string> = {
-    cUSD: CONTRACT_ADDRESSES.celoAlfajores.cUSD,
+  const tokenAddresses: Record<string, `0x${string}`> = {
+    cUSD: tokenAddress as `0x${string}`,
     CELO:
-      CONTRACT_ADDRESSES.celoAlfajores.CELO ||
-      "0x0000000000000000000000000000000000000000",
-    cEUR:
-      CONTRACT_ADDRESSES.celoAlfajores.cEUR ||
-      "0x0000000000000000000000000000000000000000",
+      chainId === 42220
+        ? "0x471EcE3750Da237f93B8E29B7377C6Ba1574beb9"
+        : "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9",
   };
 
   // Fetch balances for each token
@@ -93,13 +105,6 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     args: address ? [address] : undefined,
     query: { enabled: !!address },
   });
-  const { data: cEURBalanceData } = useReadContract({
-    address: tokenAddresses.cEUR,
-    abi: ERC20ABI,
-    functionName: "balanceOf",
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
-  });
 
   const balances = {
     cUSD: cUSDBalanceData
@@ -107,9 +112,6 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
       : 0,
     CELO: celoBalanceData
       ? Number(parseUnits(celoBalanceData as any, 18).toString()) / 1e18
-      : 0,
-    cEUR: cEURBalanceData
-      ? Number(parseUnits(cEURBalanceData as any, 18).toString()) / 1e18
       : 0,
   };
 

@@ -36,7 +36,7 @@ export default function Home() {
   } = useAutoSplit();
 
   return (
-    <div className="min-h-screen bg-[#022D2B] text-white font-sans p-6 pt-28">
+    <div className="min-h-screen bg-[#022D2B] text-white font-sans p-4 sm:p-6 md:p-8 pt-24 sm:pt-28">
       <main className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-3">
@@ -54,25 +54,25 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT: Rule Builder (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="glass-card p-8 border-white/5 space-y-8 relative overflow-hidden">
+            <div className="glass-card p-5 md:p-8 border-white/5 space-y-8 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
 
-              <div className="flex justify-between items-center relative z-10">
-                <h2 className="text-lg font-black uppercase tracking-widest flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center relative z-10">
+                <h2 className="text-base sm:text-lg font-black uppercase tracking-widest flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   Split Configuration
                 </h2>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   <button
                     onClick={saveOnChainRules}
                     disabled={loading || !isReady}
-                    className="text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-black py-2.5 px-6 rounded-xl transition-all disabled:opacity-40"
+                    className="flex-1 sm:flex-initial text-center justify-center text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-black py-2.5 px-4 sm:px-6 rounded-xl transition-all disabled:opacity-40"
                   >
                     {loading ? "SAVING..." : "SAVE ON-CHAIN"}
                   </button>
                   <button
                     onClick={addSplit}
-                    className="text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(47,208,122,0.2)]"
+                    className="flex-1 sm:flex-initial text-center justify-center text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-4 sm:px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(47,208,122,0.2)]"
                   >
                     + ADD DESTINATION
                   </button>
@@ -91,7 +91,7 @@ export default function Home() {
                       key={i}
                       className="group flex flex-col gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-emerald-500/30 transition-all"
                     >
-                      <div className="flex gap-4 items-start">
+                      <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-start">
                         <div className="flex-1 space-y-2">
                           <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">
                             Recipient / Vault Address
@@ -106,29 +106,33 @@ export default function Home() {
                             className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm font-mono focus:border-emerald-500 focus:outline-none transition-all"
                           />
                         </div>
-                        <div className="w-28 space-y-2">
-                          <label className="text-[9px] font-black text-white/30 uppercase tracking-widest">
-                            Share (%)
-                          </label>
-                          <input
-                            type="number"
-                            value={s.basisPoints / 100}
-                            onChange={(e) =>
-                              updateSplit(
-                                i,
-                                "basisPoints",
-                                Number(e.target.value) * 100,
-                              )
-                            }
-                            className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm font-black focus:border-emerald-500 focus:outline-none transition-all text-center"
-                          />
+                        <div className="flex items-end gap-3 sm:w-auto">
+                          <div className="flex-1 sm:w-28 space-y-2">
+                            <label className="text-[9px] font-black text-white/30 uppercase tracking-widest block">
+                              Share (%)
+                            </label>
+                            <input
+                              type="number"
+                              value={s.basisPoints / 100}
+                              onChange={(e) =>
+                                updateSplit(
+                                  i,
+                                  "basisPoints",
+                                  Number(e.target.value) * 100,
+                                )
+                              }
+                              className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-sm font-black focus:border-emerald-500 focus:outline-none transition-all text-center"
+                            />
+                          </div>
+                          <button
+                            onClick={() => removeSplit(i)}
+                            className="h-[46px] px-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-400 transition-all rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider"
+                            title="Remove Destination"
+                          >
+                            <span className="sm:hidden">Remove</span>
+                            <span>✕</span>
+                          </button>
                         </div>
-                        <button
-                          onClick={() => removeSplit(i)}
-                          className="mt-8 p-2 text-white/10 hover:text-red-400 transition-colors"
-                        >
-                          ✕
-                        </button>
                       </div>
 
                       <div className="flex items-center justify-between pt-2 border-t border-white/[0.03]">
@@ -187,7 +191,7 @@ export default function Home() {
           {/* RIGHT: Execution & History (5 cols) */}
           <div className="lg:col-span-5 space-y-8">
             {/* Execution Card */}
-            <div className="bg-emerald-400 text-black rounded-3xl p-8 space-y-8 shadow-[0_20px_50px_rgba(47,208,122,0.1)] relative overflow-hidden">
+            <div className="bg-emerald-400 text-black rounded-3xl p-5 md:p-8 space-y-8 shadow-[0_20px_50px_rgba(47,208,122,0.1)] relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <Scale className="w-24 h-24 rotate-12" />
               </div>
@@ -243,7 +247,7 @@ export default function Home() {
             </div>
 
             {/* History Section */}
-            <div className="glass-card p-8 border-white/5 space-y-6">
+            <div className="glass-card p-5 md:p-8 border-white/5 space-y-6">
               <h2 className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-3 text-white/50">
                 <History className="w-4 h-4" /> Activity Log
               </h2>

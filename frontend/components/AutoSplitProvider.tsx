@@ -44,6 +44,10 @@ interface SplitState {
   addTransaction: (tx: Transaction) => void;
   saveOnChainRules: () => Promise<void>;
   executeRoutePayment: () => Promise<void>;
+  balances: {
+    cUSD: number;
+    CELO: number;
+  };
 }
 
 const AutoSplitContext = createContext<SplitState | undefined>(undefined);
@@ -276,6 +280,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     addTransaction,
     saveOnChainRules,
     executeRoutePayment,
+    balances,
   };
 
   return (

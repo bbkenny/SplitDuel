@@ -49,26 +49,19 @@ export default function Navbar() {
           </span>
         </Link>
         <div className="flex items-center gap-3">
-          {isConnected && balanceData && (
-            <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white/5 rounded-xl border border-white/10 text-xs font-bold text-[#2FD07A]">
-              <span>{parseFloat(formatUnits(balanceData.value, balanceData.decimals)).toFixed(4)}</span>
-              <span>{balanceData.symbol}</span>
-            </div>
-          )}
-
           {isConnected && address ? (
             <div className="flex items-center gap-2">
-              {/* Copyable Wallet Address styled in Celo Emerald Green */}
+              {/* Copyable Wallet Address styled to match Add Destination button, but with white text and icons */}
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-2 px-3 py-2 bg-[#2FD07A]/10 hover:bg-[#2FD07A]/20 active:scale-95 transition-all rounded-xl border border-[#2FD07A]/25 text-xs font-black text-[#2FD07A] font-mono select-none"
+                className="flex items-center gap-2 px-3 py-2 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-xl text-xs font-black text-white font-mono select-none shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                 title="Copy wallet address"
               >
                 <span>{`${address.slice(0, 6)}...${address.slice(-4)}`}</span>
                 {copied ? (
-                  <Check size={14} className="text-[#2FD07A]" />
+                  <Check size={14} className="text-white" />
                 ) : (
-                  <Copy size={14} className="opacity-70 hover:opacity-100" />
+                  <Copy size={14} className="text-white/80" />
                 )}
               </button>
 
@@ -76,7 +69,7 @@ export default function Navbar() {
               {!isMiniPay && (
                 <button
                   onClick={() => open()}
-                  className="p-2 bg-white/5 hover:bg-white/10 active:scale-95 transition-all rounded-xl border border-white/10 text-[#2FD07A] flex items-center justify-center"
+                  className="p-2 bg-white/5 hover:bg-white/10 active:scale-95 transition-all rounded-xl border border-white/10 text-white flex items-center justify-center"
                   title="Wallet options"
                 >
                   <Wallet size={15} />

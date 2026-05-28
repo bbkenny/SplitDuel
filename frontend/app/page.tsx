@@ -33,6 +33,7 @@ export default function Home() {
     loading,
     saveOnChainRules,
     executeRoutePayment,
+    balances,
   } = useAutoSplit();
 
   return (
@@ -222,9 +223,19 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[9px] font-black uppercase tracking-widest opacity-40 flex items-center gap-2">
-                    <Coins className="w-3 h-3" /> Input Amount ({token})
-                  </label>
+                  <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-black/55 select-none">
+                    <label className="flex items-center gap-2">
+                      <Coins className="w-3 h-3" /> Input Amount ({token})
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setAmount(balances[token as keyof typeof balances]?.toString() || "0")}
+                      className="hover:underline font-bold tracking-normal text-[9px] transition-all cursor-pointer opacity-70 hover:opacity-100"
+                      title="Use full balance"
+                    >
+                      Balance: {balances[token as keyof typeof balances]?.toFixed(4) || "0.0000"} {token}
+                    </button>
+                  </div>
                   <input
                     type="number"
                     value={amount}

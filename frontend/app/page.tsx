@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useAutoSplit } from "@/components/AutoSplitProvider";
 import { Footer } from "@/components/Footer";
 import {
@@ -11,6 +11,11 @@ import {
   ArrowRight,
   Coins,
   Scale,
+  Award,
+  TrendingUp,
+  Landmark,
+  ArrowUpRight,
+  ArrowDownLeft,
 } from "lucide-react";
 import {
   SplitRuleSkeleton,
@@ -34,7 +39,29 @@ export default function Home() {
     saveOnChainRules,
     executeRoutePayment,
     balances,
+    savingsBalance,
+    reputationPoints,
+    creditLimit,
+    activeLoans,
+    depositSavings,
+    withdrawSavings,
+    requestMicroLoan,
+    repayLoan,
   } = useAutoSplit();
+
+  // Local savings & borrowing inputs
+  const [vaultAmount, setVaultAmount] = useState("");
+  const [vaultToken, setVaultToken] = useState("cUSD");
+  const [borrowAmount, setBorrowAmount] = useState("");
+  const [borrowToken, setBorrowToken] = useState("cUSD");
+
+  // Determine Credit Tier
+  const getCreditTier = () => {
+    if (reputationPoints >= 50) return { name: "ELITE TIER", color: "text-emerald-400 border-emerald-400 bg-emerald-500/10" };
+    if (reputationPoints >= 15) return { name: "GOLD TIER", color: "text-yellow-400 border-yellow-400 bg-yellow-500/10" };
+    return { name: "BRONZE TIER", color: "text-blue-400 border-blue-400 bg-blue-500/10" };
+  };
+  const creditTier = getCreditTier();
 
   return (
     <div className="min-h-screen bg-[#022D2B] text-white font-sans p-4 sm:p-6 md:p-8 pt-24 sm:pt-28">
@@ -42,38 +69,40 @@ export default function Home() {
         {/* Header */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-4">
-            <Zap className="w-3 h-3" /> AutoSplit Protocol v2.0
+            <Zap className="w-3 h-3 animate-pulse" /> AutoSplit DeFi Credit Union v2.0
           </div>
           <h1 className="text-5xl md:text-7xl font-black tracking-tight uppercase italic leading-[0.9]">
-            PRECISION <span className="text-emerald-400">ROUTING.</span>
+            AUTONOMOUS <span className="text-emerald-400">CREDIT.</span>
           </h1>
           <p className="text-emerald-400/50 font-bold uppercase text-sm tracking-wide">
-            Automate your financial behavior on Celo with immutable split rules.
+            Automate split savings, farm reputational credit scores, and request micro-loans on Celo.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* LEFT: Rule Builder (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          {/* LEFT: Rule Builder & Credit Union (7 cols) */}
+          <div className="lg:col-span-7 space-y-8">
+            
+            {/* Split Rules Matrix */}
             <div className="glass-card p-5 md:p-8 border-white/5 space-y-8 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
 
               <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center relative z-10">
                 <h2 className="text-base sm:text-lg font-black uppercase tracking-widest flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  Split Configuration
+                  Split Routing Configurations
                 </h2>
                 <div className="flex gap-2 w-full sm:w-auto">
                   <button
                     onClick={saveOnChainRules}
                     disabled={loading || !isReady}
-                    className="flex-1 sm:flex-initial text-center justify-center text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-black py-2.5 px-4 sm:px-6 rounded-xl transition-all disabled:opacity-40"
+                    className="flex-1 sm:flex-initial text-center justify-center text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-black py-2.5 px-4 sm:px-6 rounded-xl transition-all disabled:opacity-40 cursor-pointer"
                   >
                     {loading ? "SAVING..." : "SAVE ON-CHAIN"}
                   </button>
                   <button
                     onClick={addSplit}
-                    className="flex-1 sm:flex-initial text-center justify-center text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-4 sm:px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(47,208,122,0.2)]"
+                    className="flex-1 sm:flex-initial text-center justify-center text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-4 sm:px-6 rounded-xl transition-all shadow-[0_0_20px_rgba(47,208,122,0.2)] cursor-pointer"
                   >
                     + ADD DESTINATION
                   </button>
@@ -127,7 +156,7 @@ export default function Home() {
                           </div>
                           <button
                             onClick={() => removeSplit(i)}
-                            className="h-[46px] px-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-400 transition-all rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider"
+                            className="h-[46px] px-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-400 transition-all rounded-xl flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider cursor-pointer"
                             title="Remove Destination"
                           >
                             <span className="sm:hidden">Remove</span>
@@ -158,9 +187,8 @@ export default function Home() {
                           </span>
                         </div>
                         {s.isVault && (
-                          <div className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-500/50 italic">
-                            <Shield className="w-3 h-3" /> Protected by
-                            VaultAdapter
+                          <div className="flex items-center gap-1.5 text-[9px] font-bold text-emerald-500/50 italic select-none">
+                            <Shield className="w-3 h-3" /> Auto-Yield Compound Savings
                           </div>
                         )}
                       </div>
@@ -187,6 +215,193 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* DEFI CREDIT UNION SUITE */}
+            <div className="glass-card p-5 md:p-8 border-white/5 space-y-8 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
+
+              <h2 className="text-base sm:text-lg font-black uppercase tracking-widest flex items-center gap-3">
+                <Landmark className="w-5 h-5 text-emerald-400" />
+                DeFi Credit Union Suite
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Reputation HUD */}
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-white/30 uppercase tracking-widest block">
+                      Credit Reputation
+                    </span>
+                    <Award className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black font-mono text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.2)]">
+                      {reputationPoints}
+                    </span>
+                    <span className="text-xs font-bold text-white/40">PTS</span>
+                  </div>
+                  {/* Rating progress bar */}
+                  <div className="space-y-2">
+                    <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-emerald-400 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(reputationPoints * 2, 100)}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[8px] font-bold text-white/20 uppercase">Bronze</span>
+                      <span className={`text-[9px] font-black border px-2 py-0.5 rounded uppercase tracking-wider ${creditTier.color}`}>
+                        {creditTier.name}
+                      </span>
+                      <span className="text-[8px] font-bold text-white/20 uppercase">Elite</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Savings Growth Vault */}
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-white/30 uppercase tracking-widest block">
+                      Growth Vault (Savings)
+                    </span>
+                    <TrendingUp className="w-4 h-4 text-emerald-400 animate-pulse" />
+                  </div>
+                  <div className="space-y-3 pt-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-mono text-white/70">cUSD Savings</span>
+                      <span className="text-sm font-black text-emerald-400">{savingsBalance.cUSD.toFixed(4)} cUSD</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-mono text-white/70">CELO Savings</span>
+                      <span className="text-sm font-black text-emerald-400">{savingsBalance.CELO.toFixed(4)} CELO</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Savings Actions Terminal */}
+              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                <span className="text-[10px] font-black text-white/30 uppercase tracking-widest block">
+                  Vault Interactions (Compound 4.5% APY Yield)
+                </span>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex-1 flex gap-2">
+                    <select
+                      value={vaultToken}
+                      onChange={(e) => setVaultToken(e.target.value)}
+                      className="bg-black/20 border border-white/5 rounded-xl px-3 py-2 text-xs font-black text-emerald-400 focus:outline-none"
+                    >
+                      <option value="cUSD" className="bg-zinc-950">cUSD</option>
+                      <option value="CELO" className="bg-zinc-950">CELO</option>
+                    </select>
+                    <input
+                      type="number"
+                      value={vaultAmount}
+                      onChange={(e) => setVaultAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="flex-1 min-w-0 bg-black/20 border border-white/5 rounded-xl px-4 py-2 text-xs font-bold focus:border-emerald-500 focus:outline-none text-center"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        depositSavings(vaultToken, vaultAmount);
+                        setVaultAmount("");
+                      }}
+                      disabled={!vaultAmount || loading}
+                      className="flex-1 sm:flex-initial text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-5 rounded-xl transition-all shadow-[0_0_15px_rgba(47,208,122,0.15)] flex items-center gap-1 justify-center cursor-pointer"
+                    >
+                      <ArrowUpRight className="w-3.5 h-3.5 text-black" strokeWidth={3} /> Deposit
+                    </button>
+                    <button
+                      onClick={() => {
+                        withdrawSavings(vaultToken, vaultAmount);
+                        setVaultAmount("");
+                      }}
+                      disabled={!vaultAmount || loading}
+                      className="flex-1 sm:flex-initial text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-black py-2.5 px-5 rounded-xl transition-all flex items-center gap-1 justify-center cursor-pointer"
+                    >
+                      <ArrowDownLeft className="w-3.5 h-3.5 text-emerald-400" strokeWidth={3} /> Withdraw
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Micro-Credit Hub */}
+              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                  <span className="text-[10px] font-black text-white/30 uppercase tracking-widest block">
+                    Micro-Credit Hub (Reputation-backed Lending)
+                  </span>
+                  <div className="text-[8px] font-black px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-widest text-center select-none">
+                    Limit: {creditLimit.cUSD.toFixed(1)} cUSD / {creditLimit.CELO.toFixed(1)} CELO
+                  </div>
+                </div>
+                
+                {/* Borrow Interface */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex-1 flex gap-2">
+                    <select
+                      value={borrowToken}
+                      onChange={(e) => setBorrowToken(e.target.value)}
+                      className="bg-black/20 border border-white/5 rounded-xl px-3 py-2 text-xs font-black text-emerald-400 focus:outline-none"
+                    >
+                      <option value="cUSD" className="bg-zinc-950">cUSD</option>
+                      <option value="CELO" className="bg-zinc-950">CELO</option>
+                    </select>
+                    <input
+                      type="number"
+                      value={borrowAmount}
+                      onChange={(e) => setBorrowAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="flex-1 min-w-0 bg-black/20 border border-white/5 rounded-xl px-4 py-2 text-xs font-bold focus:border-emerald-500 focus:outline-none text-center"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      requestMicroLoan(borrowToken, borrowAmount);
+                      setBorrowAmount("");
+                    }}
+                    disabled={!borrowAmount || loading}
+                    className="w-full sm:w-auto text-[10px] bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2.5 px-6 rounded-xl transition-all shadow-[0_0_15px_rgba(47,208,122,0.15)] flex items-center gap-1 justify-center cursor-pointer"
+                  >
+                    Request Microfinance Loan
+                  </button>
+                </div>
+
+                {/* Active Loans Table */}
+                {activeLoans.length > 0 && (
+                  <div className="mt-4 border-t border-white/5 pt-4 space-y-2">
+                    <span className="text-[8px] font-black text-white/30 uppercase tracking-widest block">
+                      Active Micro-Lending Overdrafts
+                    </span>
+                    <div className="space-y-2">
+                      {activeLoans.map((loan, idx) => (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center p-3.5 rounded-xl bg-black/20 border border-white/5 text-xs font-mono"
+                        >
+                          <div>
+                            <p className="font-black text-white uppercase tracking-tight text-[10px]">
+                              Loan ID: #{loan.id} ({loan.principal} cUSD)
+                            </p>
+                            <p className="text-[9px] text-white/40 font-medium">
+                              Interest: {loan.interest} cUSD • Approved & Disbursed
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => repayLoan(loan.id, (loan.principal + loan.interest).toString())}
+                            className="text-[9px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 font-black py-1.5 px-3 rounded-lg transition-all cursor-pointer"
+                          >
+                            Repay {loan.principal + loan.interest} cUSD
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* RIGHT: Execution & History (5 cols) */}
@@ -204,8 +419,7 @@ export default function Home() {
                   ROUTING.
                 </h2>
                 <p className="text-xs font-bold opacity-70 uppercase leading-relaxed tracking-tight">
-                  Deploy your assets across the defined destination matrix in a
-                  single atomic transaction.
+                  Split your assets across the defined matrix in a single atomic transaction.
                 </p>
               </div>
 
@@ -215,7 +429,7 @@ export default function Home() {
                     <button
                       key={t}
                       onClick={() => setToken(t)}
-                      className={`py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${token === t ? "bg-black text-emerald-400 border-black" : "bg-transparent border-black/10 text-black/40 hover:bg-black/5"}`}
+                      className={`py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 cursor-pointer ${token === t ? "bg-black text-emerald-400 border-black animate-float-alt" : "bg-transparent border-black/10 text-black/40 hover:bg-black/5"}`}
                     >
                       {t}
                     </button>
@@ -248,7 +462,7 @@ export default function Home() {
                 <button
                   onClick={executeRoutePayment}
                   disabled={!isReady || !amount || loading}
-                  className="w-full bg-black text-emerald-400 font-black py-6 rounded-2xl flex items-center justify-center gap-3 hover:translate-y-[-2px] active:translate-y-[0] transition-all disabled:opacity-20 disabled:pointer-events-none group shadow-2xl"
+                  className="w-full bg-black text-emerald-400 font-black py-6 rounded-2xl flex items-center justify-center gap-3 hover:translate-y-[-2px] active:translate-y-[0] transition-all disabled:opacity-20 disabled:pointer-events-none group shadow-2xl cursor-pointer"
                 >
                   <Shield className="w-5 h-5" />
                   {loading ? "ROUTING PAYMENTS..." : "INITIATE AUTO-SPLIT"}

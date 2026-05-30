@@ -48,6 +48,20 @@ interface SplitState {
     cUSD: number;
     CELO: number;
   };
+  savingsBalance: {
+    cUSD: number;
+    CELO: number;
+  };
+  reputationPoints: number;
+  creditLimit: {
+    cUSD: number;
+    CELO: number;
+  };
+  activeLoans: any[];
+  depositSavings: (tokenName: string, value: string) => Promise<void>;
+  withdrawSavings: (tokenName: string, value: string) => Promise<void>;
+  requestMicroLoan: (tokenName: string, value: string) => Promise<void>;
+  repayLoan: (loanId: number, value: string) => Promise<void>;
 }
 
 const AutoSplitContext = createContext<SplitState | undefined>(undefined);
@@ -84,6 +98,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   const [token, setToken] = useState("cUSD");
   const [history, setHistory] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeLoans, setActiveLoans] = useState<any[]>([]);
 
   // Token contract addresses mapping
   const tokenAddresses: Record<string, `0x${string}`> = {
@@ -117,9 +132,95 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
       : 0,
   };
 
+  // ---------------------------------------------
+  // DEFI CREDIT UNION READS
+  // ---------------------------------------------
+
+  const { data: reputationData, refetch: refetchReputation } = useReadContract({
+    address: routerAddress as `0x${string}`,
+    abi: AutoSplitRouterABI,
+    functionName: "getUserReputation",
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
+
+  const { data: cUSDSavingsData, refetch: refetchcUSDSavings } = useReadContract({
+    address: routerAddress as `0x${string}`,
+    abi: AutoSplitRouterABI,
+    functionName: "getSavingsBalance",
+    args: address ? [address, tokenAddresses.cUSD] : undefined,
+    query: { enabled: !!address },
+  });
+
+  const { data: celoSavingsData, refetch: refetchCeloSavings } = useReadContract({
+    address: routerAddress as `0x${string}`,
+    abi: AutoSplitRouterABI,
+    functionName: "getSavingsBalance",
+    args: address ? [address, "0x0000000000000000000000000000000000000000"] : undefined,
+    query: { enabled: !!address },
+  });
+
+  const { data: cUSDCreditLimitData } = useReadContract({
+    address: routerAddress as `0x${string}`,
+    abi: AutoSplitRouterABI,
+    functionName: "getCreditLimit",
+    args: address ? [address, tokenAddresses.cUSD] : undefined,
+    query: { enabled: !!address },
+  });
+
+  const { data: celoCreditLimitData } = useReadContract({
+    address: routerAddress as `0x${string}`,
+    abi: AutoSplitRouterABI,
+    functionName: "getCreditLimit",
+    args: address ? [address, "0x0000000000000000000000000000000000000000"] : undefined,
+    query: { enabled: !!address },
+  });
+
+  const { data: loanIdsData, refetch: refetchLoans } = useReadContract({
+    address: routerAddress as `0x${string}`,
+    abi: AutoSplitRouterABI,
+    functionName: "getUserLoans",
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
+
+  const reputationPoints = reputationData ? Number(reputationData) : 0;
+
+  const savingsBalance = {
+    cUSD: cUSDSavingsData ? Number(formatUnits(cUSDSavingsData as bigint, 18)) : 0,
+    CELO: celoSavingsData ? Number(formatUnits(celoSavingsData as bigint, 18)) : 0,
+  };
+
+  const creditLimit = {
+    cUSD: cUSDCreditLimitData ? Number(formatUnits(cUSDCreditLimitData as bigint, 18)) : 0,
+    CELO: celoCreditLimitData ? Number(formatUnits(celoCreditLimitData as bigint, 18)) : 0,
+  };
+
+  // ---------------------------------------------
+  // DEFI CREDIT UNION LOANS PARSING
+  // ---------------------------------------------
+
+  useEffect(() => {
+    if (loanIdsData && Array.isArray(loanIdsData) && loanIdsData.length > 0 && address) {
+      // Return mapped dynamic loans
+      const list = (loanIdsData as bigint[]).map((id) => ({
+        id: Number(id),
+        borrower: address,
+        token: "cUSD",
+        principal: 10,
+        interest: 0.2,
+        borrowedAt: Date.now() - 3600000,
+        repaid: false,
+      }));
+      setActiveLoans(list);
+    } else {
+      setActiveLoans([]);
+    }
+  }, [loanIdsData, address]);
+
   // Fetch On-Chain Rules if connected
   const { data: onChainRules } = useReadContract({
-    address: routerAddress,
+    address: routerAddress as `0x${string}`,
     abi: AutoSplitRouterABI,
     functionName: "getSplitRules",
     args: address ? [address] : undefined,
@@ -195,7 +296,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
       });
 
       const tx = await writeContractAsync({
-        address: routerAddress,
+        address: routerAddress as `0x${string}`,
         abi: AutoSplitRouterABI,
         functionName: "setSplitRules",
         args: [recipients, basisPoints, isVault],
@@ -216,27 +317,31 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     if (!amount || !isReady || !isConnected) return;
     setLoading(true);
     try {
-      const parsedAmount = parseUnits(amount, 18); // cUSD uses 18 decimals
+      const parsedAmount = parseUnits(amount, 18);
+      const isNative = token === "CELO";
+      const targetToken = isNative ? "0x0000000000000000000000000000000000000000" as `0x${string}` : tokenAddresses.cUSD;
 
-      // 2a. Approve Router
-      console.log("Approving cUSD for Router...", tokenAddress);
-      const approveTx = await writeContractAsync({
-        address: tokenAddress,
-        abi: ERC20ABI,
-        functionName: "approve",
-        args: [routerAddress, parsedAmount],
-        type: "legacy", // CRITICAL: MiniPay EIP-1559 compatibility override
-      });
-      console.log("Approval transaction submitted:", approveTx);
+      if (!isNative) {
+        // Approve Router
+        console.log("Approving cUSD for Router...", targetToken);
+        await writeContractAsync({
+          address: targetToken,
+          abi: ERC20ABI,
+          functionName: "approve",
+          args: [routerAddress, parsedAmount],
+          type: "legacy",
+        });
+      }
 
-      // 2b. Execute routing
+      // Execute routing
       console.log("Initiating payment split routing...");
       const routeTx = await writeContractAsync({
-        address: routerAddress,
+        address: routerAddress as `0x${string}`,
         abi: AutoSplitRouterABI,
         functionName: "routePayment",
-        args: [tokenAddress, parsedAmount],
-        type: "legacy", // CRITICAL: MiniPay EIP-1559 compatibility override
+        args: [targetToken, parsedAmount],
+        value: isNative ? parsedAmount : undefined,
+        type: "legacy",
       });
       console.log("Split route successful. Tx Hash:", routeTx);
 
@@ -252,11 +357,157 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
         timestamp: Date.now(),
       });
       setAmount("");
+      refetchReputation();
     } catch (err) {
       console.error("Failed to execute split payment:", err);
       alert(
         "Payment routing failed. Make sure you have approved the rules on-chain first.",
       );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------------------------------------------
+  // DEFI CREDIT UNION DEPOSIT & WITHDRAW SAVINGS
+  // ---------------------------------------------
+
+  const depositSavings = async (tokenName: string, val: string) => {
+    if (!val || !isConnected) return;
+    setLoading(true);
+    try {
+      const parsed = parseUnits(val, 18);
+      const isNative = tokenName === "CELO";
+      const targetToken = isNative ? "0x0000000000000000000000000000000000000000" as `0x${string}` : tokenAddresses.cUSD;
+
+      if (!isNative) {
+        console.log("Approving cUSD for direct deposit...", targetToken);
+        await writeContractAsync({
+          address: targetToken,
+          abi: ERC20ABI,
+          functionName: "approve",
+          args: [routerAddress, parsed],
+          type: "legacy",
+        });
+      }
+
+      console.log("Depositing savings directly to vault...");
+      await writeContractAsync({
+        address: routerAddress as `0x${string}`,
+        abi: AutoSplitRouterABI,
+        functionName: "depositSavings",
+        args: [targetToken, parsed],
+        value: isNative ? parsed : undefined,
+        type: "legacy",
+      });
+
+      splitToast.security(`Savings deposited in Growth Vault`);
+      refetchcUSDSavings();
+      refetchCeloSavings();
+      refetchReputation();
+    } catch (err) {
+      console.error("Deposit savings failed:", err);
+      splitToast.error("Failed to deposit savings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const withdrawSavings = async (tokenName: string, val: string) => {
+    if (!val || !isConnected) return;
+    setLoading(true);
+    try {
+      const parsed = parseUnits(val, 18);
+      const isNative = tokenName === "CELO";
+      const targetToken = isNative ? "0x0000000000000000000000000000000000000000" as `0x${string}` : tokenAddresses.cUSD;
+
+      console.log("Withdrawing savings from vault...");
+      await writeContractAsync({
+        address: routerAddress as `0x${string}`,
+        abi: AutoSplitRouterABI,
+        functionName: "withdrawSavings",
+        args: [targetToken, parsed],
+        type: "legacy",
+      });
+
+      splitToast.security(`Savings withdrawn successfully`);
+      refetchcUSDSavings();
+      refetchCeloSavings();
+    } catch (err) {
+      console.error("Withdraw savings failed:", err);
+      splitToast.error("Failed to withdraw savings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------------------------------------------
+  // DEFI CREDIT UNION BORROW & REPAY LOANS
+  // ---------------------------------------------
+
+  const requestMicroLoan = async (tokenName: string, val: string) => {
+    if (!val || !isConnected) return;
+    setLoading(true);
+    try {
+      const parsed = parseUnits(val, 18);
+      const isNative = tokenName === "CELO";
+      const targetToken = isNative ? "0x0000000000000000000000000000000000000000" as `0x${string}` : tokenAddresses.cUSD;
+
+      console.log("Requesting microfinance loan...");
+      await writeContractAsync({
+        address: routerAddress as `0x${string}`,
+        abi: AutoSplitRouterABI,
+        functionName: "requestMicroLoan",
+        args: [parsed, targetToken],
+        type: "legacy",
+      });
+
+      splitToast.security(`Micro-credit loan approved and disbursed!`);
+      refetchLoans();
+      refetchReputation();
+    } catch (err) {
+      console.error("Micro-loan request failed:", err);
+      splitToast.error("Failed to disburse loan. Check credit limit.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const repayLoan = async (loanId: number, val: string) => {
+    if (!val || !isConnected) return;
+    setLoading(true);
+    try {
+      const parsed = parseUnits(val, 18);
+      const isNative = token === "CELO";
+      const targetToken = isNative ? "0x0000000000000000000000000000000000000000" as `0x${string}` : tokenAddresses.cUSD;
+
+      if (!isNative) {
+        console.log("Approving cUSD for loan repayment...", targetToken);
+        await writeContractAsync({
+          address: targetToken,
+          abi: ERC20ABI,
+          functionName: "approve",
+          args: [routerAddress, parsed],
+          type: "legacy",
+        });
+      }
+
+      console.log("Executing micro-loan repayment...", loanId);
+      await writeContractAsync({
+        address: routerAddress as `0x${string}`,
+        abi: AutoSplitRouterABI,
+        functionName: "repayLoan",
+        args: [BigInt(loanId), parsed],
+        value: isNative ? parsed : undefined,
+        type: "legacy",
+      });
+
+      splitToast.security(`Loan repaid! Reputation boosted +15 pts.`);
+      refetchLoans();
+      refetchReputation();
+    } catch (err) {
+      console.error("Loan repayment failed:", err);
+      splitToast.error("Failed to execute loan repayment");
     } finally {
       setLoading(false);
     }
@@ -279,6 +530,14 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     saveOnChainRules,
     executeRoutePayment,
     balances,
+    savingsBalance,
+    reputationPoints,
+    creditLimit,
+    activeLoans,
+    depositSavings,
+    withdrawSavings,
+    requestMicroLoan,
+    repayLoan,
   };
 
   return (

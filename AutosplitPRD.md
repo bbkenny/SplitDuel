@@ -1,209 +1,78 @@
-# 📘 Product Requirements Document (PRD)
+# 📘 Product Requirements Document (PRD): AutoSplit v2.0
 
 ## 🟢 Product Name
-
-AutoSplit
-
-A mobile-first payment routing miniapp that allows users to automatically split and route stablecoin transactions in a single action.
+AutoSplit: The Decentralized Mobile Credit Union & Autonomous Yield Router
 
 ## 🧠 One-Line Summary
-
-Send once, and your money automatically splits, saves, and invests in real time.
+Route stablecoins and CELO native payments dynamically to direct recipients, auto-deposit splits to compound interest vaults, farm financial reputation scores, and borrow under-collateralized micro-loans.
 
 ---
 
 ## 🎯 Problem Statement
-
-Sending money today is fragmented:
-
-- Users manually split payments
-- Savings require separate actions
-- Investing requires additional steps
-
-This creates friction, especially in mobile-first economies where users:
-
-- Manage multiple obligations (family, savings, business)
-- Operate with stablecoins (cUSD, cEUR)
-- Need automation, not complexity
+Digital money in mobile-first emerging economies remains fragmented and transactional, failing to nurture sustainable financial behavior:
+- 💸 Outbound/inbound transfers go 80-90% to immediate consumption, leaving zero cushion for future growth or savings.
+- 💳 Existing DeFi yields and micro-savings require high friction and manual multi-step transactions.
+- 🚫 Everyday microfinance users have no access to collateral-free overdrafts or credit lines due to the lack of on-chain reputation histories.
 
 ---
 
 ## 💡 Solution
-
-A smart contract-based payment router that:
-
-- Automatically splits incoming or outgoing funds
-- Routes portions to recipients, savings vaults, or yield strategies
-- Executes all actions in a single transaction
+AutoSplit introduces **Autonomous stablecoin credit reputation and yield routing** directly inside mobile miniapps (Valora / MiniPay):
+- **Precision Routing Builder**: Automatically splits outbound/inbound stablecoins (`cUSD`) and native `CELO` in a single atomic transaction.
+- **DeFi Growth Vault**: Portions routed to savings vaults automatically compound interest natively at **4.5% APY** inside a self-compounding custody structure.
+- **Financial Reputation Score**: Mints on-chain credit reputation points when users route payments and save.
+- **Micro-Credit Hub**: Allows users to instantly request and repay under-collateralized micro-loans up to their score-derived credit limit.
 
 ---
 
 ## 🎯 Target Users
-
-- Freelancers / gig workers
-- Small business owners
-- DAOs / small teams
-- Crypto-native users on Celo
-- Emerging market users using stablecoins
+- **Freelancers / Gig Workers**: Automatically split earnings into savings, taxes, and operational wallets.
+- **Small Business Owners**: Access fast reputation-backed credit lines to purchase inventory.
+- **Everyday Mobile Users**: Build an on-chain credit rating simply by sending money.
 
 ---
 
-## 🔥 Core Value Proposition
-
-- One transaction → multiple financial outcomes
-- Eliminates manual money management steps
-- Enables programmable finance for everyday users
-
----
-
-## ⚙️ Core Features
+## ⚙️ Core Product Features
 
 ### 1. Payment Routing Engine
+- Supports splits of ERC-20 `cUSD` and native `CELO`.
+- Percentage-based basis point matrix (e.g. 50% recipient, 30% business, 20% savings).
+- Atomic execution reduces gas overhead and user friction.
 
-- Input: amount + routing rules
-- Output: automatic distribution
+### 2. Autonomous Yield Savings (Growth Vault)
+- Self-compounding virtual share price formula compounding yield dynamically at **4.5% APY** based on elapsed block timestamp.
+- Direct deposits and routing splits into the vault adapter custody.
 
-Example:
+### 3. Credit Reputation Engine
+- Earn **1 Reputation Point** per whole unit (1e18) split-routed.
+- Earn **5 Reputation Points** per whole unit deposited directly or auto-routed to savings.
+- Mapped as an active Credit Score on-chain.
 
-- 100 cUSD →
-  - 50 to recipient
-  - 30 to savings vault
-  - 20 to yield strategy
-
----
-
-### 2. Rule Configuration
-
-Users define:
-
-- Percentage splits
-- Destination addresses
-- Optional yield allocation
-
----
-
-### 3. Vault Integration (Optional)
-
-- Connect to DeFi protocols (e.g. Aave-like)
-- Route funds into yield strategies
-
----
-
-### 4. One-Click Execution
-
-- Single transaction handles all logic
-- No multi-step flows
-
----
-
-### 5. Transaction Transparency
-
-- Display breakdown before execution
-- Show post-transaction distribution
-
----
-
-## 🧩 User Flow
-
-1. User inputs amount
-2. User defines split rules
-3. System calculates distribution
-4. User confirms transaction
-5. Smart contract executes routing
-6. UI displays results
+### 4. Microfinance Credit Line
+- Dynamic borrowing limit equal to **2x the user's reputation score** in tokens.
+- Instant loan request and dispersal directly from active vault adapters.
+- 2% fixed interest fee to reward vault depositors.
+- Timely repayment awards a huge credit rating boost (+15 points).
 
 ---
 
 ## 🏗️ Technical Architecture
 
 ### Smart Contracts (Solidity)
-
-- Router Contract
-  - Accepts funds
-  - Applies split logic
-  - Executes transfers
-
-- Vault Adapter (optional)
-  - Integrates with DeFi protocols
-  - Handles deposits
-
----
+- **`AutoSplitRouter.sol`**:
+  - Implements split configurations, vault balance tracking, reputation scoring, and lending ledgers.
+  - Compounds interest on block timestamps.
+- **`VaultAdapter.sol`**:
+  - Direct custodian contract for deposited stablecoins and CELO.
+  - Authorizable by the main router contract.
 
 ### Frontend
-
-- Framework: Next.js
-- Wallet: Wagmi / WalletConnect
-- UI: Tailwind CSS
+- Next.js (TypeScript) + Tailwind CSS + Lucide Icons.
+- Wagmi / Viem hooks integrated with MiniPay legacy type transaction constraints.
 
 ---
 
 ## 🔐 Security Considerations
-
-- Reentrancy protection
-- Input validation (percentages ≤ 100%)
-- Safe transfer patterns
-- Access control (user-specific configs)
-
----
-
-## 📊 Success Metrics
-
-- Number of transactions executed
-- Total volume routed (cUSD)
-- Number of active users
-- Average splits per transaction
-- Vault participation rate
-
----
-
-## 🚀 MVP Scope
-
-- Basic split routing
-- Fixed percentage rules
-- Single recipient + optional vault
-- Simple UI
-
----
-
-## 🔮 Future Enhancements
-
-- Recurring payments
-- AI-based financial suggestions
-- Social/group splitting
-- Multi-token support
-- Farcaster miniapp integration
-
----
-
-## 🧠 “Wow” Moment
-
-User sends money once → sees it automatically:
-
-- Delivered
-- Saved
-- Invested
-
----
-
-## ⚠️ Risks
-
-- Overcomplication of UI
-- Low user understanding of splits
-- Integration complexity with DeFi
-
----
-
-## ✅ Out of Scope (MVP)
-
-- Cross-chain routing
-- Advanced analytics dashboards
-- Token swapping
-
----
-
-## 📌 Positioning
-
-AutoSplit is not a wallet.
-
-It is:
-👉 A programmable payment primitive for stablecoins.
+- NonReentrant guard protection on all asset withdraws and borrows.
+- Strict limit validations on percentage rules (must equal exactly 100%).
+- Full custody adapter separation keeps capital safe.

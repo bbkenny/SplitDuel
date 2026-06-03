@@ -1,4 +1,6 @@
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
+import fs from "fs";
+import path from "path";
 
 async function main() {
   const networkName = hre.network.name;
@@ -67,14 +69,61 @@ async function main() {
     }
   }
 
+  // Read deployed governance defaults from contract
+  const apyBasisPoints = await autoSplitRouter.apyBasisPoints();
+  const loanInterestBps = await autoSplitRouter.loanInterestBps();
+  const creditMultiplier = await autoSplitRouter.creditMultiplier();
+  const deployer = (await ethers.getSigners())[0];
+  const network = await ethers.provider.getNetwork();
+
   // Log summary
   console.log("\n==================================================");
   console.log("DEPLOYMENT COMPLETE");
-  console.log(`Network: ${networkName}`);
-  console.log(`AutoSplitRouter: ${routerAddress}`);
-  console.log(`VaultAdapter: ${adapterAddress}`);
-  console.log(`cUSD Token: ${cUSDAddress}`);
+  console.log(`Network:           ${networkName} (Chain ID: ${network.chainId})`);
+  console.log(`Deployer:          ${deployer.address}`);
+  console.log(`AutoSplitRouter:   ${routerAddress}`);
+  console.log(`VaultAdapter:      ${adapterAddress}`);
+  console.log(`cUSD Token:        ${cUSDAddress}`);
+  console.log("--- Governance Defaults ---");
+  console.log(`apyBasisPoints:    ${apyBasisPoints} (${Number(apyBasisPoints) / 100}% APY)`);
+  console.log(`loanInterestBps:   ${loanInterestBps} (${Number(loanInterestBps) / 100}% loan interest)`);
+  console.log(`creditMultiplier:  ${creditMultiplier}x tokens per reputation point`);
   console.log("==================================================\n");
+
+  // Save deployment record
+  const deploymentData = {
+    network: networkName,
+    chainId: network.chainId.toString(),
+    deployer: deployer.address,
+    timestamp: new Date().toISOString(),
+    contracts: {
+      AutoSplitRouter: {
+        address: routerAddress,
+        transactionHash: autoSplitRouter.deploymentTransaction()?.hash ?? "",
+      },
+      VaultAdapter: {
+        address: adapterAddress,
+        transactionHash: vaultAdapter.deploymentTransaction()?.hash ?? "",
+        constructorArgs: ["AutoSplit Vault"],
+      },
+    },
+    governanceDefaults: {
+      apyBasisPoints: apyBasisPoints.toString(),
+      loanInterestBps: loanInterestBps.toString(),
+      creditMultiplier: creditMultiplier.toString(),
+    },
+    tokens: { cUSD: cUSDAddress },
+  };
+
+  const deploymentsDir = path.join(__dirname, "../deployments");
+  if (!fs.existsSync(deploymentsDir)) {
+    fs.mkdirSync(deploymentsDir, { recursive: true });
+  }
+  fs.writeFileSync(
+    path.join(deploymentsDir, "deployment.json"),
+    JSON.stringify(deploymentData, null, 2)
+  );
+  console.log("✅ Deployment record saved to deployments/deployment.json");
 }
 
 main().catch((error) => {

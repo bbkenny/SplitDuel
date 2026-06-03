@@ -44,7 +44,9 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
 
     // Yield Compounding Vault Configuration
     uint256 public constant SECONDS_IN_YEAR = 31536000;
-    uint256 public constant APY_BASIS_POINTS = 450; // 4.5% APY
+    uint256 public apyBasisPoints = 450;        // 4.5% APY — governable
+    uint256 public loanInterestBps = 200;       // 2% loan interest fee — governable
+    uint256 public creditMultiplier = 2;        // Credit limit = score * multiplier tokens — governable
     
     // savingsShares[user][token] => User savings shares in vault
     mapping(address => mapping(address => uint256)) public savingsShares;
@@ -93,7 +95,7 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
             return basePrice;
         }
         uint256 elapsed = block.timestamp - lastUpdate;
-        uint256 interest = (elapsed * basePrice * APY_BASIS_POINTS) / (SECONDS_IN_YEAR * 10000);
+        uint256 interest = (elapsed * basePrice * apyBasisPoints) / (SECONDS_IN_YEAR * 10000);
         return basePrice + interest;
     }
 
@@ -291,8 +293,8 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
     }
 
     function getCreditLimit(address user, address /* token */) public view returns (uint256) {
-        // Credit limit: 2 tokens per reputation point
-        return getUserReputation(user) * 2 * 1e18;
+        // Credit limit: creditMultiplier tokens per reputation point
+        return getUserReputation(user) * creditMultiplier * 1e18;
     }
 
     function requestMicroLoan(uint256 loanAmount, address token) external nonReentrant {
@@ -301,8 +303,8 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
         require(borrowedBalance[msg.sender][token] + loanAmount <= limit, "Exceeds credit limit");
         require(activeVaultAdapter != address(0), "No active vault");
 
-        // Fixed interest fee of 2% (200 basis points)
-        uint256 interest = (loanAmount * 200) / 10000;
+        // Configurable interest fee (governance-controlled via loanInterestBps)
+        uint256 interest = (loanAmount * loanInterestBps) / 10000;
 
         // Pull liquidity from VaultAdapter
         uint256 price = getCurrentSharePrice(token);
@@ -412,6 +414,23 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
             activeVaultAdapter = address(0);
         }
         emit VaultAdapterUpdated(vault, enabled);
+    }
+
+    /// @notice Governance: update the virtual APY used in savings compounding
+    function setApyBasisPoints(uint256 _apyBasisPoints) external onlyOwner {
+        apyBasisPoints = _apyBasisPoints;
+    }
+
+    /// @notice Governance: update the loan interest fee in basis points
+    function setLoanInterestBps(uint256 _loanInterestBps) external onlyOwner {
+        require(_loanInterestBps <= 3000, "Max 30% interest"); // Safety cap
+        loanInterestBps = _loanInterestBps;
+    }
+
+    /// @notice Governance: update credit limit multiplier (tokens per reputation point)
+    function setCreditMultiplier(uint256 _creditMultiplier) external onlyOwner {
+        require(_creditMultiplier > 0, "Multiplier must be > 0");
+        creditMultiplier = _creditMultiplier;
     }
 
     receive() external payable {

@@ -93,5 +93,17 @@ npm run dev
 
 ---
 
+## ⚠️ Yield Implementation Note
+
+The **4.5% APY** displayed in the Growth Vault is currently **simulated yield** — it is computed entirely on-chain using elapsed block timestamps inside `AutoSplitRouter.sol` via a virtual share price formula. There is **no external DeFi protocol connected** (e.g., no Ubeswap LP, no Mento reserve integration).
+
+This is intentional for the current MVP build and provides a realistic demo of how yield accrual would behave. The roadmap for real yield integration includes:
+- **Phase 2:** Ubeswap liquidity pool routing for cUSD deposits
+- **Phase 3:** Mento reserve yield or tokenized RWA vaults on Celo
+
+Until then, all APY figures shown are **projections based on the internal compounding formula**, not actual earned yield from an external source.
+
+---
+
 ### 📄 License
 MIT © AutoSplit Protocol

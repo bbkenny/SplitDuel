@@ -76,3 +76,11 @@ AutoSplit introduces **Autonomous stablecoin credit reputation and yield routing
 - NonReentrant guard protection on all asset withdraws and borrows.
 - Strict limit validations on percentage rules (must equal exactly 100%).
 - Full custody adapter separation keeps capital safe.
+
+### ⚠️ v2 Risk: Micro-Loan Liquidation Gap
+The current lending model uses a **fixed 2% interest fee** with **no time-based liquidation mechanism**. The only incentive for borrowers to repay is the **+15 reputation point boost**. Low-balance or anonymous wallets could theoretically walk away from loans with no forced repayment consequence.
+
+**Planned v2 mitigations:**
+- **30-day overdue penalty:** Deduct reputation points daily after grace period expires.
+- **Credit limit freeze:** Block new loans to addresses with outstanding overdue positions.
+- **Optional collateral mode:** Allow users to voluntarily over-collateralize for higher credit limits.

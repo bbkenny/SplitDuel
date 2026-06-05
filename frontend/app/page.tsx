@@ -65,10 +65,10 @@ export default function Home() {
         {/* Header */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-4">
-            <Building2 className="w-3 h-3 animate-pulse" /> The Treasury Matrix v2.0
+            <Building2 className="w-3 h-3 animate-pulse" /> Treasury Matrix v2.0
           </div>
           <h1 className="text-5xl md:text-7xl font-black tracking-tight uppercase italic leading-[0.9]">
-            REVENUE <span className="text-emerald-400">ROUTER.</span>
+            AUTO<span className="text-emerald-400">SPLIT.</span>
           </h1>
           <p className="text-emerald-400/50 font-bold uppercase text-sm tracking-wide max-w-2xl mx-auto">
             A B2B Primitive on Celo. Instantly split incoming revenue among collaborators while automatically diverting a customizable percentage into a yield-generating shared treasury.

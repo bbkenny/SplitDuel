@@ -204,7 +204,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     if (!isReady || !isConnected) return;
     setLoading(true);
     try {
-      const recipients = splits.map((s) => s.recipient);
+      const recipients = splits.map((s) => s.recipient as `0x${string}`);
       const basisPoints = splits.map((s) => BigInt(s.basisPoints));
       const isVault = splits.map((s) => s.isVault);
 

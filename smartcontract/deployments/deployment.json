@@ -1,0 +1,27 @@
+{
+  "network": "celo",
+  "chainId": "42220",
+  "deployer": "0x6C150Cbd3C9Fe63F2Ca7D58b1939e77A8299D48c",
+  "timestamp": "2026-06-05T16:08:30.127Z",
+  "contracts": {
+    "AutoSplitRouter": {
+      "address": "0xa27e53D8DE586dd3c11A91B48F13fFECfBf87b21",
+      "transactionHash": "0x544ae71c168d30442eafa7b9ba8c5b55e2246a4b0837e843ebd99ef19e4a7a2e"
+    },
+    "VaultAdapter": {
+      "address": "0x72Fc91AB6815AFEDa28ff343A294176B7F6B0288",
+      "transactionHash": "0xb276b339c1f6a0321a79cbad30ba8dcbd6f94d9a7059bc2acb0c7820341ad125",
+      "constructorArgs": [
+        "AutoSplit Vault"
+      ]
+    }
+  },
+  "governanceDefaults": {
+    "apyBasisPoints": "450",
+    "loanInterestBps": "200",
+    "creditMultiplier": "2"
+  },
+  "tokens": {
+    "cUSD": "0x765de816845861e75a25fca122bb6898b8b1282a"
+  }
+}

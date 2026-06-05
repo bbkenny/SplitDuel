@@ -18,7 +18,7 @@ interface IVaultAdapter {
  * Allows teams, DAOs, and gig workers to split incoming revenue instantly among collaborators,
  * while silently diverting a programmed percentage into a yield-generating shared treasury.
  */
-contract AutoSplitRouter is Ownable, ReentrancyGuard {
+contract AutoSplitRouter is ReentrancyGuard {
 
     struct SplitDestination {
         address recipient;
@@ -45,14 +45,44 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
     uint256 public totalTransactions;
     uint256 public totalVolume;
 
+    // Admin Role Flexibility (70% Threshold)
+    mapping(address => bool) public isAdmin;
+    address[] public adminList;
+
+    struct AdminProposal {
+        address target;
+        bool isAdd;
+        uint256 approvals;
+        bool executed;
+    }
+    
+    // proposalId => adminAddress => hasApproved
+    mapping(uint256 => mapping(address => bool)) public proposalApprovals;
+    
+    uint256 public nextProposalId;
+    mapping(uint256 => AdminProposal) public proposals;
+
+    uint256 public maxSplits = 10; // Dynamic protocol parameter
+
     // Events
     event SplitRuleUpdated(address indexed user, address[] recipients, uint256[] basisPoints, bool[] isVault);
     event PaymentRouted(address indexed sender, address token, uint256 amount, address[] recipients, uint256[] amounts);
     event VaultAdapterUpdated(address indexed vault, bool enabled);
     event TreasuryDeposited(address indexed user, address indexed token, uint256 amount, uint256 shares);
     event TreasuryWithdrawn(address indexed user, address indexed token, uint256 amount, uint256 shares);
+    event AdminProposalCreated(uint256 indexed proposalId, address indexed target, bool isAdd);
+    event AdminProposalApproved(uint256 indexed proposalId, address indexed approver);
+    event AdminProposalExecuted(uint256 indexed proposalId, address indexed target, bool isAdd);
 
-    constructor() Ownable(msg.sender) {}
+    modifier onlyAdmin() {
+        require(isAdmin[msg.sender], "Not an admin");
+        _;
+    }
+
+    constructor() {
+        isAdmin[msg.sender] = true;
+        adminList.push(msg.sender);
+    }
 
     // ---------------------------------------------
     // TREASURY INTERNALS (Compound interest simulation)
@@ -95,7 +125,7 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
         require(len == basisPoints.length, "Length mismatch");
         require(len == isVault.length, "Length mismatch");
         require(len > 0, "Empty splits");
-        require(len <= 10, "Too many splits");
+        require(len <= maxSplits, "Too many splits");
 
         uint256 totalBasisPoints;
         for (uint256 i; i < len; i++) {
@@ -276,10 +306,14 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
     }
 
     // ---------------------------------------------
-    // ADMIN FUNCTIONS
+    // ADMIN FUNCTIONS & MULTI-SIG LOGIC
     // ---------------------------------------------
 
-    function setVaultAdapter(address vault, bool enabled) external onlyOwner {
+    function setMaxSplits(uint256 _maxSplits) external onlyAdmin {
+        maxSplits = _maxSplits;
+    }
+
+    function setVaultAdapter(address vault, bool enabled) external onlyAdmin {
         vaultAdapters[vault] = enabled;
         if (enabled) {
             activeVaultAdapter = vault;
@@ -290,8 +324,78 @@ contract AutoSplitRouter is Ownable, ReentrancyGuard {
     }
 
     /// @notice Governance: update the virtual APY used in treasury compounding
-    function setApyBasisPoints(uint256 _apyBasisPoints) external onlyOwner {
+    function setApyBasisPoints(uint256 _apyBasisPoints) external onlyAdmin {
         apyBasisPoints = _apyBasisPoints;
+    }
+
+    // ---------------------------------------------
+    // 70% ADMIN THRESHOLD LOGIC
+    // ---------------------------------------------
+
+    function proposeAdminChange(address target, bool isAdd) external onlyAdmin {
+        require(isAdmin[target] != isAdd, "Target already in desired state");
+        
+        if (adminList.length == 1) {
+            // Immediate execution if only 1 admin exists
+            _executeAdminChange(target, isAdd);
+            return;
+        }
+
+        uint256 proposalId = nextProposalId++;
+        AdminProposal storage p = proposals[proposalId];
+        p.target = target;
+        p.isAdd = isAdd;
+        
+        proposalApprovals[proposalId][msg.sender] = true;
+        p.approvals = 1;
+        
+        emit AdminProposalCreated(proposalId, target, isAdd);
+        emit AdminProposalApproved(proposalId, msg.sender);
+
+        _checkAndExecuteProposal(proposalId);
+    }
+
+    function approveAdminChange(uint256 proposalId) external onlyAdmin {
+        AdminProposal storage p = proposals[proposalId];
+        require(!p.executed, "Already executed");
+        require(!proposalApprovals[proposalId][msg.sender], "Already approved");
+        require(isAdmin[p.target] != p.isAdd, "Target already in desired state");
+
+        proposalApprovals[proposalId][msg.sender] = true;
+        p.approvals++;
+        
+        emit AdminProposalApproved(proposalId, msg.sender);
+
+        _checkAndExecuteProposal(proposalId);
+    }
+
+    function _checkAndExecuteProposal(uint256 proposalId) internal {
+        AdminProposal storage p = proposals[proposalId];
+        
+        // 70% threshold calculation
+        uint256 requiredApprovals = (adminList.length * 70 + 99) / 100;
+        
+        if (p.approvals >= requiredApprovals) {
+            p.executed = true;
+            _executeAdminChange(p.target, p.isAdd);
+            emit AdminProposalExecuted(proposalId, p.target, p.isAdd);
+        }
+    }
+
+    function _executeAdminChange(address target, bool isAdd) internal {
+        if (isAdd) {
+            isAdmin[target] = true;
+            adminList.push(target);
+        } else {
+            isAdmin[target] = false;
+            for (uint256 i = 0; i < adminList.length; i++) {
+                if (adminList[i] == target) {
+                    adminList[i] = adminList[adminList.length - 1];
+                    adminList.pop();
+                    break;
+                }
+            }
+        }
     }
 
     receive() external payable {

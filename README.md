@@ -15,19 +15,24 @@
 
 ---
 
-> **The Problem:** In mobile-first economies, digital payments are purely transactional. Senders route money instantly for consumption, with zero automatic micro-savings triggers. Furthermore, unbanked microfinance users lack on-chain credit history to access small borrowing buffers or overdrafts.
+> **The Problem:** In digital economies, managing collaborative revenue and shared treasuries is a painful, manual process requiring spreadsheets and trust. 
 > 
-> **The Solution:** AutoSplit v2.0 introduces a programmable stablecoin payment primitive that combines **precision routing, autonomous time-compounding savings, credit reputation points, and micro-loan borrowing** into a single, mobile-native dashboard on Celo.
+> **The Solution:** AutoSplit v2.0 introduces a **Programmable Revenue Router** — "One address → many outcomes." Instantly route incoming revenue among collaborators while automatically diverting a percentage into a yield-generating shared treasury.
+
+---
+
+## 🌐 Deployed Contracts (Celo Mainnet)
+
+* **AutoSplitRouter:** [`0x8fd08cf9b2A54E498F1C78116A9Ad2620038B462`](https://celoscan.io/address/0x8fd08cf9b2A54E498F1C78116A9Ad2620038B462)
+* **VaultAdapter:** [`0xCc070bBDF79AD0Ef42747BCB7AD349708Ee19161`](https://celoscan.io/address/0xCc070bBDF79AD0Ef42747BCB7AD349708Ee19161)
 
 ---
 
 ## 🎯 Overview
 
-AutoSplit transitions everyday payments into building blocks for credit health and microfinance growth:
-- **Precision Routing Engine:** Split native `CELO` or ERC-20 `cUSD` payments dynamically across a basis-point recipient matrix in a single atomic transaction.
-- **DeFi Growth Vault:** Auto-route split percentages into a vault that compounds interest dynamically at **4.5% APY** based on elapsed block timestamps.
-- **On-Chain Reputation Registry:** Mints credit reputation points automatically when you split, route, or save.
-- **Micro-Credit Hub:** Instantly borrow and repay stablecoin micro-loans (overdrafts) up to your reputational credit limit.
+AutoSplit acts as production-grade infrastructure for teams, DAOs, creators, and agencies:
+- **Programmable Routing Engine:** Split native `CELO` or ERC-20 `cUSD` payments dynamically across a recipient matrix in a single atomic transaction.
+- **DeFi Shared Treasury:** Auto-route split percentages directly into a Vault that compounds interest dynamically.
 
 ---
 

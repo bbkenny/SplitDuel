@@ -59,6 +59,7 @@ Professional, mobile-first interface designed for Opera **MiniPay** and **Valora
 - **Reputation Hub:** View your live credit points, rating tiers (Bronze, Gold, Elite), and borrow limit.
 - **Growth Savings Vault:** Deposit or withdraw directly to see savings compound in real-time.
 - **Micro-Credit Hub:** Request micro-loans and execute one-tap loan repayments.
+- **Secure Admin Panel:** An owner-gated dashboard available only to the contract deployer, featuring UI controls for dynamic APY adjustments, loan interest fee tuning, and credit multiplier configurations.
 
 ---
 

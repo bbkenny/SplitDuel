@@ -3,6 +3,10 @@
 import React, { useState } from "react";
 import { useAutoSplit } from "@/components/AutoSplitProvider";
 import { Footer } from "@/components/Footer";
+import AdminPanel from "@/components/AdminPanel";
+import { useReadContract, useAccount } from "wagmi";
+import { AutoSplitRouterABI } from "@/lib/abi";
+import { CONTRACT_ADDRESSES } from "@/lib/constants";
 import {
   Shield,
   Zap,
@@ -63,6 +67,15 @@ export default function Home() {
   };
   const creditTier = getCreditTier();
 
+  const { address } = useAccount();
+  const { data: ownerAddress } = useReadContract({
+    address: CONTRACT_ADDRESSES.celo.AUTO_SPLIT_ROUTER as `0x${string}`,
+    abi: AutoSplitRouterABI,
+    functionName: "owner",
+  });
+
+  const isAdmin = address && ownerAddress && address.toLowerCase() === (ownerAddress as string).toLowerCase();
+
   return (
     <div className="min-h-screen bg-[#022D2B] text-white font-sans p-4 sm:p-6 md:p-8 pt-24 sm:pt-28">
       <main className="max-w-6xl mx-auto space-y-12">
@@ -83,6 +96,9 @@ export default function Home() {
           {/* LEFT: Rule Builder & Credit Union (7 cols) */}
           <div className="lg:col-span-7 space-y-8">
             
+            {/* Admin Panel (Only visible to owner) */}
+            {isAdmin && <AdminPanel />}
+
             {/* Split Rules Matrix */}
             <div className="glass-card p-5 md:p-8 border-white/5 space-y-8 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />

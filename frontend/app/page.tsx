@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useAutoSplit } from "@/components/AutoSplitProvider";
-import { Footer } from "@/components/Footer";
-import AdminPanel from "@/components/AdminPanel";
-import { useReadContract, useAccount } from "wagmi";
-import { AutoSplitRouterABI } from "@/lib/abi";
-import { CONTRACT_ADDRESSES } from "@/lib/constants";
+import React, { useState } from 'react';
+import { useAutoSplit } from '@/components/AutoSplitProvider';
+import { Footer } from '@/components/Footer';
+import AdminPanel from '@/components/AdminPanel';
+import { useReadContract, useAccount } from 'wagmi';
+import { AutoSplitRouterABI } from '@/lib/abi';
+import { CONTRACT_ADDRESSES } from '@/lib/constants';
 import {
   Shield,
   Zap,
@@ -18,11 +18,11 @@ import {
   ArrowDownLeft,
   Building2,
   Users,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   SplitRuleSkeleton,
   HistoryListSkeleton,
-} from "@/components/ui/SkeletonLoaders";
+} from '@/components/ui/SkeletonLoaders';
 
 export default function Home() {
   const {
@@ -44,20 +44,83 @@ export default function Home() {
     treasuryBalance,
     depositTreasury,
     withdrawTreasury,
+
+    // Simulation & Stepper
+    txStep,
+    txError,
+    txHash,
+    txSimulation,
+    txReset,
+    txSimulatePayment,
   } = useAutoSplit();
 
-  // Local treasury inputs
-  const [vaultAmount, setVaultAmount] = useState("");
-  const [vaultToken, setVaultToken] = useState("cUSD");
+  // Local states
+  const [vaultAmount, setVaultAmount] = useState('');
+  const [vaultToken, setVaultToken] = useState('cUSD');
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
 
   const { address } = useAccount();
   const { data: ownerAddress } = useReadContract({
     address: CONTRACT_ADDRESSES.celo.AUTO_SPLIT_ROUTER as `0x${string}`,
     abi: AutoSplitRouterABI,
-    functionName: "owner",
+    functionName: 'owner',
   });
 
   const isAdmin = address && ownerAddress && address.toLowerCase() === (ownerAddress as string).toLowerCase();
+
+  // Validation Checks
+  const routeAmountNum = parseFloat(amount || '0');
+  const routeBalance = token === 'cUSD' ? balances.cUSD : balances.CELO;
+  const isRouteInsufficient = routeAmountNum > routeBalance;
+  const isCeloGasLow = token === 'CELO' ? (balances.CELO - routeAmountNum < 0.005) : (balances.CELO < 0.005);
+
+  const vaultAmountNum = parseFloat(vaultAmount || '0');
+  const vaultBalance = vaultToken === 'cUSD' ? balances.cUSD : balances.CELO;
+  const isDepositInsufficient = vaultAmountNum > vaultBalance;
+  const isWithdrawInsufficient = vaultAmountNum > (vaultToken === 'cUSD' ? treasuryBalance.cUSD : treasuryBalance.CELO);
+
+  // Action Handlers
+  const handleRouteClick = async () => {
+    if (isRouteInsufficient || !amount || isCeloGasLow) return;
+    await txSimulatePayment(token, amount, splits);
+    setModalTitle('Route Payment Simulation');
+    setShowModal(true);
+  };
+
+  const handleSaveRulesClick = async () => {
+    setModalTitle('Save Rules On-Chain');
+    setShowModal(true);
+    try {
+      await saveOnChainRules();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDepositClick = async () => {
+    if (isDepositInsufficient || !vaultAmount) return;
+    setModalTitle('Deposit to Shared Treasury');
+    setShowModal(true);
+    try {
+      await depositTreasury(vaultToken, vaultAmount);
+      setVaultAmount('');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleWithdrawClick = async () => {
+    if (isWithdrawInsufficient || !vaultAmount) return;
+    setModalTitle('Withdraw from Shared Treasury');
+    setShowModal(true);
+    try {
+      await withdrawTreasury(vaultToken, vaultAmount);
+      setVaultAmount('');
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#022D2B] text-white font-sans p-4 sm:p-6 md:p-8 pt-24 sm:pt-28">
@@ -106,7 +169,7 @@ export default function Home() {
                         <input
                           type="text"
                           value={split.recipient}
-                          onChange={(e) => updateSplit(index, "recipient", e.target.value)}
+                          onChange={(e) => updateSplit(index, 'recipient', e.target.value)}
                           placeholder="Recipient 0x..."
                           className="w-full bg-[#033633] text-emerald-100 placeholder-emerald-700 p-3 rounded-xl border border-emerald-500/20 focus:outline-none focus:border-emerald-400 font-mono text-sm"
                         />
@@ -117,7 +180,7 @@ export default function Home() {
                               min="0"
                               max="10000"
                               value={split.basisPoints}
-                              onChange={(e) => updateSplit(index, "basisPoints", parseInt(e.target.value))}
+                              onChange={(e) => updateSplit(index, 'basisPoints', parseInt(e.target.value))}
                               className="w-full accent-emerald-500"
                             />
                             <span className="text-emerald-400 font-bold min-w-[50px] text-right">
@@ -152,11 +215,11 @@ export default function Home() {
                       + ADD DESTINATION
                     </button>
                     <button
-                      onClick={saveOnChainRules}
+                      onClick={handleSaveRulesClick}
                       disabled={!isReady || loading}
                       className="flex-[2] bg-emerald-500 hover:bg-emerald-400 text-[#022D2B] font-black p-4 rounded-2xl transition-all disabled:opacity-50 disabled:bg-[#033633] disabled:text-emerald-700"
                     >
-                      {loading ? "SYNCING..." : "SAVE ON-CHAIN"}
+                      {loading && showModal ? 'SYNCING...' : 'SAVE ON-CHAIN'}
                     </button>
                   </div>
                 </div>
@@ -186,14 +249,28 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex gap-3 mb-4">
-                <input 
-                  type="number" 
-                  placeholder="Amount" 
-                  value={vaultAmount}
-                  onChange={e => setVaultAmount(e.target.value)}
-                  className="flex-1 bg-[#022D2B] text-emerald-100 placeholder-emerald-700 p-3 rounded-xl border border-emerald-500/20 focus:outline-none focus:border-emerald-400 font-mono"
-                />
+              {/* Deposit/Withdraw Input & Smart Verification */}
+              <div className="relative flex items-center gap-3 mb-4">
+                <div className="relative flex-1">
+                  <input 
+                    type="number" 
+                    placeholder="Amount" 
+                    value={vaultAmount}
+                    onChange={e => setVaultAmount(e.target.value)}
+                    className="w-full bg-[#022D2B] text-emerald-100 placeholder-emerald-700 p-3 pr-16 rounded-xl border border-emerald-500/20 focus:outline-none focus:border-emerald-400 font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Autocomplete with user's wallet balance
+                      const maxVal = vaultToken === 'cUSD' ? balances.cUSD : balances.CELO;
+                      setVaultAmount(maxVal.toString());
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-emerald-400 hover:text-emerald-300 px-2 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/20"
+                  >
+                    MAX
+                  </button>
+                </div>
                 <select 
                   value={vaultToken}
                   onChange={e => setVaultToken(e.target.value)}
@@ -204,18 +281,30 @@ export default function Home() {
                 </select>
               </div>
 
+              {/* Inline Smart Validation Alerts for Vault */}
+              {vaultAmount && isDepositInsufficient && (
+                <div className="text-red-400 font-bold text-xs bg-red-500/10 p-3 rounded-xl border border-red-500/20 mb-4">
+                  ⚠️ Insufficient balance to deposit. You have {vaultBalance.toFixed(4)} {vaultToken}.
+                </div>
+              )}
+              {vaultAmount && isWithdrawInsufficient && (
+                <div className="text-red-400 font-bold text-xs bg-red-500/10 p-3 rounded-xl border border-red-500/20 mb-4">
+                  ⚠️ Insufficient treasury balance to withdraw. You have {(vaultToken === 'cUSD' ? treasuryBalance.cUSD : treasuryBalance.CELO).toFixed(4)} {vaultToken}.
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <button 
-                  onClick={() => depositTreasury(vaultToken, vaultAmount)}
-                  disabled={loading || !vaultAmount}
-                  className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold p-3 rounded-xl border border-emerald-500/30 transition-all flex items-center justify-center gap-2"
+                  onClick={handleDepositClick}
+                  disabled={loading || !vaultAmount || isDepositInsufficient}
+                  className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold p-3 rounded-xl border border-emerald-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ArrowDownLeft className="w-4 h-4" /> DEPOSIT
                 </button>
                 <button 
-                  onClick={() => withdrawTreasury(vaultToken, vaultAmount)}
-                  disabled={loading || !vaultAmount}
-                  className="flex-1 bg-[#022D2B] hover:bg-[#033633] text-white font-bold p-3 rounded-xl border border-emerald-500/20 transition-all flex items-center justify-center gap-2"
+                  onClick={handleWithdrawClick}
+                  disabled={loading || !vaultAmount || isWithdrawInsufficient}
+                  className="flex-1 bg-[#022D2B] hover:bg-[#033633] text-white font-bold p-3 rounded-xl border border-emerald-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   WITHDRAW <ArrowUpRight className="w-4 h-4" />
                 </button>
@@ -235,13 +324,26 @@ export default function Home() {
               
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Total Amount"
-                    className="flex-1 bg-[#033633]/10 text-[#022D2B] placeholder-[#022D2B]/50 p-4 rounded-2xl border border-[#022D2B]/20 focus:outline-none focus:border-[#022D2B] font-mono text-lg font-bold"
-                  />
+                  <div className="relative flex-1">
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="Total Amount"
+                      className="w-full bg-[#033633]/10 text-[#022D2B] placeholder-[#022D2B]/50 p-4 pr-16 rounded-2xl border border-[#022D2B]/20 focus:outline-none focus:border-[#022D2B] font-mono text-lg font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Max autocomplete
+                        const maxVal = token === 'cUSD' ? balances.cUSD : balances.CELO;
+                        setAmount(maxVal.toString());
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#022D2B] hover:opacity-80 px-2 py-1 bg-[#022D2B]/10 rounded-md border border-[#022D2B]/20"
+                    >
+                      MAX
+                    </button>
+                  </div>
                   <select
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
@@ -254,15 +356,27 @@ export default function Home() {
 
                 <div className="bg-[#033633]/5 p-4 rounded-2xl flex justify-between items-center text-sm font-bold">
                   <span>WALLET BALANCE:</span>
-                  <span>{token === "cUSD" ? balances.cUSD.toFixed(2) : balances.CELO.toFixed(2)} {token}</span>
+                  <span>{token === 'cUSD' ? balances.cUSD.toFixed(2) : balances.CELO.toFixed(2)} {token}</span>
                 </div>
 
+                {/* Inline Smart Validation Alerts for Routing */}
+                {amount && isRouteInsufficient && (
+                  <div className="text-red-950 font-bold text-xs bg-red-100 p-3 rounded-xl border border-red-200">
+                    ⚠️ Insufficient balance. You only have {routeBalance.toFixed(4)} {token}.
+                  </div>
+                )}
+                {amount && !isRouteInsufficient && isCeloGasLow && (
+                  <div className="text-amber-950 font-bold text-xs bg-amber-100 p-3 rounded-xl border border-amber-200">
+                    ⚠️ Low CELO balance. Leave at least 0.005 CELO for gas fees to avoid transaction failure.
+                  </div>
+                )}
+
                 <button
-                  onClick={executeRoutePayment}
-                  disabled={!isReady || !amount || loading}
-                  className="w-full bg-[#022D2B] hover:bg-[#033633] text-emerald-400 font-black p-5 rounded-2xl transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
+                  onClick={handleRouteClick}
+                  disabled={!isReady || !amount || loading || isRouteInsufficient || isCeloGasLow}
+                  className="w-full bg-[#022D2B] hover:bg-[#033633] text-emerald-400 font-black p-5 rounded-2xl transition-all shadow-xl disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
                 >
-                  {loading ? "PROCESSING..." : "EXECUTE ROUTING"} <ArrowRight className="w-5 h-5" />
+                  {loading && showModal ? 'PROCESSING...' : 'EXECUTE ROUTING'} <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -318,6 +432,205 @@ export default function Home() {
         </div>
       </main>
       <Footer />
+
+      {/* Transaction Lifecycle & Simulation Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 bg-[#022D2B]/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#033633] border border-emerald-500/30 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] pointer-events-none" />
+            
+            <h3 className="text-xl font-black italic tracking-wide uppercase text-emerald-400 mb-4 border-b border-emerald-500/10 pb-3">
+              {modalTitle}
+            </h3>
+
+            {/* 1. Simulation step (Only for route payments and when status is idle) */}
+            {txStep === 'idle' && txSimulation && (
+              <div className="space-y-4">
+                <p className="text-sm text-emerald-100/70">
+                  Review your program split parameters before signing the transaction.
+                </p>
+                <div className="bg-[#022D2B] p-4 rounded-2xl border border-emerald-500/10 space-y-3">
+                  <div className="flex justify-between items-center text-xs font-bold text-emerald-400">
+                    <span>TOTAL SEND AMOUNT</span>
+                    <span>{txSimulation.totalAmount} {txSimulation.tokenName}</span>
+                  </div>
+                  <div className="border-t border-emerald-500/10 pt-2 space-y-2">
+                    {txSimulation.recipients.map((recipient, i) => (
+                      <div key={i} className="flex justify-between items-center text-xs">
+                        <span className="font-mono text-emerald-100/60">
+                          {txSimulation.isVault[i] ? (
+                            <span className="text-emerald-400 font-bold flex items-center gap-1">🏦 SAVINGS VAULT</span>
+                          ) : (
+                            `${recipient.slice(0, 8)}...${recipient.slice(-6)}`
+                          )}
+                        </span>
+                        <span className="font-bold text-white">
+                          {txSimulation.amounts[i]} {txSimulation.tokenName} ({txSimulation.percentages[i]}%)
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-emerald-500/10 pt-2 flex justify-between items-center text-[10px] font-bold text-emerald-400/60">
+                    <span>ESTIMATED GAS FEE</span>
+                    <span>{txSimulation.estimatedGasFee}</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => {
+                      setShowModal(false);
+                      txReset();
+                    }}
+                    className="flex-1 bg-[#022D2B] hover:bg-[#033633] text-emerald-400 font-bold p-3 rounded-xl border border-emerald-500/20 transition-all text-xs"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await executeRoutePayment();
+                      } catch (err) {
+                        console.error(err);
+                      }
+                    }}
+                    className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-[#022D2B] font-black p-3 rounded-xl transition-all text-xs"
+                  >
+                    CONFIRM & SEND
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 2. Active transaction steps (preparing, broadcasting, confirming, confirmed, failed) */}
+            {txStep !== 'idle' && (
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  {/* Preparing Step */}
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                      txStep === 'preparing' ? 'bg-emerald-500 text-[#022D2B] animate-pulse' :
+                      ['broadcasting', 'confirming', 'confirmed'].includes(txStep) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                      'bg-[#022D2B] text-emerald-700'
+                    }`}>
+                      {['broadcasting', 'confirming', 'confirmed'].includes(txStep) ? '✓' : '1'}
+                    </div>
+                    <div className="flex-1">
+                      <p className={`text-sm font-bold ${txStep === 'preparing' ? 'text-emerald-400' : 'text-emerald-100/60'}`}>
+                        Preparing Transaction
+                      </p>
+                      <p className="text-xs text-emerald-400/40">Requesting signature from wallet...</p>
+                    </div>
+                  </div>
+
+                  {/* Broadcasting Step */}
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                      txStep === 'broadcasting' ? 'bg-emerald-500 text-[#022D2B] animate-pulse' :
+                      ['confirming', 'confirmed'].includes(txStep) ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                      'bg-[#022D2B] text-emerald-700'
+                    }`}>
+                      {['confirming', 'confirmed'].includes(txStep) ? '✓' : '2'}
+                    </div>
+                    <div className="flex-1">
+                      <p className={`text-sm font-bold ${txStep === 'broadcasting' ? 'text-emerald-400' : 'text-emerald-100/60'}`}>
+                        Broadcasting
+                      </p>
+                      <p className="text-xs text-emerald-400/40">Sending transaction to Celo network...</p>
+                    </div>
+                  </div>
+
+                  {/* Confirming Step */}
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                      txStep === 'confirming' ? 'bg-emerald-500 text-[#022D2B] animate-pulse' :
+                      txStep === 'confirmed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                      'bg-[#022D2B] text-emerald-700'
+                    }`}>
+                      {txStep === 'confirmed' ? '✓' : '3'}
+                    </div>
+                    <div className="flex-1">
+                      <p className={`text-sm font-bold ${txStep === 'confirming' ? 'text-emerald-400' : 'text-emerald-100/60'}`}>
+                        Confirming Blocks
+                      </p>
+                      <p className="text-xs text-emerald-400/40">Waiting for Celo block receipt...</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Status messages & feedback */}
+                {txStep === 'confirmed' && (
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl text-center space-y-2">
+                    <div className="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto text-emerald-400">
+                      ✓
+                    </div>
+                    <p className="text-sm font-bold text-emerald-400 uppercase tracking-wider">Transaction Confirmed!</p>
+                    {txHash && (
+                      <a
+                        href={`https://celoscan.io/tx/${txHash}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block text-xs font-mono text-emerald-400/60 hover:text-emerald-400 underline"
+                      >
+                        View on Celoscan ↗
+                      </a>
+                    )}
+                    <button
+                      onClick={() => {
+                        setShowModal(false);
+                        txReset();
+                      }}
+                      className="w-full mt-2 bg-emerald-500 hover:bg-emerald-400 text-[#022D2B] font-black py-2.5 rounded-xl transition-all text-xs"
+                    >
+                      DISMISS
+                    </button>
+                  </div>
+                )}
+
+                {txStep === 'failed' && (
+                  <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl text-center space-y-2">
+                    <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center mx-auto text-red-400 text-lg font-bold">
+                      ✕
+                    </div>
+                    <p className="text-sm font-bold text-red-400 uppercase tracking-wider">Transaction Failed</p>
+                    <p className="text-xs text-red-300/80 max-h-20 overflow-y-auto font-mono text-left p-2 bg-black/20 rounded-lg">
+                      {txError}
+                    </p>
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => {
+                          setShowModal(false);
+                          txReset();
+                        }}
+                        className="flex-1 bg-[#022D2B] hover:bg-[#033633] text-emerald-400 font-bold py-2 rounded-xl border border-emerald-500/20 transition-all text-xs"
+                      >
+                        CLOSE
+                      </button>
+                      <button
+                        onClick={async () => {
+                          txReset();
+                          if (modalTitle.includes('Route')) {
+                            await executeRoutePayment();
+                          } else if (modalTitle.includes('Save')) {
+                            await saveOnChainRules();
+                          } else if (modalTitle.includes('Deposit')) {
+                            await depositTreasury(vaultToken, vaultAmount);
+                          } else if (modalTitle.includes('Withdraw')) {
+                            await withdrawTreasury(vaultToken, vaultAmount);
+                          }
+                        }}
+                        className="flex-1 bg-red-500 hover:bg-red-400 text-white font-black py-2 rounded-xl transition-all text-xs"
+                      >
+                        TRY AGAIN
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

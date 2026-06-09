@@ -58,6 +58,12 @@ export default function Home() {
   const [vaultAmount, setVaultAmount] = useState('');
   const [vaultToken, setVaultToken] = useState('cUSD');
   const [showModal, setShowModal] = useState(false);
+  const [treasurySim, setTreasurySim] = useState<{
+    action: 'deposit' | 'withdraw';
+    token: string;
+    amount: string;
+    usdValue: string;
+  } | null>(null);
   const [modalTitle, setModalTitle] = useState('');
 
   const { address } = useAccount();
@@ -98,28 +104,32 @@ export default function Home() {
     }
   };
 
-  const handleDepositClick = async () => {
+  const handleDepositClick = () => {
     if (isDepositInsufficient || !vaultAmount) return;
+    const rate = vaultToken === 'CELO' ? 0.62 : 1.00;
+    const usd = (parseFloat(vaultAmount) * rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    setTreasurySim({
+      action: 'deposit',
+      token: vaultToken,
+      amount: vaultAmount,
+      usdValue: usd,
+    });
     setModalTitle('Deposit to Shared Treasury');
     setShowModal(true);
-    try {
-      await depositTreasury(vaultToken, vaultAmount);
-      setVaultAmount('');
-    } catch (e) {
-      console.error(e);
-    }
   };
 
-  const handleWithdrawClick = async () => {
+  const handleWithdrawClick = () => {
     if (isWithdrawInsufficient || !vaultAmount) return;
+    const rate = vaultToken === 'CELO' ? 0.62 : 1.00;
+    const usd = (parseFloat(vaultAmount) * rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    setTreasurySim({
+      action: 'withdraw',
+      token: vaultToken,
+      amount: vaultAmount,
+      usdValue: usd,
+    });
     setModalTitle('Withdraw from Shared Treasury');
     setShowModal(true);
-    try {
-      await withdrawTreasury(vaultToken, vaultAmount);
-      setVaultAmount('');
-    } catch (e) {
-      console.error(e);
-    }
   };
 
   return (
@@ -257,16 +267,27 @@ export default function Home() {
                     placeholder="Amount" 
                     value={vaultAmount}
                     onChange={e => setVaultAmount(e.target.value)}
-                    className="w-full bg-[#022D2B] text-emerald-100 placeholder-emerald-700 p-3 pr-16 rounded-xl border border-emerald-500/20 focus:outline-none focus:border-emerald-400 font-mono"
+                    className="w-full bg-[#022D2B] text-emerald-100 placeholder-emerald-700 p-3 pr-36 rounded-xl border border-emerald-500/20 focus:outline-none focus:border-emerald-400 font-mono text-sm"
                   />
+                  <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+                    {vaultAmount && !isNaN(parseFloat(vaultAmount)) && (
+                      <span className="text-[10px] text-emerald-400/60 font-medium">
+                        ≈ ${(parseFloat(vaultAmount) * (vaultToken === 'CELO' ? 0.62 : 1.00)).toFixed(2)} USD
+                      </span>
+                    )}
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
-                      // Autocomplete with user's wallet balance
-                      const maxVal = vaultToken === 'cUSD' ? balances.cUSD : balances.CELO;
-                      setVaultAmount(maxVal.toString());
+                      // Autocomplete with user's wallet balance (reserving 0.05 CELO buffer for gas if native CELO)
+                      if (vaultToken === 'CELO') {
+                        const maxVal = Math.max(0, balances.CELO - 0.05);
+                        setVaultAmount(maxVal.toString());
+                      } else {
+                        setVaultAmount(balances.cUSD.toString());
+                      }
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-emerald-400 hover:text-emerald-300 px-2 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/20"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-emerald-400 hover:text-emerald-300 px-2 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/20"
                   >
                     MAX
                   </button>
@@ -330,16 +351,27 @@ export default function Home() {
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="Total Amount"
-                      className="w-full bg-[#033633]/10 text-[#022D2B] placeholder-[#022D2B]/50 p-4 pr-16 rounded-2xl border border-[#022D2B]/20 focus:outline-none focus:border-[#022D2B] font-mono text-lg font-bold"
+                      className="w-full bg-[#033633]/10 text-[#022D2B] placeholder-[#022D2B]/50 p-4 pr-36 rounded-2xl border border-[#022D2B]/20 focus:outline-none focus:border-[#022D2B] font-mono text-lg font-bold"
                     />
+                    <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+                      {amount && !isNaN(parseFloat(amount)) && (
+                        <span className="text-xs text-[#022D2B]/60 font-black">
+                          ≈ ${(parseFloat(amount) * (token === 'CELO' ? 0.62 : 1.00)).toFixed(2)} USD
+                        </span>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => {
-                        // Max autocomplete
-                        const maxVal = token === 'cUSD' ? balances.cUSD : balances.CELO;
-                        setAmount(maxVal.toString());
+                        // Max autocomplete with gas buffer for native CELO
+                        if (token === 'CELO') {
+                          const maxVal = Math.max(0, balances.CELO - 0.05);
+                          setAmount(maxVal.toString());
+                        } else {
+                          setAmount(balances.cUSD.toString());
+                        }
                       }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#022D2B] hover:opacity-80 px-2 py-1 bg-[#022D2B]/10 rounded-md border border-[#022D2B]/20"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#022D2B] hover:opacity-80 px-2 py-1 bg-[#022D2B]/10 rounded-md border border-[#022D2B]/20"
                     >
                       MAX
                     </button>
@@ -452,7 +484,7 @@ export default function Home() {
                 <div className="bg-[#022D2B] p-4 rounded-2xl border border-emerald-500/10 space-y-3">
                   <div className="flex justify-between items-center text-xs font-bold text-emerald-400">
                     <span>TOTAL SEND AMOUNT</span>
-                    <span>{txSimulation.totalAmount} {txSimulation.tokenName}</span>
+                    <span>{txSimulation.totalAmount} {txSimulation.tokenName} (≈ ${(parseFloat(txSimulation.totalAmount) * (txSimulation.tokenName === 'CELO' ? 0.62 : 1.00)).toFixed(2)} USD)</span>
                   </div>
                   <div className="border-t border-emerald-500/10 pt-2 space-y-2">
                     {txSimulation.recipients.map((recipient, i) => (
@@ -472,7 +504,7 @@ export default function Home() {
                   </div>
                   <div className="border-t border-emerald-500/10 pt-2 flex justify-between items-center text-[10px] font-bold text-emerald-400/60">
                     <span>ESTIMATED GAS FEE</span>
-                    <span>{txSimulation.estimatedGasFee}</span>
+                    <span>{txSimulation.estimatedGasFee} (≈ $0.0003 USD)</span>
                   </div>
                 </div>
 
@@ -497,6 +529,64 @@ export default function Home() {
                     className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-[#022D2B] font-black p-3 rounded-xl transition-all text-xs"
                   >
                     CONFIRM & SEND
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 1.5. Treasury Simulation step (When status is idle and treasurySim exists) */}
+            {txStep === 'idle' && treasurySim && (
+              <div className="space-y-4">
+                <p className="text-sm text-emerald-100/70">
+                  Review your treasury transaction parameters before signing.
+                </p>
+                <div className="bg-[#022D2B] p-4 rounded-2xl border border-emerald-500/10 space-y-3">
+                  <div className="flex justify-between items-center text-xs font-bold text-emerald-400">
+                    <span>ACTION</span>
+                    <span className="uppercase text-white font-black bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">{treasurySim.action}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs font-bold text-emerald-400">
+                    <span>TOKEN</span>
+                    <span>{treasurySim.token}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs font-bold text-white">
+                    <span>AMOUNT</span>
+                    <span>{treasurySim.amount} {treasurySim.token} (≈ ${treasurySim.usdValue} USD)</span>
+                  </div>
+                  <div className="border-t border-emerald-500/10 pt-2 flex justify-between items-center text-[10px] font-bold text-emerald-400/60">
+                    <span>ESTIMATED GAS FEE</span>
+                    <span>0.0005 CELO (≈ $0.0003 USD)</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => {
+                      setShowModal(false);
+                      setTreasurySim(null);
+                      txReset();
+                    }}
+                    className="flex-1 bg-[#022D2B] hover:bg-[#033633] text-emerald-400 font-bold p-3 rounded-xl border border-emerald-500/20 transition-all text-xs"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        if (treasurySim.action === 'deposit') {
+                          await depositTreasury(treasurySim.token, treasurySim.amount);
+                        } else {
+                          await withdrawTreasury(treasurySim.token, treasurySim.amount);
+                        }
+                        setVaultAmount('');
+                        setTreasurySim(null);
+                      } catch (err) {
+                        console.error(err);
+                      }
+                    }}
+                    className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-[#022D2B] font-black p-3 rounded-xl transition-all text-xs"
+                  >
+                    CONFIRM & SIGN
                   </button>
                 </div>
               </div>

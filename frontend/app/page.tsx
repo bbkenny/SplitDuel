@@ -23,6 +23,7 @@ import {
   SplitRuleSkeleton,
   HistoryListSkeleton,
 } from '@/components/ui/SkeletonLoaders';
+import OnboardingTour from '@/components/onboarding/OnboardingTour';
 
 export default function Home() {
   const {
@@ -134,6 +135,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#022D2B] text-white font-sans p-4 sm:p-6 md:p-8 pt-24 sm:pt-28">
+      <OnboardingTour />
       <main className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-3">

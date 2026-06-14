@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useReadContract } from 'wagmi';
 import { parseUnits } from 'viem';
 import { AutoSplitRouterABI, ERC20ABI } from '@/lib/abi';
+import { AUTO_SPLIT_ROUTER_FUNCTIONS, ERC20_FUNCTIONS } from '@/lib/constants/contracts';
 
 interface Split {
   recipient: string;
@@ -43,7 +44,7 @@ export function useAutoSplitRouter({
   const { data: onChainRules, refetch: refetchOnChainRules } = useReadContract({
     address: routerAddress,
     abi: AutoSplitRouterABI,
-    functionName: 'getSplitRules',
+    functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.GET_SPLIT_RULES,
     args: address ? [address] : undefined,
     query: { enabled: !!address && !!routerAddress },
   });
@@ -101,7 +102,7 @@ export function useAutoSplitRouter({
       return await writeContractAsync({
         address: routerAddress,
         abi: AutoSplitRouterABI,
-        functionName: 'setSplitRules',
+        functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.SET_SPLIT_RULES,
         args: [recipients, basisPoints, isVault],
         type: 'legacy',
       });
@@ -123,7 +124,7 @@ export function useAutoSplitRouter({
         return await writeContractAsync({
           address: targetToken,
           abi: ERC20ABI,
-          functionName: 'approve',
+          functionName: ERC20_FUNCTIONS.APPROVE,
           args: [routerAddress, parsedAmount],
           type: 'legacy',
         });
@@ -135,7 +136,7 @@ export function useAutoSplitRouter({
       return await writeContractAsync({
         address: routerAddress,
         abi: AutoSplitRouterABI,
-        functionName: 'routePayment',
+        functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.ROUTE_PAYMENT,
         args: [targetToken, parsedAmount],
         value: isNative ? parsedAmount : undefined,
         type: 'legacy',

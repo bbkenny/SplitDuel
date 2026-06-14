@@ -48,6 +48,7 @@ export const metadata: Metadata = {
     shortcut: "/autosplit.svg",
     apple: "/autosplit-logo.png",
   },
+  manifest: "/site.webmanifest",
   robots: { index: true, follow: true },
   other: {
     "talentapp:project_verification":

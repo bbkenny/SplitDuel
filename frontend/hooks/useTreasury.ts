@@ -3,6 +3,7 @@
 import { useAccount, useWriteContract, useReadContract } from 'wagmi';
 import { parseUnits, formatUnits } from 'viem';
 import { AutoSplitRouterABI, ERC20ABI } from '@/lib/abi';
+import { VAULT_ADAPTER_FUNCTIONS, ERC20_FUNCTIONS } from '@/lib/constants/contracts';
 
 interface UseTreasuryProps {
   routerAddress: `0x${string}`;
@@ -26,7 +27,7 @@ export function useTreasury({
   const { data: cUSDTreasuryData, refetch: refetchcUSDTreasury } = useReadContract({
     address: routerAddress,
     abi: AutoSplitRouterABI,
-    functionName: 'getTreasuryBalance',
+    functionName: VAULT_ADAPTER_FUNCTIONS.GET_TREASURY_BALANCE,
     args: address ? [address, cUSDAddress] : undefined,
     query: { enabled: !!address && !!routerAddress },
   });
@@ -35,7 +36,7 @@ export function useTreasury({
   const { data: celoTreasuryData, refetch: refetchCeloTreasury } = useReadContract({
     address: routerAddress,
     abi: AutoSplitRouterABI,
-    functionName: 'getTreasuryBalance',
+    functionName: VAULT_ADAPTER_FUNCTIONS.GET_TREASURY_BALANCE,
     args: address ? [address, '0x0000000000000000000000000000000000000000'] : undefined,
     query: { enabled: !!address && !!routerAddress },
   });
@@ -63,7 +64,7 @@ export function useTreasury({
         return await writeContractAsync({
           address: targetToken,
           abi: ERC20ABI,
-          functionName: 'approve',
+          functionName: ERC20_FUNCTIONS.APPROVE,
           args: [routerAddress, parsed],
           type: 'legacy',
         });
@@ -75,7 +76,7 @@ export function useTreasury({
       return await writeContractAsync({
         address: routerAddress,
         abi: AutoSplitRouterABI,
-        functionName: 'depositTreasury',
+        functionName: VAULT_ADAPTER_FUNCTIONS.DEPOSIT_TREASURY,
         args: [targetToken, parsed],
         value: isNative ? parsed : undefined,
         type: 'legacy',
@@ -95,7 +96,7 @@ export function useTreasury({
       return await writeContractAsync({
         address: routerAddress,
         abi: AutoSplitRouterABI,
-        functionName: 'withdrawTreasury',
+        functionName: VAULT_ADAPTER_FUNCTIONS.WITHDRAW_TREASURY,
         args: [targetToken, parsed],
         type: 'legacy',
       });

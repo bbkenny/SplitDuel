@@ -68,13 +68,17 @@ export default function Home() {
   const [modalTitle, setModalTitle] = useState('');
 
   const { address } = useAccount();
-  const { data: ownerAddress } = useReadContract({
+  const { data: isAdminData } = useReadContract({
     address: CONTRACT_ADDRESSES.celo.AUTO_SPLIT_ROUTER as `0x${string}`,
     abi: AutoSplitRouterABI,
-    functionName: 'owner',
+    functionName: 'isAdmin',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address,
+    }
   });
 
-  const isAdmin = address && ownerAddress && address.toLowerCase() === (ownerAddress as string).toLowerCase();
+  const isAdmin = !!isAdminData;
 
   // Validation Checks
   const routeAmountNum = parseFloat(amount || '0');

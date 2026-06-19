@@ -250,7 +250,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="text-xl font-black italic tracking-wide">SHARED TREASURY</h3>
-                  <p className="text-emerald-400/60 text-xs font-medium">Compound Yield Severance Fund (4.5% APY)</p>
+                  <p className="text-emerald-400/60 text-xs font-medium">Compound Yield Severance Fund (Simulated 4.5% APY)</p>
                 </div>
               </div>
 

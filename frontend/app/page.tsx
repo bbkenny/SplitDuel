@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { useAutoSplit } from '@/components/AutoSplitProvider';
 import { Footer } from '@/components/Footer';
 import AdminPanel from '@/components/AdminPanel';
-import { useReadContract, useAccount } from 'wagmi';
-import { AutoSplitRouterABI } from '@/lib/abi';
+import { useReadContract, useAccount, useBalance } from 'wagmi';
+import { AutoSplitRouterABI, ERC20ABI } from '@/lib/abi';
+import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/lib/constants';
 import {
   Shield,
@@ -29,6 +30,7 @@ import { useCeloPrice } from '@/hooks/useCeloPrice';
 export default function Home() {
   const celoUsdRate = useCeloPrice();
   const {
+
     splits,
     amount,
     setAmount,
@@ -57,6 +59,33 @@ export default function Home() {
     txSimulatePayment,
   } = useAutoSplit();
 
+  const { address, chainId } = useAccount();
+
+  const isNative = token === 'CELO';
+  const targetChainId = chainId === 42220 ? 42220 : 44787;
+  const cUSDAddress = targetChainId === 42220 
+    ? CONTRACT_ADDRESSES.celo.cUSD 
+    : CONTRACT_ADDRESSES.celoAlfajores.cUSD;
+
+  const { data: nativeBalance } = useBalance({
+    address,
+    query: { enabled: !!address, refetchInterval: 2000 },
+  });
+
+  const { data: cUSDBalanceData } = useReadContract({
+    address: cUSDAddress,
+    abi: ERC20ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address, refetchInterval: 2000 },
+  });
+
+  const localCUSD = cUSDBalanceData ? Number(formatUnits(cUSDBalanceData as bigint, 18)) : 0;
+  const localCELO = nativeBalance ? Number(formatUnits(nativeBalance.value, nativeBalance.decimals)) : 0;
+
+  const displayBalance = token === 'CELO' ? localCELO.toFixed(2) : localCUSD.toFixed(2);
+
+
   // Local states
   const [vaultAmount, setVaultAmount] = useState('');
   const [vaultToken, setVaultToken] = useState('cUSD');
@@ -69,7 +98,7 @@ export default function Home() {
   } | null>(null);
   const [modalTitle, setModalTitle] = useState('');
 
-  const { address } = useAccount();
+
   const { data: isAdminData } = useReadContract({
     address: CONTRACT_ADDRESSES.celo.AUTO_SPLIT_ROUTER as `0x${string}`,
     abi: AutoSplitRouterABI,
@@ -84,12 +113,16 @@ export default function Home() {
 
   // Validation Checks
   const routeAmountNum = parseFloat(amount || '0');
-  const routeBalance = token === 'cUSD' ? balances.cUSD : balances.CELO;
+  const numericDisplayBalance = parseFloat(displayBalance);
+  const routeBalance = numericDisplayBalance;
   const isRouteInsufficient = routeAmountNum > routeBalance;
-  const isCeloGasLow = token === 'CELO' ? (balances.CELO - routeAmountNum < 0.005) : (balances.CELO < 0.005);
+  
+  const isCeloGasLow = token === 'CELO' 
+    ? (localCELO - routeAmountNum < 0.005) 
+    : (localCELO < 0.005);
 
   const vaultAmountNum = parseFloat(vaultAmount || '0');
-  const vaultBalance = vaultToken === 'cUSD' ? balances.cUSD : balances.CELO;
+  const vaultBalance = vaultToken === 'cUSD' ? localCUSD : localCELO;
   const isDepositInsufficient = vaultAmountNum > vaultBalance;
   const isWithdrawInsufficient = vaultAmountNum > (vaultToken === 'cUSD' ? treasuryBalance.cUSD : treasuryBalance.CELO);
 
@@ -144,10 +177,7 @@ export default function Home() {
       <OnboardingTour />
       <main className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-4">
-            <Building2 className="w-3 h-3 animate-pulse" /> Programmable Revenue Router
-          </div>
+        <div className="text-center space-y-3 pt-8 md:pt-12">
           <h1 className="text-5xl md:text-7xl font-black tracking-tight uppercase italic leading-[0.9]">
             AUTO<span className="text-emerald-400">SPLIT.</span>
           </h1>
@@ -309,10 +339,10 @@ export default function Home() {
                     onClick={() => {
                       // Autocomplete with user's wallet balance (reserving 0.05 CELO buffer for gas if native CELO)
                       if (vaultToken === 'CELO') {
-                        const maxVal = Math.max(0, balances.CELO - 0.05);
+                        const maxVal = Math.max(0, localCELO - 0.05);
                         setVaultAmount(maxVal.toString());
                       } else {
-                        setVaultAmount(balances.cUSD.toString());
+                        setVaultAmount(localCUSD.toString());
                       }
                     }}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-emerald-400 hover:text-emerald-300 px-2 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/20"
@@ -393,10 +423,10 @@ export default function Home() {
                       onClick={() => {
                         // Max autocomplete with gas buffer for native CELO
                         if (token === 'CELO') {
-                          const maxVal = Math.max(0, balances.CELO - 0.05);
+                          const maxVal = Math.max(0, localCELO - 0.05);
                           setAmount(maxVal.toString());
                         } else {
-                          setAmount(balances.cUSD.toString());
+                          setAmount(localCUSD.toString());
                         }
                       }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#022D2B] hover:opacity-80 px-2 py-1 bg-[#022D2B]/10 rounded-md border border-[#022D2B]/20"
@@ -416,7 +446,7 @@ export default function Home() {
 
                 <div className="bg-[#033633]/5 p-4 rounded-2xl flex justify-between items-center text-sm font-bold">
                   <span>WALLET BALANCE:</span>
-                  <span>{token === 'cUSD' ? balances.cUSD.toFixed(2) : balances.CELO.toFixed(2)} {token}</span>
+                  <span>{displayBalance} {token}</span>
                 </div>
 
                 {/* Inline Smart Validation Alerts for Routing */}

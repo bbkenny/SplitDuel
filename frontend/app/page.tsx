@@ -81,7 +81,7 @@ export default function Home() {
     address: cUSDAddress,
     abi: ERC20ABI,
     functionName: 'balanceOf',
-    args: address ? [address] : undefined,
+    args: address ? [address as `0x${string}`] : undefined,
     chainId: targetChainId,
     query: { enabled: !!address, refetchInterval: 2000 },
   });

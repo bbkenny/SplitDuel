@@ -112,7 +112,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     address: tokenAddresses.cUSD,
     abi: ERC20ABI,
     functionName: 'balanceOf',
-    args: address ? [address] : undefined,
+    args: address ? [address as `0x${string}`] : undefined,
     query: { enabled: !!address, refetchInterval: 2000 },
   });
 

@@ -104,21 +104,26 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   const [history, setHistory] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Determine target chain (default to Alfajores if not on Mainnet)
+  const targetChainId = chainId === 42220 ? 42220 : 44787;
+
   // Fetch balances
   const { data: cUSDBalanceData, refetch: refetchcUSDBalance } = useReadContract({
     address: tokenAddresses.cUSD,
     abi: ERC20ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
-    chainId: 42220,
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 2000 },
   });
 
   const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
     address,
-    chainId: 42220,
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 2000 },
   });
+
+  console.log("AutoSplit Debug - Address:", address, "Chain:", targetChainId);
+  console.log("AutoSplit Debug - cUSD Data:", cUSDBalanceData);
+  console.log("AutoSplit Debug - CELO Data:", celoBalanceResult);
 
   const balances = {
     cUSD: cUSDBalanceData ? Number(formatUnits(cUSDBalanceData as bigint, 18)) : 0,

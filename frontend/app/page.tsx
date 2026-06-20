@@ -256,6 +256,12 @@ export default function Home() {
                             </div>
                           </div>
                           <label className="flex items-center gap-2 cursor-pointer group">
+                            <input 
+                              type="checkbox"
+                              className="sr-only"
+                              checked={split.isVault}
+                              onChange={(e) => updateSplit(index, 'isVault', e.target.checked)}
+                            />
                             <div className={`w-10 h-6 rounded-full p-1 transition-colors ${split.isVault ? 'bg-emerald-500' : 'bg-[#033633] border border-emerald-500/30'}`}>
                               <div className={`w-4 h-4 rounded-full bg-white transition-transform ${split.isVault ? 'translate-x-4' : 'translate-x-0'}`} />
                             </div>

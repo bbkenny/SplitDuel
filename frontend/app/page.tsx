@@ -188,13 +188,13 @@ export default function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT: Rule Builder & Treasury (7 cols) */}
-          <div className="lg:col-span-7 space-y-8">
+          <div className="contents lg:block lg:col-span-7 space-y-0 lg:space-y-8">
             
             {/* Admin Panel (Only visible to owner) */}
             {isAdmin && <AdminPanel />}
 
             {/* Split Rules Editor */}
-            <div className="bg-[#033633] border border-emerald-500/20 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+            <div className="order-2 lg:order-none bg-[#033633] border border-emerald-500/20 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] pointer-events-none" />
               
               <div className="flex items-center justify-between mb-8">
@@ -301,7 +301,7 @@ export default function Home() {
             </div>
 
             {/* Treasury (Savings Vault) */}
-            <div className="bg-[#033633] border border-emerald-500/20 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+            <div className="order-4 lg:order-none bg-[#033633] border border-emerald-500/20 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                   <Building2 className="w-5 h-5" />
@@ -399,10 +399,10 @@ export default function Home() {
           </div>
 
           {/* RIGHT: Execute & History (5 cols) */}
-          <div className="lg:col-span-5 space-y-8">
+          <div className="contents lg:block lg:col-span-5 space-y-0 lg:space-y-8">
             
             {/* Execution Panel */}
-            <div className="bg-emerald-500 text-[#022D2B] rounded-3xl p-6 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+            <div className="order-3 lg:order-none bg-emerald-500 text-[#022D2B] rounded-3xl p-6 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
               <h2 className="text-2xl font-black italic tracking-wide mb-6 flex items-center gap-2">
                 <Zap className="w-6 h-6" /> ROUTE PAYMENT
               </h2>
@@ -478,7 +478,7 @@ export default function Home() {
             </div>
 
             {/* History Panel */}
-            <div className="bg-[#033633] border border-emerald-500/20 rounded-3xl p-6 shadow-2xl">
+            <div className="order-5 lg:order-none bg-[#033633] border border-emerald-500/20 rounded-3xl p-6 shadow-2xl">
               <h3 className="text-lg font-black italic tracking-wide mb-6 flex items-center gap-2 text-emerald-400">
                 <History className="w-5 h-5" /> RECENT ROUTINGS
               </h3>

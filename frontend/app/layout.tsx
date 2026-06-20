@@ -66,6 +66,7 @@ export const viewport: Viewport = {
 import { AutoSplitProvider } from "@/components/AutoSplitProvider";
 import OnboardingTour from "@/components/onboarding/OnboardingTour";
 import { SplitToaster } from "@/components/ui/Toast";
+import FloatingGuide from "@/components/FloatingGuide";
 
 export default function AppLayout({
   children,
@@ -81,6 +82,7 @@ export default function AppLayout({
             <main>{children}</main>
             <OnboardingTour />
             <SplitToaster />
+            <FloatingGuide />
           </AutoSplitProvider>
         </Web3Providers>
       </body>

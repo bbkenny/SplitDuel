@@ -201,9 +201,29 @@ export default function Home() {
                               onChange={(e) => updateSplit(index, 'basisPoints', parseInt(e.target.value))}
                               className="w-full accent-emerald-500"
                             />
-                            <span className="text-emerald-400 font-bold min-w-[50px] text-right">
-                              {(split.basisPoints / 100).toFixed(1)}%
-                            </span>
+                            <div className="flex items-center justify-end text-emerald-400 font-bold min-w-[64px]">
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                value={split.basisPoints / 100}
+                                onChange={(e) => {
+                                  let val = parseFloat(e.target.value);
+                                  if (isNaN(val)) {
+                                    // if the user clears the input completely, we can set it to 0 or leave it empty.
+                                    // For UX, if it's empty, we update it to 0 so the slider updates
+                                    if (e.target.value === '') updateSplit(index, 'basisPoints', 0);
+                                    return;
+                                  }
+                                  if (val > 100) val = 100;
+                                  if (val < 0) val = 0;
+                                  updateSplit(index, 'basisPoints', Math.round(val * 100));
+                                }}
+                                className="w-[46px] bg-transparent text-right outline-none appearance-none m-0 p-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:bg-emerald-500/10 focus:rounded px-1"
+                              />
+                              <span>%</span>
+                            </div>
                           </div>
                           <label className="flex items-center gap-2 cursor-pointer group">
                             <div className={`w-10 h-6 rounded-full p-1 transition-colors ${split.isVault ? 'bg-emerald-500' : 'bg-[#033633] border border-emerald-500/30'}`}>

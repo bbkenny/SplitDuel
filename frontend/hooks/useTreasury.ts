@@ -29,7 +29,7 @@ export function useTreasury({
     abi: AutoSplitRouterABI,
     functionName: VAULT_ADAPTER_FUNCTIONS.GET_TREASURY_BALANCE,
     args: address ? [address, cUSDAddress] : undefined,
-    query: { enabled: !!address && !!routerAddress },
+    query: { enabled: !!address && !!routerAddress, refetchInterval: 2000 },
   });
 
   // Fetch CELO Treasury Balance
@@ -38,7 +38,7 @@ export function useTreasury({
     abi: AutoSplitRouterABI,
     functionName: VAULT_ADAPTER_FUNCTIONS.GET_TREASURY_BALANCE,
     args: address ? [address, '0x0000000000000000000000000000000000000000'] : undefined,
-    query: { enabled: !!address && !!routerAddress },
+    query: { enabled: !!address && !!routerAddress, refetchInterval: 2000 },
   });
 
   const treasuryBalance = {

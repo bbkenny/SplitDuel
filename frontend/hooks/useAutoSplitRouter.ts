@@ -46,7 +46,7 @@ export function useAutoSplitRouter({
     abi: AutoSplitRouterABI,
     functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.GET_SPLIT_RULES,
     args: address ? [address] : undefined,
-    query: { enabled: !!address && !!routerAddress },
+    query: { enabled: !!address && !!routerAddress, refetchInterval: 2000 },
   });
 
   useEffect(() => {

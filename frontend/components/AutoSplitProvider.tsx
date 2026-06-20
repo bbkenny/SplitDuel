@@ -110,11 +110,13 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     abi: ERC20ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
+    chainId: 42220,
     query: { enabled: !!address },
   });
 
   const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
     address,
+    chainId: 42220,
     query: { enabled: !!address },
   });
 

@@ -24,8 +24,10 @@ import {
   HistoryListSkeleton,
 } from '@/components/ui/SkeletonLoaders';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
+import { useCeloPrice } from '@/hooks/useCeloPrice';
 
 export default function Home() {
+  const celoUsdRate = useCeloPrice();
   const {
     splits,
     amount,
@@ -278,7 +280,7 @@ export default function Home() {
                   <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
                     {vaultAmount && !isNaN(parseFloat(vaultAmount)) && (
                       <span className="text-[10px] text-emerald-400/60 font-medium">
-                        ≈ ${(parseFloat(vaultAmount) * (vaultToken === 'CELO' ? 0.62 : 1.00)).toFixed(2)} USD
+                        ≈ ${(parseFloat(vaultAmount) * (vaultToken === 'CELO' ? celoUsdRate : 1.00)).toFixed(2)} USD
                       </span>
                     )}
                   </div>
@@ -362,7 +364,7 @@ export default function Home() {
                     <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
                       {amount && !isNaN(parseFloat(amount)) && (
                         <span className="text-xs text-[#022D2B]/60 font-black">
-                          ≈ ${(parseFloat(amount) * (token === 'CELO' ? 0.62 : 1.00)).toFixed(2)} USD
+                          ≈ ${(parseFloat(amount) * (token === 'CELO' ? celoUsdRate : 1.00)).toFixed(2)} USD
                         </span>
                       )}
                     </div>
@@ -490,7 +492,7 @@ export default function Home() {
                 <div className="bg-[#022D2B] p-4 rounded-2xl border border-emerald-500/10 space-y-3">
                   <div className="flex justify-between items-center text-xs font-bold text-emerald-400">
                     <span>TOTAL SEND AMOUNT</span>
-                    <span>{txSimulation.totalAmount} {txSimulation.tokenName} (≈ ${(parseFloat(txSimulation.totalAmount) * (txSimulation.tokenName === 'CELO' ? 0.62 : 1.00)).toFixed(2)} USD)</span>
+                    <span>{txSimulation.totalAmount} {txSimulation.tokenName} (≈ ${(parseFloat(txSimulation.totalAmount) * (txSimulation.tokenName === 'CELO' ? celoUsdRate : 1.00)).toFixed(2)} USD)</span>
                   </div>
                   <div className="border-t border-emerald-500/10 pt-2 space-y-2">
                     {txSimulation.recipients.map((recipient, i) => (

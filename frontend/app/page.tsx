@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAutoSplit } from '@/components/AutoSplitProvider';
 import { Footer } from '@/components/Footer';
 import AdminPanel from '@/components/AdminPanel';
@@ -28,6 +28,10 @@ import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import { useCeloPrice } from '@/hooks/useCeloPrice';
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const celoUsdRate = useCeloPrice();
   const {
 
@@ -69,6 +73,7 @@ export default function Home() {
 
   const { data: nativeBalance } = useBalance({
     address,
+    chainId: targetChainId,
     query: { enabled: !!address, refetchInterval: 2000 },
   });
 
@@ -77,6 +82,7 @@ export default function Home() {
     abi: ERC20ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
+    chainId: targetChainId,
     query: { enabled: !!address, refetchInterval: 2000 },
   });
 
@@ -171,6 +177,8 @@ export default function Home() {
     setModalTitle('Withdraw from Shared Treasury');
     setShowModal(true);
   };
+
+  if (!mounted) return null;
 
   return (
     <div className="min-h-screen bg-[#022D2B] text-white font-sans p-4 sm:p-6 md:p-8 pt-24 sm:pt-28">

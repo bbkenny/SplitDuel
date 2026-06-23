@@ -29,24 +29,23 @@ export const metadata: Metadata = {
     siteName: "AutoSplit",
     images: [
       {
-        url: "/autosplit-logo.png",
+        url: "/autosplit-logo.svg",
         width: 1200,
         height: 630,
-        alt: "AutoSplit Logo",
+        alt: "AutoSplit Social Routing",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AutoSplit — Multi-Transaction Financial Outcomes",
-    description:
-      "Send once, split automatically. One transaction, multiple outcomes on Celo.",
-    images: ["/autosplit-logo.png"],
+    title: "AutoSplit — Programmable Native Yield",
+    description: "Route CELO dynamically and compound yields securely.",
+    images: ["/autosplit-logo.svg"],
   },
   icons: {
-    icon: "/autosplit.svg",
+    icon: "/autosplit-logo.svg",
     shortcut: "/autosplit.svg",
-    apple: "/autosplit-logo.png",
+    apple: "/autosplit-logo.svg",
   },
   manifest: "/site.webmanifest",
   robots: { index: true, follow: true },

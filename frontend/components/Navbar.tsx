@@ -47,7 +47,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <img src="/autosplit-logo.png" alt="AutoSplit Logo" className="h-14 w-auto object-contain group-hover:scale-110 transition-transform" />
+          <img src="/autosplit-logo.svg" alt="AutoSplit Logo" className="h-14 w-auto object-contain group-hover:scale-110 transition-transform" />
           <span
             style={{ letterSpacing: "0.16em", lineHeight: 1 }}
             className="text-2xl font-black uppercase hidden sm:block"
@@ -67,9 +67,10 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-xl text-xs font-black text-white font-mono select-none shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                  className="flex items-center gap-2 px-2 py-1.5 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all rounded-xl text-xs font-black text-white font-mono select-none shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                   title="View balance"
                 >
+                  <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${address}`} alt="Avatar" className="w-6 h-6 rounded-full bg-white/20" />
                   <span>{`${address.slice(0, 6)}...${address.slice(-4)}`}</span>
                   <ChevronDown size={14} className={`text-white transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
                 </button>

@@ -14,7 +14,7 @@ const metadata = {
   name: 'AutoSplit',
   description: 'Automated payment routing protocol for stablecoins on Celo',
   url: 'https://auto-splits.vercel.app',
-  icons: ['/autosplit-logo.png'],
+  icons: ['/autosplit-logo.svg'],
 }
 
 const wagmiAdapter = new WagmiAdapter({

@@ -66,31 +66,13 @@ export default function Home() {
   const { address, chainId } = useAccount();
 
   const isNative = token === 'CELO';
-  const targetChainId = chainId === 42220 ? 42220 : 44787;
-  const cUSDAddress = targetChainId === 42220 
-    ? CONTRACT_ADDRESSES.celo.cUSD 
-    : CONTRACT_ADDRESSES.celoAlfajores.cUSD;
 
-  const { data: nativeBalance } = useBalance({
-    address,
-    chainId: targetChainId,
-    query: { enabled: !!address, refetchInterval: 2000 },
-  });
-
-  const { data: cUSDBalanceData } = useReadContract({
-    address: cUSDAddress,
-    abi: ERC20ABI,
-    functionName: 'balanceOf',
-    args: address ? [address as `0x${string}`] : undefined,
-    chainId: targetChainId,
-    query: { enabled: !!address, refetchInterval: 2000 },
-  });
-
-  const localCUSD = cUSDBalanceData ? Number(formatUnits(cUSDBalanceData as bigint, 18)) : 0;
-  const localCELO = nativeBalance ? Number(formatUnits(nativeBalance.value, nativeBalance.decimals)) : 0;
+  // Extract from Context
+  const { isAdmin } = useAutoSplit();
+  const localCUSD = balances.cUSD;
+  const localCELO = balances.CELO;
 
   const displayBalance = token === 'CELO' ? localCELO.toFixed(2) : localCUSD.toFixed(2);
-
 
   // Local states
   const [vaultAmount, setVaultAmount] = useState('');
@@ -103,19 +85,6 @@ export default function Home() {
     usdValue: string;
   } | null>(null);
   const [modalTitle, setModalTitle] = useState('');
-
-
-  const { data: isAdminData } = useReadContract({
-    address: CONTRACT_ADDRESSES.celo.AUTO_SPLIT_ROUTER as `0x${string}`,
-    abi: AutoSplitRouterABI,
-    functionName: 'isAdmin',
-    args: address ? [address] : undefined,
-    query: {
-      enabled: !!address,
-    }
-  });
-
-  const isAdmin = !!isAdminData;
 
   // Validation Checks
   const routeAmountNum = parseFloat(amount || '0');
@@ -341,11 +310,16 @@ export default function Home() {
                     onChange={e => setVaultAmount(e.target.value)}
                     className="w-full bg-[#022D2B] text-emerald-100 placeholder-emerald-700 p-3 pr-36 rounded-xl border border-emerald-500/20 focus:outline-none focus:border-emerald-400 font-mono text-sm"
                   />
-                  <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+                  <div className="absolute right-14 top-1/2 -translate-y-1/2 flex flex-col items-end gap-0.5 pointer-events-none">
                     {vaultAmount && !isNaN(parseFloat(vaultAmount)) && (
-                      <span className="text-[10px] text-emerald-400/60 font-medium">
-                        ≈ ${(parseFloat(vaultAmount) * (vaultToken === 'CELO' ? celoUsdRate : 1.00)).toFixed(2)} USD
-                      </span>
+                      <>
+                        <span className="text-[10px] text-emerald-400/60 font-medium leading-none">
+                          ≈ ${(parseFloat(vaultAmount) * (vaultToken === 'CELO' ? celoUsdRate : 1.00)).toFixed(2)} USD
+                        </span>
+                        <span className="text-[9px] text-emerald-500/50 font-mono leading-none">
+                          {(parseFloat(vaultAmount) * 1e18).toLocaleString('fullwide', {useGrouping:false})} Wei
+                        </span>
+                      </>
                     )}
                   </div>
                   <button
@@ -425,11 +399,16 @@ export default function Home() {
                       placeholder="Total Amount"
                       className="w-full bg-[#033633]/10 text-[#022D2B] placeholder-[#022D2B]/50 p-4 pr-36 rounded-2xl border border-[#022D2B]/20 focus:outline-none focus:border-[#022D2B] font-mono text-lg font-bold"
                     />
-                    <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+                    <div className="absolute right-14 top-1/2 -translate-y-1/2 flex flex-col items-end gap-0.5 pointer-events-none">
                       {amount && !isNaN(parseFloat(amount)) && (
-                        <span className="text-xs text-[#022D2B]/60 font-black">
-                          ≈ ${(parseFloat(amount) * (token === 'CELO' ? celoUsdRate : 1.00)).toFixed(2)} USD
-                        </span>
+                        <>
+                          <span className="text-xs text-[#022D2B]/60 font-black leading-none">
+                            ≈ ${(parseFloat(amount) * (token === 'CELO' ? celoUsdRate : 1.00)).toFixed(2)} USD
+                          </span>
+                          <span className="text-[10px] text-[#022D2B]/40 font-mono font-bold leading-none">
+                            {(parseFloat(amount) * 1e18).toLocaleString('fullwide', {useGrouping:false})} Wei
+                          </span>
+                        </>
                       )}
                     </div>
                     <button

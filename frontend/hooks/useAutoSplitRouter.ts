@@ -49,6 +49,15 @@ export function useAutoSplitRouter({
     query: { enabled: !!address && !!routerAddress, refetchInterval: 2000 },
   });
 
+  const { data: isAdminData } = useReadContract({
+    address: routerAddress,
+    abi: AutoSplitRouterABI,
+    functionName: 'isAdmin',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address && !!routerAddress },
+  });
+  const isAdmin = !!isAdminData;
+
   useEffect(() => {
     const rules = onChainRules as any;
     if (rules && Array.isArray(rules[0]) && rules[0].length > 0) {
@@ -168,6 +177,7 @@ export function useAutoSplitRouter({
     removeSplit,
     totalBasisPoints,
     isReady,
+    isAdmin,
     saveOnChainRules,
     executeRoutePayment,
     refetchOnChainRules,

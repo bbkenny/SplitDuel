@@ -44,6 +44,7 @@ interface SplitState {
   removeSplit: (index: number) => void;
   totalBasisPoints: number;
   isReady: boolean;
+  isAdmin: boolean;
   addTransaction: (tx: Transaction) => void;
   saveOnChainRules: () => Promise<void>;
   executeRoutePayment: () => Promise<void>;
@@ -230,6 +231,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     removeSplit: routerHook.removeSplit,
     totalBasisPoints: routerHook.totalBasisPoints,
     isReady: routerHook.isReady,
+    isAdmin: routerHook.isAdmin,
     addTransaction,
     saveOnChainRules: handleSaveOnChainRules,
     executeRoutePayment: handleExecuteRoutePayment,

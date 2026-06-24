@@ -7,7 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from 'react';
-import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/lib/constants';
 import { ERC20ABI } from '@/lib/abi';
@@ -108,26 +108,20 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   // Determine target chain (default to Alfajores if not on Mainnet)
   const targetChainId = chainId === 42220 ? 42220 : 44787;
 
-  // Fetch balances
-  const { data: cUSDBalanceData, refetch: refetchcUSDBalance } = useReadContract({
-    address: tokenAddresses.cUSD,
-    abi: ERC20ABI,
-    functionName: 'balanceOf',
-    args: address ? [address as `0x${string}`] : undefined,
-    query: { enabled: !!address, refetchInterval: 2000 },
+  // Fetch balances — useBalance with token= handles ERC20 more reliably than useReadContract
+  const { data: cUSDBalanceData, refetch: refetchcUSDBalance } = useBalance({
+    address,
+    token: tokenAddresses.cUSD,
+    query: { enabled: !!address, refetchInterval: 5000 },
   });
 
   const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
     address,
-    query: { enabled: !!address, refetchInterval: 2000 },
+    query: { enabled: !!address, refetchInterval: 5000 },
   });
 
-  console.log("AutoSplit Debug - Address:", address, "Chain:", targetChainId);
-  console.log("AutoSplit Debug - cUSD Data:", cUSDBalanceData);
-  console.log("AutoSplit Debug - CELO Data:", celoBalanceResult);
-
   const balances = {
-    cUSD: cUSDBalanceData ? Number(formatUnits(cUSDBalanceData as bigint, 18)) : 0,
+    cUSD: cUSDBalanceData ? Number(formatUnits(cUSDBalanceData.value, cUSDBalanceData.decimals)) : 0,
     CELO: celoBalanceResult ? Number(formatUnits(celoBalanceResult.value, celoBalanceResult.decimals)) : 0,
   };
 

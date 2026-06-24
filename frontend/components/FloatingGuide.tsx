@@ -73,10 +73,10 @@ export default function FloatingGuide() {
                     <li>When you click <strong className="text-white">Execute Routing</strong>, the smart contract instantly distributes the funds to the various recipients and diverts the specified percentage directly into the Shared Treasury.</li>
                   </ul>
 
-                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">3. Shared Treasury (Compound Yield Severance Fund)</h3>
+                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">3. Shared Treasury (Moola Market Integrated)</h3>
                   <ul className="space-y-3 list-disc pl-5 text-sm">
                     <li>This widget tracks the balances (cUSD and CELO) that you've routed into the compound treasury vault.</li>
-                    <li><strong className="text-white">Vault Interactions:</strong> You can manually deposit more funds or withdraw your existing savings anytime. It explicitly states the simulated yield (e.g., 4.5% APY).</li>
+                    <li><strong className="text-white">Vault Interactions:</strong> You can manually deposit more funds or withdraw your existing savings anytime. Behind the scenes, the VaultAdapter seamlessly deposits your CELO and ERC20 tokens natively into Moola Market for real, decentralized yield generation while maintaining your 1:1 parity and accounting!</li>
                   </ul>
                 </div>
               </div>

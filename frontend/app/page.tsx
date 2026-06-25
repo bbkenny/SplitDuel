@@ -4,9 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAutoSplit } from '@/components/AutoSplitProvider';
 import { Footer } from '@/components/Footer';
 import AdminPanel from '@/components/AdminPanel';
-import { useReadContract, useAccount, useBalance } from 'wagmi';
-import { AutoSplitRouterABI, ERC20ABI } from '@/lib/abi';
-import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import { CONTRACT_ADDRESSES } from '@/lib/constants';
 import {
   Shield,

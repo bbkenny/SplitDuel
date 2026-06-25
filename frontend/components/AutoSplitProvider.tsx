@@ -8,7 +8,7 @@ import React, {
   useEffect,
 } from 'react';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
-import { formatUnits } from 'viem';
+import { formatUnits, erc20Abi } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/lib/constants';
 import { ERC20ABI } from '@/lib/abi';
 import { splitToast } from '@/components/ui/Toast';
@@ -108,18 +108,20 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   // Determine target chain (default to Alfajores if not on Mainnet)
   const targetChainId = chainId === 42220 ? 42220 : 44787;
 
-  // Fetch cUSD balance via ERC20 balanceOf (wagmi v2/v3 removed token param from useBalance)
-  const { data: cUSDBalanceRaw, refetch: refetchcUSDBalance } = useReadContract({
-    address: tokenAddresses.cUSD as `0x${string}`,
-    abi: ERC20ABI,
-    functionName: 'balanceOf',
-    args: address ? [address as `0x${string}`] : undefined,
-    query: { enabled: !!address && !!tokenAddresses.cUSD, refetchInterval: 5000 },
-  });
-
+  // Native CELO balance
   const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
     address,
     query: { enabled: !!address, refetchInterval: 5000 },
+  });
+
+  // cUSD ERC20 balance — uses viem's built-in erc20Abi which includes balanceOf
+  // (the custom ERC20ABI in lib/abi.ts was missing balanceOf, causing 0.00 forever)
+  const { data: cUSDBalanceRaw, refetch: refetchcUSDBalance } = useReadContract({
+    address: tokenAddresses.cUSD as `0x${string}`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: address ? [address as `0x${string}`] : undefined,
+    query: { enabled: !!address && !!tokenAddresses.cUSD, refetchInterval: 5000 },
   });
 
   const balances = {

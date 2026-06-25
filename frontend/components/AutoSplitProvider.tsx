@@ -7,7 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from 'react';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useReadContract } from 'wagmi';
 import { formatUnits } from 'viem';
 import { CONTRACT_ADDRESSES } from '@/lib/constants';
 import { ERC20ABI } from '@/lib/abi';
@@ -108,11 +108,13 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   // Determine target chain (default to Alfajores if not on Mainnet)
   const targetChainId = chainId === 42220 ? 42220 : 44787;
 
-  // Fetch balances — useBalance with token= handles ERC20 more reliably than useReadContract
-  const { data: cUSDBalanceData, refetch: refetchcUSDBalance } = useBalance({
-    address,
-    token: tokenAddresses.cUSD,
-    query: { enabled: !!address, refetchInterval: 5000 },
+  // Fetch cUSD balance via ERC20 balanceOf (wagmi v2/v3 removed token param from useBalance)
+  const { data: cUSDBalanceRaw, refetch: refetchcUSDBalance } = useReadContract({
+    address: tokenAddresses.cUSD as `0x${string}`,
+    abi: ERC20ABI,
+    functionName: 'balanceOf',
+    args: address ? [address as `0x${string}`] : undefined,
+    query: { enabled: !!address && !!tokenAddresses.cUSD, refetchInterval: 5000 },
   });
 
   const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
@@ -121,7 +123,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   const balances = {
-    cUSD: cUSDBalanceData ? Number(formatUnits(cUSDBalanceData.value, cUSDBalanceData.decimals)) : 0,
+    cUSD: cUSDBalanceRaw != null ? Number(formatUnits(cUSDBalanceRaw as bigint, 18)) : 0,
     CELO: celoBalanceResult ? Number(formatUnits(celoBalanceResult.value, celoBalanceResult.decimals)) : 0,
   };
 

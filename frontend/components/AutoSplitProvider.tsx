@@ -111,6 +111,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   // Native CELO balance
   const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
     address,
+    chainId: targetChainId,
     query: { enabled: !!address, refetchInterval: 5000 },
   });
 
@@ -121,6 +122,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: address ? [address as `0x${string}`] : undefined,
+    chainId: targetChainId,
     query: { enabled: !!address && !!tokenAddresses.cUSD, refetchInterval: 5000 },
   });
 

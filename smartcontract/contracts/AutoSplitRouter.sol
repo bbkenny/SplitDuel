@@ -45,6 +45,25 @@ contract AutoSplitRouter is ReentrancyGuard {
     uint256 public totalTransactions;
     uint256 public totalVolume;
 
+    // ---------------------------------------------
+    // MICRO-CREDIT & REPUTATION ENGINE
+    // ---------------------------------------------
+    mapping(address => uint256) public reputationScore;
+    
+    struct Loan {
+        uint256 principal;
+        uint256 amountDue;
+        uint256 dueDate;
+        bool isActive;
+        address token;
+    }
+    
+    mapping(address => Loan) public activeLoans;
+
+    event LoanBorrowed(address indexed user, address indexed token, uint256 amount, uint256 dueDate);
+    event LoanRepaid(address indexed user, address indexed token, uint256 amount);
+    event ReputationUpdated(address indexed user, uint256 newScore);
+
     // Admin Role Flexibility (70% Threshold)
     mapping(address => bool) public isAdmin;
     address[] public adminList;
@@ -197,6 +216,7 @@ contract AutoSplitRouter is ReentrancyGuard {
 
             if (splits[i].isVault) {
                 _depositTreasuryInternal(msg.sender, token, splitAmount);
+                reputationScore[msg.sender] += (splitAmount / 1e18) * 5; // 5 pts per unit saved
             } else {
                 if (token == address(0)) {
                     (bool success, ) = splits[i].recipient.call{value: splitAmount}("");
@@ -209,6 +229,9 @@ contract AutoSplitRouter is ReentrancyGuard {
                 }
             }
         }
+
+        reputationScore[msg.sender] += amount / 1e18; // 1 pt per unit routed
+        emit ReputationUpdated(msg.sender, reputationScore[msg.sender]);
 
         emit PaymentRouted(msg.sender, token, amount, recipients, amounts);
     }
@@ -274,6 +297,85 @@ contract AutoSplitRouter is ReentrancyGuard {
         }
 
         emit TreasuryWithdrawn(msg.sender, token, withdrawnAmount, sharesNeeded);
+    }
+
+    // ---------------------------------------------
+    // MICRO-CREDIT HUB
+    // ---------------------------------------------
+
+    function borrow(address token, uint256 amount) external nonReentrant {
+        Loan storage currentLoan = activeLoans[msg.sender];
+        
+        // Freeze check for overdue wallets
+        if (currentLoan.isActive && block.timestamp > currentLoan.dueDate) {
+            revert("Account frozen: loan overdue");
+        }
+        require(!currentLoan.isActive, "Existing loan active");
+        
+        // Credit limit check
+        uint256 creditLimit = reputationScore[msg.sender] * 2 * 1e18;
+        require(amount <= creditLimit, "Exceeds credit limit");
+        require(amount > 0, "Zero amount");
+        require(activeVaultAdapter != address(0), "No active vault");
+
+        uint256 fee = (amount * 2) / 100; // 2% fixed fee
+
+        activeLoans[msg.sender] = Loan({
+            principal: amount,
+            amountDue: amount + fee,
+            dueDate: block.timestamp + 30 days,
+            isActive: true,
+            token: token
+        });
+
+        // Withdraw from vault adapter to fund the loan
+        // Note: For ERC20, the vault will transfer to us, then we transfer to user.
+        uint256 withdrawnAmount = IVaultAdapter(activeVaultAdapter).withdraw(token, amount);
+        require(withdrawnAmount >= amount, "Withdraw amount mismatch");
+
+        if (token == address(0)) {
+            (bool success, ) = msg.sender.call{value: withdrawnAmount}("");
+            require(success, "CELO borrow transfer failed");
+        } else {
+            require(IERC20(token).transfer(msg.sender, withdrawnAmount), "ERC20 borrow transfer failed");
+        }
+
+        emit LoanBorrowed(msg.sender, token, amount, block.timestamp + 30 days);
+    }
+
+    function repayLoan() external payable nonReentrant {
+        Loan storage loan = activeLoans[msg.sender];
+        require(loan.isActive, "No active loan");
+        
+        uint256 due = loan.amountDue;
+        address token = loan.token;
+        
+        if (token == address(0)) {
+            require(msg.value == due, "CELO repayment mismatch");
+        } else {
+            require(msg.value == 0, "Native value sent for ERC20");
+            require(IERC20(token).transferFrom(msg.sender, address(this), due), "ERC20 repayment failed");
+        }
+
+        if (block.timestamp <= loan.dueDate) {
+            reputationScore[msg.sender] += 15; // Timely repayment boost
+            emit ReputationUpdated(msg.sender, reputationScore[msg.sender]);
+        } else {
+            // Apply 30-day overdue penalty (e.g., deduct 5 points)
+            if (reputationScore[msg.sender] >= 5) {
+                reputationScore[msg.sender] -= 5;
+            } else {
+                reputationScore[msg.sender] = 0;
+            }
+            emit ReputationUpdated(msg.sender, reputationScore[msg.sender]);
+        }
+
+        loan.isActive = false;
+
+        // Route repayment back to treasury
+        _depositTreasuryInternal(address(this), token, due);
+
+        emit LoanRepaid(msg.sender, token, due);
     }
 
     // ---------------------------------------------

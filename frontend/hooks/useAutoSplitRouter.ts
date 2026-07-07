@@ -14,8 +14,7 @@ interface Split {
 
 interface UseAutoSplitRouterProps {
   routerAddress: `0x${string}`;
-  cUSDAddress: `0x${string}`;
-  celoAddress: `0x${string}`;
+  tokenAddresses: Record<string, `0x${string}`>;
   runTx: (writeFn: () => Promise<`0x${string}`>) => Promise<any>;
   refetchBalances: () => void;
   addTransaction: (tx: any) => void;
@@ -23,8 +22,7 @@ interface UseAutoSplitRouterProps {
 
 export function useAutoSplitRouter({
   routerAddress,
-  cUSDAddress,
-  celoAddress,
+  tokenAddresses,
   runTx,
   refetchBalances,
   addTransaction,
@@ -38,7 +36,7 @@ export function useAutoSplitRouter({
   ]);
 
   const [amount, setAmount] = useState('');
-  const [token, setToken] = useState('cUSD');
+  const [token, setToken] = useState('USDm');
 
   // Fetch On-Chain Rules
   const { data: onChainRules, refetch: refetchOnChainRules } = useReadContract({
@@ -113,8 +111,8 @@ export function useAutoSplitRouter({
         abi: AutoSplitRouterABI,
         functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.SET_SPLIT_RULES,
         args: [recipients, basisPoints, isVault],
-        type: 'legacy',
-      });
+        feeCurrency: tokenAddresses.USDm,
+      } as any);
     });
 
     refetchOnChainRules();
@@ -125,18 +123,18 @@ export function useAutoSplitRouter({
 
     const parsedAmount = parseUnits(amount, 18);
     const isNative = token === 'CELO';
-    const targetToken = isNative ? '0x0000000000000000000000000000000000000000' as `0x${string}` : cUSDAddress;
+    const targetToken = tokenAddresses[token];
 
     if (!isNative) {
-      // Step 1: Approve cUSD for Router
+      // Step 1: Approve token for Router
       await runTx(async () => {
         return await writeContractAsync({
           address: targetToken,
           abi: ERC20ABI,
           functionName: ERC20_FUNCTIONS.APPROVE,
           args: [routerAddress, parsedAmount],
-          type: 'legacy',
-        });
+          feeCurrency: tokenAddresses.USDm,
+        } as any);
       });
     }
 
@@ -148,8 +146,8 @@ export function useAutoSplitRouter({
         functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.ROUTE_PAYMENT,
         args: [targetToken, parsedAmount],
         value: isNative ? parsedAmount : undefined,
-        type: 'legacy',
-      });
+        feeCurrency: tokenAddresses.USDm,
+      } as any);
     });
 
     // Add to history list

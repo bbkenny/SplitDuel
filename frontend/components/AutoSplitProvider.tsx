@@ -49,7 +49,7 @@ interface SplitState {
   saveOnChainRules: () => Promise<void>;
   executeRoutePayment: () => Promise<void>;
   balances: {
-    cUSD: number;
+    tokenBalance: number;
     CELO: number;
   };
   treasuryBalance: {
@@ -81,25 +81,32 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
     if (chainId === 42220) {
       return {
         router: CONTRACT_ADDRESSES.celo.AUTO_SPLIT_ROUTER,
-        cUSD: CONTRACT_ADDRESSES.celo.cUSD,
+        USDm: CONTRACT_ADDRESSES.celo.USDm,
+        EURm: CONTRACT_ADDRESSES.celo.EURm,
+        USDT: CONTRACT_ADDRESSES.celo.USDT,
+        USDC: CONTRACT_ADDRESSES.celo.USDC,
+        CELO: CONTRACT_ADDRESSES.celo.CELO,
       };
     }
     return {
       router: CONTRACT_ADDRESSES.celoAlfajores.AUTO_SPLIT_ROUTER,
-      cUSD: CONTRACT_ADDRESSES.celoAlfajores.cUSD,
+      USDm: CONTRACT_ADDRESSES.celoAlfajores.USDm,
+      EURm: CONTRACT_ADDRESSES.celoAlfajores.EURm,
+      USDT: CONTRACT_ADDRESSES.celoAlfajores.USDT,
+      USDC: CONTRACT_ADDRESSES.celoAlfajores.USDC,
+      CELO: CONTRACT_ADDRESSES.celoAlfajores.CELO,
     };
   };
 
   const activeAddrs = getActiveAddresses();
   const routerAddress = activeAddrs.router as `0x${string}`;
-  const tokenAddress = activeAddrs.cUSD as `0x${string}`;
 
   const tokenAddresses: Record<string, `0x${string}`> = {
-    cUSD: tokenAddress,
-    CELO:
-      chainId === 42220
-        ? '0x471EcE3750Da237f93B8E29B7377C6Ba1574beb9'
-        : '0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9',
+    USDm: activeAddrs.USDm as `0x${string}`,
+    EURm: activeAddrs.EURm as `0x${string}`,
+    USDT: activeAddrs.USDT as `0x${string}`,
+    USDC: activeAddrs.USDC as `0x${string}`,
+    CELO: activeAddrs.CELO as `0x${string}`,
   };
 
   const [history, setHistory] = useState<Transaction[]>([]);
@@ -107,34 +114,6 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
 
   // Determine target chain (default to Alfajores if not on Mainnet)
   const targetChainId = chainId === 42220 ? 42220 : 44787;
-
-  // Native CELO balance
-  const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
-    address,
-    chainId: targetChainId,
-    query: { enabled: !!address, refetchInterval: 5000 },
-  });
-
-  // cUSD ERC20 balance — uses viem's built-in erc20Abi which includes balanceOf
-  // (the custom ERC20ABI in lib/abi.ts was missing balanceOf, causing 0.00 forever)
-  const { data: cUSDBalanceRaw, refetch: refetchcUSDBalance } = useReadContract({
-    address: tokenAddresses.cUSD as `0x${string}`,
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: address ? [address as `0x${string}`] : undefined,
-    chainId: targetChainId,
-    query: { enabled: !!address && !!tokenAddresses.cUSD, refetchInterval: 5000 },
-  });
-
-  const balances = {
-    cUSD: cUSDBalanceRaw != null ? Number(formatUnits(cUSDBalanceRaw as bigint, 18)) : 0,
-    CELO: celoBalanceResult ? Number(formatUnits(celoBalanceResult.value, celoBalanceResult.decimals)) : 0,
-  };
-
-  const refetchBalances = () => {
-    refetchcUSDBalance();
-    refetchCeloBalance();
-  };
 
   const addTransaction = (tx: Transaction) => {
     const newHistory = [tx, ...history].slice(0, 50);
@@ -145,13 +124,10 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const saved = localStorage.getItem('autosplit_history');
     if (saved) setHistory(JSON.parse(saved));
-  }, []);
-
-  // Initialize Router custom hook
+  }, []);  // Initialize Router custom hook
   const routerHook = useAutoSplitRouter({
     routerAddress,
-    cUSDAddress: tokenAddresses.cUSD,
-    celoAddress: tokenAddresses.CELO,
+    tokenAddresses,
     runTx: txSim.runTx,
     refetchBalances,
     addTransaction,
@@ -160,11 +136,38 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   // Initialize Treasury custom hook
   const treasuryHook = useTreasury({
     routerAddress,
-    cUSDAddress: tokenAddresses.cUSD,
-    celoAddress: tokenAddresses.CELO,
+    tokenAddresses,
     runTx: txSim.runTx,
     refetchBalances,
   });
+  // Native CELO balance
+  const { data: celoBalanceResult, refetch: refetchCeloBalance } = useBalance({
+    address,
+    chainId: targetChainId,
+    query: { enabled: !!address, refetchInterval: 5000 },
+  });
+
+  // Custom ERC20 token balances for selected token
+  const { data: tokenBalanceRaw, refetch: refetchTokenBalance } = useReadContract({
+    address: tokenAddresses[routerHook?.token || 'USDm'] as `0x${string}`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: address ? [address as `0x${string}`] : undefined,
+    chainId: targetChainId,
+    query: { enabled: !!address && !!tokenAddresses[routerHook?.token || 'USDm'], refetchInterval: 5000 },
+  });
+
+  const balances = {
+    tokenBalance: tokenBalanceRaw != null ? Number(formatUnits(tokenBalanceRaw as bigint, 18)) : 0,
+    CELO: celoBalanceResult ? Number(formatUnits(celoBalanceResult.value, celoBalanceResult.decimals)) : 0,
+  };
+
+  function refetchBalances() {
+    if (typeof refetchTokenBalance === 'function') refetchTokenBalance();
+    if (typeof refetchCeloBalance === 'function') refetchCeloBalance();
+  }
+
+
 
   const handleSaveOnChainRules = async () => {
     setLoading(true);

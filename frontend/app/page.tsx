@@ -67,14 +67,14 @@ export default function Home() {
 
   // Extract from Context
   const { isAdmin } = useAutoSplit();
-  const localCUSD = balances.cUSD;
+  const localTokenBalance = balances.tokenBalance;
   const localCELO = balances.CELO;
 
-  const displayBalance = token === 'CELO' ? localCELO.toFixed(2) : localCUSD.toFixed(2);
+  const displayBalance = token === 'CELO' ? localCELO.toFixed(2) : localTokenBalance.toFixed(2);
 
   // Local states
   const [vaultAmount, setVaultAmount] = useState('');
-  const [vaultToken, setVaultToken] = useState('cUSD');
+  const [vaultToken, setVaultToken] = useState('USDm');
   const [showModal, setShowModal] = useState(false);
   const [treasurySim, setTreasurySim] = useState<{
     action: 'deposit' | 'withdraw';
@@ -95,9 +95,9 @@ export default function Home() {
     : (localCELO < 0.005);
 
   const vaultAmountNum = parseFloat(vaultAmount || '0');
-  const vaultBalance = vaultToken === 'cUSD' ? localCUSD : localCELO;
+  const vaultBalance = vaultToken === 'CELO' ? localCELO : localTokenBalance;
   const isDepositInsufficient = vaultAmountNum > vaultBalance;
-  const isWithdrawInsufficient = vaultAmountNum > (vaultToken === 'cUSD' ? treasuryBalance.cUSD : treasuryBalance.CELO);
+  const isWithdrawInsufficient = vaultAmountNum > (vaultToken === 'CELO' ? treasuryBalance.CELO : treasuryBalance.cUSD);
 
   // Action Handlers
   const handleRouteClick = async () => {
@@ -289,7 +289,7 @@ export default function Home() {
 
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-[#022D2B] p-4 rounded-2xl border border-emerald-500/10">
-                  <div className="text-emerald-400/50 text-xs font-bold mb-1">cUSD TREASURY</div>
+                  <div className="text-emerald-400/50 text-xs font-bold mb-1">USDm TREASURY</div>
                   <div className="text-2xl font-black text-emerald-400">{treasuryBalance.cUSD.toFixed(2)}</div>
                 </div>
                 <div className="bg-[#022D2B] p-4 rounded-2xl border border-emerald-500/10">
@@ -328,7 +328,7 @@ export default function Home() {
                         const maxVal = Math.max(0, localCELO - 0.05);
                         setVaultAmount(maxVal.toString());
                       } else {
-                        setVaultAmount(localCUSD.toString());
+                        setVaultAmount(localTokenBalance.toString());
                       }
                     }}
                     className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-emerald-400 hover:text-emerald-300 px-2 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/20"
@@ -341,7 +341,10 @@ export default function Home() {
                   onChange={e => setVaultToken(e.target.value)}
                   className="bg-[#022D2B] text-emerald-400 font-bold p-3 rounded-xl border border-emerald-500/20 outline-none"
                 >
-                  <option value="cUSD">cUSD</option>
+                  <option value="USDm">USDm</option>
+                  <option value="EURm">EURm</option>
+                  <option value="USDT">USDT</option>
+                  <option value="USDC">USDC</option>
                   <option value="CELO">CELO</option>
                 </select>
               </div>
@@ -354,7 +357,7 @@ export default function Home() {
               )}
               {vaultAmount && isWithdrawInsufficient && (
                 <div className="text-red-400 font-bold text-xs bg-red-500/10 p-3 rounded-xl border border-red-500/20 mb-4">
-                  ⚠️ Insufficient treasury balance to withdraw. You have {(vaultToken === 'cUSD' ? treasuryBalance.cUSD : treasuryBalance.CELO).toFixed(4)} {vaultToken}.
+                  ⚠️ Insufficient treasury balance to withdraw. You have {(vaultToken === 'CELO' ? treasuryBalance.CELO : treasuryBalance.cUSD).toFixed(4)} {vaultToken}.
                 </div>
               )}
 
@@ -417,7 +420,7 @@ export default function Home() {
                           const maxVal = Math.max(0, localCELO - 0.05);
                           setAmount(maxVal.toString());
                         } else {
-                          setAmount(localCUSD.toString());
+                          setAmount(localTokenBalance.toString());
                         }
                       }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-[#022D2B] hover:opacity-80 px-2 py-1 bg-[#022D2B]/10 rounded-md border border-[#022D2B]/20"
@@ -430,7 +433,10 @@ export default function Home() {
                     onChange={(e) => setToken(e.target.value)}
                     className="bg-[#033633]/10 text-[#022D2B] font-black p-4 rounded-2xl border border-[#022D2B]/20 outline-none"
                   >
-                    <option value="cUSD">cUSD</option>
+                    <option value="USDm">USDm</option>
+                    <option value="EURm">EURm</option>
+                    <option value="USDT">USDT</option>
+                    <option value="USDC">USDC</option>
                     <option value="CELO">CELO</option>
                   </select>
                 </div>

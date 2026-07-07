@@ -1,0 +1,18 @@
+--- components/AutoSplitProvider.tsx
++++ components/AutoSplitProvider.tsx
+@@ -150,15 +150,4 @@
+     CELO: celoBalanceResult ? Number(formatUnits(celoBalanceResult.value, celoBalanceResult.decimals)) : 0,
+   };
+ 
+-  function refetchBalances() {
+-    refetchTokenBalance();
+-    refetchCeloBalance();
+-  }
+-
+-  function refetchBalances() {
+-    if (typeof refetchTokenBalance === 'function') refetchTokenBalance();
+-    if (typeof refetchCeloBalance === 'function') refetchCeloBalance();
+-  }
+-
+-  // Initialize Router custom hook
+-  const routerHook = useAutoSplitRouter({

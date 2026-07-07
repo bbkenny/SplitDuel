@@ -79,8 +79,8 @@ export default function Navbar() {
                   <div className="absolute top-full right-0 mt-2 w-56 bg-[#022D2B] border border-emerald-500/20 rounded-xl shadow-2xl p-2 z-50 flex flex-col gap-1">
                     <div className="px-2 pt-2 pb-1 text-[10px] font-black text-emerald-400/50 tracking-wider">WALLET BALANCE</div>
                     <div className="flex justify-between items-center px-3 py-2.5 bg-[#033633]/80 rounded-lg">
-                      <span className="text-emerald-400/60 text-xs font-bold">cUSD</span>
-                      <span className="text-emerald-400 font-mono font-bold text-sm">{balances?.cUSD?.toFixed(2) || "0.00"}</span>
+                      <span className="text-emerald-400/60 text-xs font-bold">Selected Token</span>
+                      <span className="text-emerald-400 font-mono font-bold text-sm">{balances?.tokenBalance?.toFixed(2) || "0.00"}</span>
                     </div>
                     <div className="flex justify-between items-center px-3 py-2.5 bg-[#033633]/80 rounded-lg">
                       <span className="text-emerald-400/60 text-xs font-bold">CELO</span>

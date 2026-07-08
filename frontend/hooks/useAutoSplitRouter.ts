@@ -5,6 +5,7 @@ import { useAccount, useWriteContract, useReadContract } from 'wagmi';
 import { parseUnits } from 'viem';
 import { AutoSplitRouterABI, ERC20ABI } from '@/lib/abi';
 import { AUTO_SPLIT_ROUTER_FUNCTIONS, ERC20_FUNCTIONS } from '@/lib/constants/contracts';
+import { useCeloFeeCurrency } from './useCeloFeeCurrency';
 
 interface Split {
   recipient: string;
@@ -29,6 +30,7 @@ export function useAutoSplitRouter({
 }: UseAutoSplitRouterProps) {
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const { feeCurrency } = useCeloFeeCurrency();
 
   const [splits, setSplits] = useState<Split[]>([
     { recipient: '', basisPoints: 5000, isVault: false },
@@ -111,7 +113,7 @@ export function useAutoSplitRouter({
         abi: AutoSplitRouterABI,
         functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.SET_SPLIT_RULES,
         args: [recipients, basisPoints, isVault],
-        feeCurrency: tokenAddresses.USDm,
+        ...(feeCurrency ? { feeCurrency } : {}),
       } as any);
     });
 
@@ -133,7 +135,7 @@ export function useAutoSplitRouter({
           abi: ERC20ABI,
           functionName: ERC20_FUNCTIONS.APPROVE,
           args: [routerAddress, parsedAmount],
-          feeCurrency: tokenAddresses.USDm,
+          ...(feeCurrency ? { feeCurrency } : {}),
         } as any);
       });
     }
@@ -146,7 +148,7 @@ export function useAutoSplitRouter({
         functionName: AUTO_SPLIT_ROUTER_FUNCTIONS.ROUTE_PAYMENT,
         args: [targetToken, parsedAmount],
         value: isNative ? parsedAmount : undefined,
-        feeCurrency: tokenAddresses.USDm,
+        ...(feeCurrency ? { feeCurrency } : {}),
       } as any);
     });
 

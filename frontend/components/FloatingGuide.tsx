@@ -40,7 +40,7 @@ export default function FloatingGuide() {
               className="w-full sm:w-[450px] h-full bg-[#031F1C] border-l border-[#2FD07A]/20 shadow-2xl relative z-10 flex flex-col"
             >
               <div className="p-6 border-b border-[#2FD07A]/20 flex justify-between items-center bg-black/30 backdrop-blur-md">
-                <h2 className="text-2xl font-black gradient-text tracking-tight">How AutoSplit Works</h2>
+                <h2 className="text-2xl font-black gradient-text tracking-tight">How Split Duel Works</h2>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
@@ -52,7 +52,7 @@ export default function FloatingGuide() {
               <div className="p-6 overflow-y-auto flex-1 space-y-8 text-[#E6F2EF]">
                 <div className="prose prose-invert prose-sm max-w-none">
                   <p className="text-lg text-[#7FA9A3] leading-relaxed">
-                    This is the heart of <strong>AutoSplit</strong>. It operates as an elite Programmable Revenue Router. One Address → Many Outcomes. Instantly split incoming revenue among your team, creators, or DAO, while automatically diverting a percentage into a yield-generating shared treasury. No accountants. No spreadsheets.
+                    This is the heart of <strong>Split Duel</strong>. It operates as an elite Programmable Revenue Router. One Address → Many Outcomes. Instantly split incoming revenue among your team, creators, or DAO, while automatically diverting a percentage into a yield-generating shared treasury. No accountants. No spreadsheets.
                   </p>
                   
                   <p className="font-bold text-white mt-4">Here is a step-by-step breakdown of how to interact with it:</p>

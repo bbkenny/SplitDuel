@@ -7,7 +7,7 @@ import { X, ChevronRight, Split, Landmark, ShieldCheck, Zap } from "lucide-react
 const slides = [
   {
     title: "One Transaction, Multiple Outcomes",
-    description: "Send stablecoins once, and AutoSplit automatically routes them to multiple destinations based on your rules.",
+    description: "Send stablecoins once, and Split Duel automatically routes them to multiple destinations based on your rules.",
     icon: <Split className="w-12 h-12 text-green-500" />,
     color: "from-green-500/20 to-transparent",
   },

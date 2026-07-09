@@ -5,13 +5,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | AutoSplit",
-    default: "AutoSplit — Multi-Transaction Financial Outcomes",
+    template: "%s | Split Duel",
+    default: "Split Duel — Multi-Transaction Financial Outcomes",
   },
   description:
-    "AutoSplit is a miniapp that allows one transaction to result in multiple financial outcomes, automatically splitting, saving, and investing in real time.",
+    "Split Duel is a miniapp that allows one transaction to result in multiple financial outcomes, automatically splitting, saving, and investing in real time.",
   keywords: [
-    "AutoSplit",
+    "Split Duel",
     "automation",
     "Celo",
     "DeFi",
@@ -19,33 +19,33 @@ export const metadata: Metadata = {
     "payments",
     "financial outcomes",
   ],
-  authors: [{ name: "AutoSplit Team" }],
-  creator: "AutoSplit Team",
+  authors: [{ name: "Split Duel Team" }],
+  creator: "Split Duel Team",
   openGraph: {
     type: "website",
-    title: "AutoSplit — Multi-Transaction Financial Outcomes",
+    title: "Split Duel — Multi-Transaction Financial Outcomes",
     description:
       "Send once, split automatically. One transaction, multiple outcomes on Celo.",
-    siteName: "AutoSplit",
+    siteName: "Split Duel",
     images: [
       {
-        url: "/autosplit-logo.svg",
+        url: "/splitduel.svg",
         width: 1200,
         height: 630,
-        alt: "AutoSplit Social Routing",
+        alt: "Split Duel Social Routing",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AutoSplit — Programmable Native Yield",
+    title: "Split Duel — Programmable Native Yield",
     description: "Route CELO dynamically and compound yields securely.",
-    images: ["/autosplit-logo.svg"],
+    images: ["/splitduel.svg"],
   },
   icons: {
-    icon: "/autosplit-logo.svg",
-    shortcut: "/autosplit.svg",
-    apple: "/autosplit-logo.svg",
+    icon: "/splitduel.svg",
+    shortcut: "/splitduel.svg",
+    apple: "/splitduel.svg",
   },
   manifest: "/site.webmanifest",
   robots: { index: true, follow: true },

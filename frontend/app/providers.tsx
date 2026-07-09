@@ -11,10 +11,10 @@ const queryClient = new QueryClient()
 const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID || process.env.NEXT_PUBLIC_PROJECT_ID || 'b56816460394348a735c02450371424c'
 
 const metadata = {
-  name: 'AutoSplit',
+  name: 'Split Duel',
   description: 'Automated payment routing protocol for stablecoins on Celo',
-  url: 'https://auto-splits.vercel.app',
-  icons: ['/autosplit-logo.svg'],
+  url: 'https://splitduel.vercel.app',
+  icons: ['/splitduel.svg'],
 }
 
 const wagmiAdapter = new WagmiAdapter({

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Split Duel",
     images: [
       {
-        url: "/splitduel.svg",
+        url: "/splitduel-logo.png",
         width: 1200,
         height: 630,
         alt: "Split Duel Social Routing",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Split Duel — Programmable Native Yield",
     description: "Route CELO dynamically and compound yields securely.",
-    images: ["/splitduel.svg"],
+    images: ["/splitduel-logo.png"],
   },
   icons: {
     icon: "/splitduel.svg",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     "talentapp:project_verification":
       "6aa1bfe48f7a9e3ff5e6bec896de3882caf5b295ce9f859bda473e9ab41f2678d05b2f8fcd4c48e37d8b31c2b63e04bcc0698ff6c983ef92299830d4907ec91e",
   },
-  metadataBase: new URL("https://auto-splits.vercel.app"),
+  metadataBase: new URL("https://splitduel.vercel.app"),
 };
 
 export const viewport: Viewport = {

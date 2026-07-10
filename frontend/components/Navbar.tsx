@@ -41,19 +41,7 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <img src="/splitduel.svg" alt="Split Duel Logo" className="h-14 w-auto object-contain group-hover:scale-110 transition-transform" />
-          <span
-            style={{ letterSpacing: "0.16em", lineHeight: 1 }}
-            className="text-2xl font-black uppercase hidden sm:block"
-          >
-            <span style={{ color: "var(--primary)" }}>SPLIT</span>
-            <span
-              style={{ color: "var(--foreground-muted)" }}
-              className="mx-1.5"
-            >
-              DUEL
-            </span>
-          </span>
+          <img src="/splitduel.svg" alt="Split Duel Logo" className="h-10 w-auto object-contain group-hover:scale-110 transition-transform" />
         </Link>
         <div className="flex items-center gap-3">
           {isConnected && address ? (

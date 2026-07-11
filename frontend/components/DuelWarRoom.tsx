@@ -50,11 +50,11 @@ export default function DuelWarRoom() {
             <h2 className="text-lg md:text-xl font-black text-white mb-4 tracking-widest">YOUR COMMAND CENTER</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-[#050D0C] p-2.5 rounded-lg border border-[#5DBF7E]/20">
-                <span className="flex items-center gap-2 text-[#5DBF7E] font-bold text-xs tracking-widest"><TrendingUp size={16}/> TREASURY</span>
+                <span className="flex items-center gap-2 text-[var(--color-primary)] font-bold text-xs tracking-widest"><img src="/assets/yield_icon.png" alt="Yield" className="w-4 h-4 object-contain drop-shadow-[0_0_5px_var(--color-primary)]" /> TREASURY</span>
                 <span className="text-white font-mono text-lg font-bold">0.023 yield</span>
               </div>
               <div className="flex justify-between items-center bg-[#050D0C] p-2.5 rounded-lg border border-[#4DA3FF]/20">
-                <span className="flex items-center gap-2 text-[#4DA3FF] font-bold text-xs tracking-widest"><Shield size={16}/> SHIELD</span>
+                <span className="flex items-center gap-2 text-[var(--color-defense)] font-bold text-xs tracking-widest"><img src="/assets/defense_icon.png" alt="Shield" className="w-4 h-4 object-contain drop-shadow-[0_0_5px_var(--color-defense)]" /> SHIELD</span>
                 <span className="text-white font-mono text-lg font-bold">40%</span>
               </div>
               <div className="flex justify-between items-center p-2 pt-3">
@@ -94,11 +94,11 @@ export default function DuelWarRoom() {
             <h2 className="text-lg md:text-xl font-black text-white mb-4 tracking-widest">ENEMY TREASURY</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-[#0A0507] p-2.5 rounded-lg border border-[#FF4D6D]/20">
-                <span className="flex items-center gap-2 text-[#FF4D6D] font-bold text-xs tracking-widest"><TrendingUp size={16}/> TREASURY</span>
+                <span className="flex items-center gap-2 text-[var(--color-attack)] font-bold text-xs tracking-widest"><img src="/assets/yield_icon.png" alt="Yield" className="w-4 h-4 object-contain drop-shadow-[0_0_5px_var(--color-attack)]" /> TREASURY</span>
                 <span className="text-white font-mono text-lg font-bold">0.019 yield</span>
               </div>
               <div className="flex justify-between items-center bg-[#0A0507] p-2.5 rounded-lg border border-[#4DA3FF]/20">
-                <span className="flex items-center gap-2 text-[#4DA3FF] font-bold text-xs tracking-widest"><Shield size={16}/> SHIELD</span>
+                <span className="flex items-center gap-2 text-[var(--color-defense)] font-bold text-xs tracking-widest"><img src="/assets/defense_icon.png" alt="Shield" className="w-4 h-4 object-contain drop-shadow-[0_0_5px_var(--color-defense)]" /> SHIELD</span>
                 <span className="text-white font-mono text-lg font-bold">0%</span>
               </div>
               <div className="flex justify-between items-center p-2 pt-3">
@@ -122,8 +122,8 @@ export default function DuelWarRoom() {
             {/* Attack Slider */}
             <div className="flex flex-col gap-2 group">
               <div className="flex justify-between items-end">
-                <div className="flex items-center gap-2 text-[#FF4D6D] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(255,77,109,0.8)]">
-                  <Zap size={22}/> ATTACK
+                <div className="flex items-center gap-2 text-[var(--color-attack)] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(255,10,120,0.8)]">
+                  <img src="/assets/attack_icon.png" alt="Attack" className="w-6 h-6 object-contain" /> ATTACK
                 </div>
                 <div className="text-2xl md:text-3xl font-mono font-black text-[#FF4D6D] drop-shadow-[0_0_10px_rgba(255,77,109,0.5)]">{attackPct}%</div>
               </div>
@@ -138,8 +138,8 @@ export default function DuelWarRoom() {
             {/* Defend Slider */}
             <div className="flex flex-col gap-2 group">
               <div className="flex justify-between items-end">
-                <div className="flex items-center gap-2 text-[#4DA3FF] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(77,163,255,0.8)]">
-                  <Shield size={22}/> DEFEND
+                <div className="flex items-center gap-2 text-[var(--color-defense)] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(47,155,255,0.8)]">
+                  <img src="/assets/defense_icon.png" alt="Defend" className="w-6 h-6 object-contain" /> DEFEND
                 </div>
                 <div className="text-2xl md:text-3xl font-mono font-black text-[#4DA3FF] drop-shadow-[0_0_10px_rgba(77,163,255,0.5)]">{defendPct}%</div>
               </div>
@@ -154,8 +154,8 @@ export default function DuelWarRoom() {
             {/* Invest Slider */}
             <div className="flex flex-col gap-2 group">
               <div className="flex justify-between items-end">
-                <div className="flex items-center gap-2 text-[#5DBF7E] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(93,191,126,0.8)]">
-                  <TrendingUp size={22}/> INVEST
+                <div className="flex items-center gap-2 text-[var(--color-invest)] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(0,245,138,0.8)]">
+                  <img src="/assets/invest_icon.png" alt="Invest" className="w-6 h-6 object-contain" /> INVEST
                 </div>
                 <div className="text-2xl md:text-3xl font-mono font-black text-[#5DBF7E] drop-shadow-[0_0_10px_rgba(0,242,138,0.5)]">{investPct}%</div>
               </div>

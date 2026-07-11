@@ -1,23 +1,57 @@
-# AutoSplit
+# 🎮 SplitDuel (Yield Tactics)
 
-The elite Programmable Revenue Router on Celo.
+**The Lossless Yield Battle Game on Celo.**
 
-One Address → Many Outcomes. Instantly split incoming revenue among your team, creators, or DAO, while automatically diverting a percentage into a yield-generating shared treasury. No accountants. No spreadsheets.
+Two players. Five rounds. Split your energy into Attack, Defend, or Invest. Best treasury wins the yield — principal 100% safe.
 
-## How it works
+## 🎯 The Game Paradigm
 
-### 1. Split Matrix Configurations
-This section replaces traditional static transfers with dynamic routing.
-* **Add Destination:** Click this to create a new split recipient. You can add as many as you want.
-* **Recipient Address:** Enter the `0x...` address for each destination.
-* **Share (%):** Define the exact percentage of the incoming transfer each address should receive. *Important:* The sum of all splits must exactly equal 100%.
-* **Vault Toggle (Yield Treasury):** By toggling the switch next to an address, you convert it from a "Direct Transfer" to "Routing to Yield Treasury." This automatically diverts those funds into compound savings instead of sending them to the wallet.
-* **Save On-Chain:** Once configured, clicking this saves your exact split matrix into the smart contract permanently.
+Traditional DeFi yield products are complex and lack engagement. SplitDuel transforms yield generation into a 1v1 tactical strategy game. Players deposit an equal stake into the DuelManager. This principal is NEVER at risk.
 
-### 2. Execute Routing
-* **Route Payment:** Once your rules are saved on-chain, you use this execution panel. Input a total amount and select an asset (CELO or cUSD).
-* When you click **Execute Routing**, the smart contract instantly distributes the funds to the various recipients and diverts the specified percentage directly into the Shared Treasury.
+Over 5 rounds, players allocate 100% of their energy across three vaults:
+- ⚔️ **Attack**
+- 🛡️ **Defend**
+- 📈 **Invest**
 
-### 3. Shared Treasury (Compound Yield Severance Fund)
-* This widget tracks the balances (cUSD and CELO) that you've routed into the compound treasury vault. 
-* **Vault Interactions:** You can manually deposit more funds or withdraw your existing savings anytime. It explicitly states the simulated yield (e.g., 4.5% APY).
+**Combat Mechanics:**
+- **Attack** vs **Defend**: Blocked — attack wasted, shield holds.
+- **Attack** vs **Invest**: Hit — you drain a % of their yield gain this round.
+- **Invest** vs **Invest**: Both grow cleanly.
+
+Players submit their choices secretly (commit-reveal). After 5 rounds, the player with the highest treasury score wins the accumulated yield. BOTH players get their principal back.
+
+---
+
+## 🏗️ Directory Architecture
+
+```
+SplitDuel/
+├── smartcontract/             # Solidity Workspace
+│   ├── contracts/             # Core Protocol Contracts
+│   │   ├── DuelManager.sol    # Matchmaking, commit-reveal, resolution
+│   │   └── SplitPool.sol      # Daily tournament pool
+│   └── hardhat.config.ts      # TypeScript Hardhat config
+│
+└── frontend/                  # NextJS Web3 Game Client
+    ├── src/
+    │   ├── app/
+    │   │   └── page.tsx       # 3-Slider UI, Visual Routing Animations
+    └── package.json           # Frontend packages
+```
+
+---
+
+## 🌟 Key Features
+* **Lossless Gameplay:** 100% principal protection.
+* **Commit-Reveal Mechanism:** Prevents front-running and creates high psychological tension.
+* **Daily Split Pool:** A multiplayer daily tournament for the top 10% most efficient allocators.
+* **Reputation Buffs:** Earn small efficiency buffs (Novice → Legend) based on your fight count.
+* **MiniPay Optimized:** USDm fee abstraction (CIP-64) and mobile-first 60-second rounds.
+
+---
+
+## 🔗 Live Deployments
+
+**Celo Mainnet:**
+* **DuelManager:** `0xb564244275a393567dECede23cfB2fB3424AFc0F`
+* **SplitPool:** `0x1D3184144fC75f4912a2805eeD7a218f2B48b4e9`

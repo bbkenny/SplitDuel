@@ -14,12 +14,11 @@ export default function DuelWarRoom() {
   };
 
   return (
-    <div className="min-h-screen bg-[#021312] p-4 md:p-8 font-sans flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen font-sans flex flex-col items-center pt-32 pb-20 relative overflow-hidden">
       {/* Background visual effects */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,242,138,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,242,138,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(0,242,138,0.05)_0%,rgba(2,19,18,1)_70%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,242,138,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(0,242,138,0.06)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
 
-      <div className="w-full max-w-5xl bg-[#102E2B]/80 backdrop-blur-xl border border-[#5DBF7E]/30 rounded-2xl p-6 md:p-10 shadow-[0_0_50px_rgba(93,191,126,0.1)] relative z-10">
+      <div className="w-full max-w-[1200px] px-6 md:px-10 relative z-10">
         
         {/* Header */}
         <div className="flex justify-between items-start border-b border-[#5DBF7E]/20 pb-6 mb-8">
@@ -41,8 +40,8 @@ export default function DuelWarRoom() {
         {/* HUD with Battlefield */}
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 mb-12 items-center">
           {/* Player 1 HUD */}
-          <div className="bg-[#0A1A18] p-6 rounded-xl border-2 border-[#00F28A]/30 shadow-[0_0_30px_rgba(0,242,138,0.1)] relative overflow-hidden group hover:border-[#00F28A]/60 transition-colors">
-            <div className="absolute top-0 right-0 px-3 py-1 bg-[#00F28A] text-[#102E2B] font-black text-xs tracking-widest rounded-bl-lg shadow-[0_0_10px_rgba(0,242,138,0.5)]">COMMANDER</div>
+          <div className="bg-[#0A1A18] p-6 rounded-2xl border-2 border-[#00F28A]/20 shadow-[0_0_20px_rgba(0,242,138,0.05)] relative overflow-hidden group hover:border-[#00F28A]/40 transition-colors">
+            <div className="absolute top-0 right-0 px-3 py-1 bg-[#00F28A] text-[#102E2B] font-black text-xs tracking-widest rounded-bl-2xl shadow-[0_0_10px_rgba(0,242,138,0.3)]">COMMANDER</div>
             <h2 className="text-xl md:text-2xl font-black text-white mb-6 tracking-widest">YOUR COMMAND CENTER</h2>
             <div className="space-y-4">
               <div className="flex justify-between items-center bg-[#050D0C] p-3 rounded-lg border border-[#5DBF7E]/20">
@@ -77,8 +76,8 @@ export default function DuelWarRoom() {
           </div>
 
           {/* Player 2 HUD */}
-          <div className="bg-[#1A0A0E]/80 p-6 rounded-xl border-2 border-[#FF4D6D]/30 shadow-[0_0_30px_rgba(255,77,109,0.1)] relative overflow-hidden group hover:border-[#FF4D6D]/60 transition-colors">
-            <div className="absolute top-0 right-0 px-3 py-1 bg-[#FF4D6D] text-white font-black text-xs tracking-widest rounded-bl-lg shadow-[0_0_10px_rgba(255,77,109,0.5)]">VETERAN</div>
+          <div className="bg-[#1A0A0E]/80 p-6 rounded-2xl border-2 border-[#FF4D6D]/20 shadow-[0_0_20px_rgba(255,77,109,0.05)] relative overflow-hidden group hover:border-[#FF4D6D]/40 transition-colors">
+            <div className="absolute top-0 right-0 px-3 py-1 bg-[#FF4D6D] text-white font-black text-xs tracking-widest rounded-bl-2xl shadow-[0_0_10px_rgba(255,77,109,0.3)]">VETERAN</div>
             <h2 className="text-xl md:text-2xl font-black text-white mb-6 tracking-widest">ENEMY TREASURY</h2>
             <div className="space-y-4">
               <div className="flex justify-between items-center bg-[#0A0507] p-3 rounded-lg border border-[#FF4D6D]/20">
@@ -98,8 +97,8 @@ export default function DuelWarRoom() {
         </div>
 
         {/* Matrix Allocator */}
-        <div className="bg-[#0A1A18] p-6 md:p-10 rounded-xl border-2 border-[#5DBF7E]/30 relative overflow-hidden shadow-[inset_0_0_30px_rgba(0,0,0,0.5)]">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#5DBF7E] text-[#102E2B] px-8 py-1.5 rounded-b-xl font-black tracking-[0.2em] text-xs md:text-sm shadow-[0_0_20px_rgba(0,242,138,0.6)]">
+        <div className="bg-[#0A1A18] p-8 md:p-12 rounded-2xl border-2 border-[#5DBF7E]/20 relative overflow-hidden shadow-[inset_0_0_20px_rgba(0,0,0,0.3)]">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#5DBF7E] text-[#102E2B] px-8 py-1.5 rounded-b-2xl font-black tracking-[0.2em] text-xs md:text-sm shadow-[0_0_15px_rgba(0,242,138,0.4)]">
             ALLOCATE RESOURCES
           </div>
           
@@ -166,7 +165,7 @@ export default function DuelWarRoom() {
             
             <button 
               disabled={total !== 100}
-              className="w-full md:w-auto bg-[#102E2B] border-2 border-[#00F28A] hover:bg-[#00F28A] disabled:border-gray-800 disabled:bg-gray-900 disabled:text-gray-600 text-[#00F28A] hover:text-[#102E2B] px-8 md:px-12 py-5 md:py-6 rounded-xl font-black tracking-[0.2em] text-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_30px_rgba(0,242,138,0.4)] hover:shadow-[0_0_50px_rgba(0,242,138,0.8)] disabled:shadow-none"
+              className="w-full md:w-auto bg-[#102E2B] border-2 border-[#00F28A] hover:bg-[#00F28A] disabled:border-gray-800 disabled:bg-gray-900 disabled:text-gray-600 text-[#00F28A] hover:text-[#102E2B] px-10 md:px-14 py-6 md:py-8 rounded-2xl font-black tracking-[0.2em] text-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(0,242,138,0.2)] hover:shadow-[0_0_40px_rgba(0,242,138,0.4)] disabled:shadow-none"
             >
               COMMIT ALLOCATION →
             </button>

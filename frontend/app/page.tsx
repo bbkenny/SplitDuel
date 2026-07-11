@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import DuelWarRoom from '@/components/DuelWarRoom';
-import { Shield, TrendingUp, Zap, History, Target } from 'lucide-react';
 
 export default function SplitDuelHome() {
   const [mounted, setMounted] = useState(false);
@@ -21,65 +20,75 @@ export default function SplitDuelHome() {
   }
 
   return (
-    <div className="min-h-screen text-[#5DBF7E] font-sans flex flex-col">
+    <div className="min-h-screen text-[var(--color-primary)] font-sans flex flex-col relative overflow-hidden bg-[var(--color-background)]">
+      {/* Background Graphic */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none mix-blend-screen"
+        style={{ backgroundImage: "url('/assets/background_tactical_grid.png')" }} 
+      />
+      {/* Holographic rings */}
+      <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border-[1px] border-[var(--color-primary)] opacity-10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none" />
+      <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-[1px] border-[var(--color-secondary)] opacity-[0.05] rounded-full animate-[spin_40s_linear_infinite_reverse] pointer-events-none" />
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden pt-36 pb-20">
+      <main className="flex-1 flex flex-col items-center justify-center p-8 text-center relative z-10 pt-36 pb-20">
         
-        {/* Background Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,242,138,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(0,242,138,0.06)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
-
-        <div className="z-10 w-full max-w-[1200px] mx-auto">
+        <div className="w-full max-w-[1200px] mx-auto">
           
           {/* Hero Illustration */}
-          <div className="w-full max-w-lg mx-auto h-32 flex items-center justify-center mb-16 relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-24 h-24 border-2 border-[#00F28A]/10 rounded-full animate-ping absolute" />
-              <div className="w-16 h-16 border border-[#5DBF7E]/30 rounded-full absolute" />
-              <Shield size={40} className="text-[#5DBF7E] drop-shadow-[0_0_15px_rgba(0,242,138,0.6)] z-10" />
-            </div>
+          <div className="w-full max-w-4xl mx-auto flex items-center justify-center mb-10 relative animate-[pulse_6s_ease-in-out_infinite]">
+            <img 
+              src="/assets/hero_illustration.png" 
+              alt="War Room Command Center" 
+              className="w-full h-auto drop-shadow-[0_0_50px_rgba(93,191,126,0.3)] object-contain"
+            />
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-widest leading-tight">
+          <h2 className="text-4xl md:text-5xl font-black text-[var(--color-text)] mb-6 tracking-widest leading-tight">
             BUILD YOUR TREASURY.<br/>
             DEFEAT YOUR RIVAL.
           </h2>
           
-          <p className="text-lg md:text-xl text-[#5DBF7E]/80 mb-8 leading-relaxed max-w-3xl mx-auto font-medium">
+          <p className="text-lg md:text-xl text-[var(--color-primary)] opacity-80 mb-8 leading-relaxed max-w-3xl mx-auto font-medium">
             A 1v1 real-time strategy battle where two players compete to grow their treasury the fastest.
           </p>
 
-          <p className="text-xs md:text-sm text-white/60 mb-12 font-bold tracking-widest uppercase">
+          <p className="text-xs md:text-sm text-[var(--color-text)] opacity-60 mb-12 font-bold tracking-widest uppercase">
             Only the DeFi yield is at stake. Your principal is always safe.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
-            <div className="bg-[#0A1A18] p-6 rounded-2xl border-2 border-[#FF4D6D]/20 shadow-[0_0_15px_rgba(255,77,109,0.05)] hover:border-[#FF4D6D]/60 hover:-translate-y-1 transition-all">
-              <Zap className="text-[#FF4D6D] w-10 h-10 mx-auto mb-3 drop-shadow-[0_0_10px_rgba(255,77,109,0.6)]" />
-              <div className="text-[#FF4D6D] font-black text-lg tracking-widest mb-1">ATTACK</div>
-              <div className="text-[#E6F2EF]/70 text-sm font-medium">Drain opponent yield</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
+            {/* Attack Card */}
+            <div className="bg-[var(--color-surface)]/80 backdrop-blur-md p-8 rounded-2xl border border-[var(--color-attack)]/30 shadow-[0_0_20px_rgba(255,10,120,0.05)] hover-lift">
+              <img src="/assets/attack_icon.png" alt="Attack" className="w-20 h-20 mx-auto mb-4 object-contain drop-shadow-[0_0_15px_rgba(255,10,120,0.6)] animate-[pulse_3s_ease-in-out_infinite]" />
+              <div className="text-[var(--color-attack)] font-black text-xl tracking-widest mb-2">ATTACK</div>
+              <div className="text-[var(--color-text)]/70 text-sm font-medium">Drain opponent yield</div>
             </div>
-            <div className="bg-[#0A1A18] p-6 rounded-2xl border-2 border-[#4DA3FF]/20 shadow-[0_0_15px_rgba(77,163,255,0.05)] hover:border-[#4DA3FF]/60 hover:-translate-y-1 transition-all">
-              <Shield className="text-[#4DA3FF] w-10 h-10 mx-auto mb-3 drop-shadow-[0_0_10px_rgba(77,163,255,0.6)]" />
-              <div className="text-[#4DA3FF] font-black text-lg tracking-widest mb-1">DEFEND</div>
-              <div className="text-[#E6F2EF]/70 text-sm font-medium">Block incoming attacks</div>
+
+            {/* Defense Card */}
+            <div className="bg-[var(--color-surface)]/80 backdrop-blur-md p-8 rounded-2xl border border-[var(--color-defense)]/30 shadow-[0_0_20px_rgba(47,155,255,0.05)] hover-lift">
+              <img src="/assets/defense_icon.png" alt="Defense" className="w-20 h-20 mx-auto mb-4 object-contain drop-shadow-[0_0_15px_rgba(47,155,255,0.6)] animate-[pulse_4s_ease-in-out_infinite]" />
+              <div className="text-[var(--color-defense)] font-black text-xl tracking-widest mb-2">DEFEND</div>
+              <div className="text-[var(--color-text)]/70 text-sm font-medium">Block incoming attacks</div>
             </div>
-            <div className="bg-[#0A1A18] p-6 rounded-2xl border-2 border-[#5DBF7E]/20 shadow-[0_0_15px_rgba(93,191,126,0.05)] hover:border-[#00F28A]/60 hover:-translate-y-1 transition-all">
-              <TrendingUp className="text-[#5DBF7E] w-10 h-10 mx-auto mb-3 drop-shadow-[0_0_10px_rgba(0,242,138,0.6)]" />
-              <div className="text-[#5DBF7E] font-black text-lg tracking-widest mb-1">INVEST</div>
-              <div className="text-[#E6F2EF]/70 text-sm font-medium">Compound your treasury</div>
+
+            {/* Invest Card */}
+            <div className="bg-[var(--color-surface)]/80 backdrop-blur-md p-8 rounded-2xl border border-[var(--color-invest)]/30 shadow-[0_0_20px_rgba(0,245,138,0.05)] hover-lift">
+              <img src="/assets/invest_icon.png" alt="Invest" className="w-20 h-20 mx-auto mb-4 object-contain drop-shadow-[0_0_15px_rgba(0,245,138,0.6)] animate-[pulse_3.5s_ease-in-out_infinite]" />
+              <div className="text-[var(--color-invest)] font-black text-xl tracking-widest mb-2">INVEST</div>
+              <div className="text-[var(--color-text)]/70 text-sm font-medium">Compound your treasury</div>
             </div>
           </div>
 
           {!address ? (
-            <div className="animate-pulse text-[#F4D935] text-xl font-bold tracking-widest mt-10">
+            <div className="animate-pulse text-[var(--color-warning)] text-xl font-bold tracking-widest mt-10">
               CONNECT WALLET TO ENTER
             </div>
           ) : (
             <div className="max-w-2xl mx-auto">
               <button 
                 onClick={() => setInDuel(true)}
-                className="w-full bg-[#102E2B] border-2 border-[#00F28A] hover:bg-[#00F28A] text-[#00F28A] hover:text-[#102E2B] px-4 py-5 rounded-2xl font-black tracking-[0.2em] md:tracking-[0.4em] text-lg md:text-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(0,242,138,0.2)] hover:shadow-[0_0_40px_rgba(0,242,138,0.4)] flex items-center justify-center gap-4"
+                className="btn-cyber w-full bg-[#05100D] border-2 border-[var(--color-primary)] text-[var(--color-primary)] px-4 py-6 rounded-2xl font-black tracking-[0.2em] md:tracking-[0.4em] text-lg md:text-xl shadow-[0_0_20px_rgba(93,191,126,0.2)] flex items-center justify-center gap-4 hover:bg-[var(--color-primary)] hover:text-[#05100D]"
               >
                 <span className="hidden md:inline">██████</span> ENTER DUEL <span className="hidden md:inline">██████</span>
               </button>

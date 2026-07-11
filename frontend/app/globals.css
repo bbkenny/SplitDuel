@@ -2,18 +2,45 @@
 
 :root {
   --color-primary: #5DBF7E;
-  --color-secondary: #00F28A;
-  --color-background: #102E2B;
-  --color-text: #E6F2EF;
+  --color-secondary: #00F58A;
+  --color-background: #081514;
+  --color-surface: #102E2B;
+  --color-text: #F4F4F4;
   --color-muted: #7FA9A3;
   --color-border: rgba(93, 191, 126, 0.2);
   --color-card: rgba(16, 46, 43, 0.8);
-  --color-danger: #FF4D6D;
-  --color-defense: #4DA3FF;
+  --color-danger: #FF0A78;
+  --color-attack: #FF0A78;
+  --color-defense: #2F9BFF;
+  --color-invest: #00F58A;
+  --color-warning: #FFD24A;
+  --color-white: #F4F4F4;
+  --color-glow: rgba(93, 191, 126, 0.35);
 }
 
 html, body {
   @apply bg-[var(--color-background)] text-[var(--color-text)] min-h-screen font-sans;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 30px rgba(93, 191, 126, 0.15);
+}
+
+.btn-cyber {
+  transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.btn-cyber:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px var(--color-glow);
+  border-color: var(--color-primary);
+}
+.btn-cyber:active {
+  transform: scale(0.98);
 }
 
 * { box-sizing: border-box; }

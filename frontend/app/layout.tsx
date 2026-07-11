@@ -42,6 +42,11 @@ export const metadata: Metadata = {
     description: "Route CELO dynamically and compound yields securely.",
     images: ["/splitduel-logo.png"],
   },
+  icons: {
+    icon: "/splitduel.svg",
+    shortcut: "/splitduel.svg",
+    apple: "/splitduel-logo.png",
+  },
   manifest: "/site.webmanifest",
   robots: { index: true, follow: true },
   other: {

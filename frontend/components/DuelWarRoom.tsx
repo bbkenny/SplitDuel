@@ -16,7 +16,11 @@ export default function DuelWarRoom() {
   return (
     <div className="min-h-screen font-sans flex flex-col items-center pt-32 pb-20 relative overflow-hidden">
       {/* Background visual effects */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,242,138,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(0,242,138,0.06)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none mix-blend-screen"
+        style={{ backgroundImage: "url('/assets/background_military_bunker.png')" }} 
+      />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-px h-full bg-gradient-to-b from-transparent via-[var(--color-primary)] to-transparent opacity-20 shadow-[0_0_30px_rgba(93,191,126,0.8)]" />
 
       <div className="w-full max-w-[1200px] px-6 md:px-10 relative z-10">
         
@@ -40,8 +44,9 @@ export default function DuelWarRoom() {
         {/* HUD with Battlefield */}
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 mb-12 items-center">
           {/* Player 1 HUD */}
-          <div className="bg-[#0A1A18] p-5 rounded-2xl border-2 border-[#00F28A]/20 shadow-[0_0_20px_rgba(0,242,138,0.05)] relative overflow-hidden group hover:border-[#00F28A]/40 transition-colors">
-            <div className="absolute top-0 right-0 px-3 py-1 bg-[#00F28A] text-[#102E2B] font-black text-[10px] tracking-widest rounded-bl-2xl shadow-[0_0_10px_rgba(0,242,138,0.3)]">COMMANDER</div>
+          <div className="bg-[var(--color-surface)]/80 backdrop-blur-md p-5 rounded-2xl border-2 border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(93,191,126,0.05)] relative overflow-hidden group hover:border-[var(--color-primary)]/40 transition-colors">
+            <div className="absolute top-0 right-0 px-3 py-1 bg-[var(--color-primary)] text-[var(--color-surface)] font-black text-[10px] tracking-widest rounded-bl-2xl shadow-[0_0_10px_rgba(93,191,126,0.3)]">COMMANDER</div>
+            <img src="/assets/treasury_icon.png" alt="Treasury" className="absolute top-2 right-16 w-8 h-8 opacity-50 drop-shadow-[0_0_10px_rgba(93,191,126,0.5)] animate-pulse" />
             <h2 className="text-lg md:text-xl font-black text-white mb-4 tracking-widest">YOUR COMMAND CENTER</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-[#050D0C] p-2.5 rounded-lg border border-[#5DBF7E]/20">
@@ -53,31 +58,39 @@ export default function DuelWarRoom() {
                 <span className="text-white font-mono text-lg font-bold">40%</span>
               </div>
               <div className="flex justify-between items-center p-2 pt-3">
-                <span className="text-[#E6F2EF]/40 font-bold tracking-widest text-[10px]">RANK</span>
-                <span className="text-[#F4D935] font-black tracking-widest border border-[#F4D935]/30 px-2 py-0.5 rounded bg-[#F4D935]/10 text-xs shadow-[0_0_10px_rgba(244,217,53,0.2)]">TIER III</span>
+                <span className="text-[var(--color-text)]/40 font-bold tracking-widest text-[10px]">RANK</span>
+                <div className="flex items-center gap-1.5 border border-[var(--color-warning)]/30 px-2 py-0.5 rounded bg-[var(--color-warning)]/10 shadow-[0_0_10px_rgba(255,210,74,0.2)]">
+                  <img src="/assets/rank_medal_gold.png" alt="Gold Medal" className="w-4 h-4 object-contain" />
+                  <span className="text-[var(--color-warning)] font-black tracking-widest text-xs">TIER III</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Battlefield Middle */}
           <div className="hidden md:flex flex-col items-center justify-center px-4 relative">
-            <div className="text-[#FF4D6D] font-black text-xl animate-pulse tracking-[0.3em] mb-4 drop-shadow-[0_0_10px_rgba(255,77,109,0.8)]">VS</div>
+            <div className="text-[var(--color-attack)] font-black text-xl animate-pulse tracking-[0.3em] mb-4 drop-shadow-[0_0_10px_rgba(255,10,120,0.8)]">VS</div>
             <div className="flex flex-col items-center gap-2 relative z-10">
-              <div className="w-[2px] h-12 bg-gradient-to-b from-[#00F28A] to-transparent rounded-full opacity-60"></div>
-              <div className="p-2.5 rounded-full bg-[#1A0A0E] border border-[#FF4D6D]/30 shadow-[0_0_20px_rgba(255,77,109,0.4)] relative">
-                <div className="absolute inset-0 rounded-full border border-[#FF4D6D] animate-ping opacity-20"></div>
-                <Zap className="text-[#FF4D6D] drop-shadow-[0_0_10px_rgba(255,77,109,1)]" size={24} />
+              <div className="w-[2px] h-12 bg-gradient-to-b from-[var(--color-primary)] to-transparent rounded-full opacity-60"></div>
+              
+              {/* 3D Energy Core representation */}
+              <div className="w-16 h-16 rounded-full bg-[var(--color-surface)] border-2 border-[var(--color-attack)]/40 shadow-[0_0_30px_rgba(255,10,120,0.5)] relative flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 rounded-full border border-[var(--color-attack)] animate-ping opacity-30"></div>
+                <div className="absolute inset-2 rounded-full border-2 border-[var(--color-defense)] border-dashed animate-[spin_4s_linear_infinite] opacity-50"></div>
+                <img src="/assets/attack_icon.png" alt="Core" className="w-8 h-8 drop-shadow-[0_0_10px_rgba(255,10,120,1)] z-10 animate-pulse" />
               </div>
-              <div className="w-[2px] h-12 bg-gradient-to-t from-[#FF4D6D] to-transparent rounded-full opacity-60"></div>
+
+              <div className="w-[2px] h-12 bg-gradient-to-t from-[var(--color-attack)] to-transparent rounded-full opacity-60"></div>
             </div>
             
             {/* Glowing lines connecting to HUDs */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-[1px] bg-gradient-to-r from-[#00F28A]/50 via-[#FF4D6D]/50 to-[#FF4D6D]/50 -z-10 opacity-30"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-[1px] bg-gradient-to-r from-[var(--color-primary)]/50 via-[var(--color-attack)]/50 to-[var(--color-attack)]/50 -z-10 opacity-30"></div>
           </div>
 
           {/* Player 2 HUD */}
-          <div className="bg-[#1A0A0E]/80 p-5 rounded-2xl border-2 border-[#FF4D6D]/20 shadow-[0_0_20px_rgba(255,77,109,0.05)] relative overflow-hidden group hover:border-[#FF4D6D]/40 transition-colors">
-            <div className="absolute top-0 right-0 px-3 py-1 bg-[#FF4D6D] text-white font-black text-[10px] tracking-widest rounded-bl-2xl shadow-[0_0_10px_rgba(255,77,109,0.3)]">VETERAN</div>
+          <div className="bg-[var(--color-surface)]/80 backdrop-blur-md p-5 rounded-2xl border-2 border-[var(--color-attack)]/20 shadow-[0_0_20px_rgba(255,10,120,0.05)] relative overflow-hidden group hover:border-[var(--color-attack)]/40 transition-colors">
+            <div className="absolute top-0 right-0 px-3 py-1 bg-[var(--color-attack)] text-[var(--color-text)] font-black text-[10px] tracking-widest rounded-bl-2xl shadow-[0_0_10px_rgba(255,10,120,0.3)]">VETERAN</div>
+            <img src="/assets/treasury_icon.png" alt="Treasury" className="absolute top-2 right-16 w-8 h-8 opacity-50 drop-shadow-[0_0_10px_rgba(255,10,120,0.5)] animate-pulse" />
             <h2 className="text-lg md:text-xl font-black text-white mb-4 tracking-widest">ENEMY TREASURY</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-[#0A0507] p-2.5 rounded-lg border border-[#FF4D6D]/20">
@@ -89,8 +102,11 @@ export default function DuelWarRoom() {
                 <span className="text-white font-mono text-lg font-bold">0%</span>
               </div>
               <div className="flex justify-between items-center p-2 pt-3">
-                <span className="text-[#E6F2EF]/40 font-bold tracking-widest text-[10px]">RANK</span>
-                <span className="text-[#F4D935] font-black tracking-widest border border-[#F4D935]/30 px-2 py-0.5 rounded bg-[#F4D935]/10 text-xs shadow-[0_0_10px_rgba(244,217,53,0.2)]">TIER II</span>
+                <span className="text-[var(--color-text)]/40 font-bold tracking-widest text-[10px]">RANK</span>
+                <div className="flex items-center gap-1.5 border border-[var(--color-warning)]/30 px-2 py-0.5 rounded bg-[var(--color-warning)]/10 shadow-[0_0_10px_rgba(255,210,74,0.2)]">
+                  <img src="/assets/rank_medal_bronze.png" alt="Bronze Medal" className="w-4 h-4 object-contain" />
+                  <span className="text-[var(--color-warning)] font-black tracking-widest text-xs">TIER II</span>
+                </div>
               </div>
             </div>
           </div>
@@ -165,7 +181,7 @@ export default function DuelWarRoom() {
             
             <button 
               disabled={total !== 100}
-              className="w-full md:w-auto bg-[#102E2B] border-2 border-[#00F28A] hover:bg-[#00F28A] disabled:border-gray-800 disabled:bg-gray-900 disabled:text-gray-600 text-[#00F28A] hover:text-[#102E2B] px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black tracking-[0.2em] text-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(0,242,138,0.2)] hover:shadow-[0_0_40px_rgba(0,242,138,0.4)] disabled:shadow-none"
+              className="btn-cyber w-full md:w-auto bg-[var(--color-surface)] border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:border-gray-800 disabled:bg-gray-900 disabled:text-gray-600 text-[var(--color-primary)] hover:text-[var(--color-surface)] px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black tracking-[0.2em] text-lg shadow-[0_0_20px_rgba(93,191,126,0.2)] disabled:shadow-none"
             >
               COMMIT ALLOCATION →
             </button>

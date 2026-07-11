@@ -38,7 +38,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#102E2B]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#081514]/70 backdrop-blur-md border-b border-[#5DBF7E]/10">
       <div className="max-w-[1200px] mx-auto px-8 h-24 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-4 shrink-0 group">
           <img src="/splitduel-logo.png" alt="Split Duel Logo" className="h-12 w-auto object-contain group-hover:scale-105 transition-transform" />
@@ -100,7 +100,7 @@ export default function Navbar() {
             !isMiniPay && (
               <button
                 onClick={() => open()}
-                className="bg-[#5DBF7E] text-[#102E2B] font-black py-3 px-8 rounded-2xl text-sm md:text-base hover:bg-[#00F28A] hover:shadow-[0_0_10px_rgba(0,242,138,0.3)] transition-all tracking-wider"
+                className="btn-cyber bg-[var(--color-primary)] text-[var(--color-surface)] font-black py-3 px-8 rounded-2xl text-sm md:text-base tracking-wider border border-transparent"
               >
                 CONNECT WALLET
               </button>

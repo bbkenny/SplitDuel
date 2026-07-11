@@ -22,10 +22,13 @@ export default function SplitDuelHome() {
   return (
     <div className="min-h-screen text-[var(--color-primary)] font-sans flex flex-col relative overflow-hidden bg-[var(--color-background)]">
       {/* Background Graphic */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none mix-blend-screen"
-        style={{ backgroundImage: "url('/assets/background_tactical_grid.png')" }} 
-      />
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 mix-blend-screen blur-[3px]"
+          style={{ backgroundImage: "url('/assets/background_tactical_grid.png')" }} 
+        />
+        <div className="absolute inset-0 bg-[var(--color-background)]/70" />
+      </div>
       {/* Holographic rings */}
       <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border-[1px] border-[var(--color-primary)] opacity-10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none" />
       <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-[1px] border-[var(--color-secondary)] opacity-[0.05] rounded-full animate-[spin_40s_linear_infinite_reverse] pointer-events-none" />

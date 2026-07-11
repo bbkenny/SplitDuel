@@ -38,22 +38,11 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="max-w-7xl mx-auto px-5 h-20 flex items-center justify-between gap-6">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#102E2B] border-b border-[#5DBF7E]/20 shadow-lg">
+      <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <img src="/splitduel.svg" alt="Split Duel Logo" className="h-14 w-auto object-contain group-hover:scale-110 transition-transform" />
-          <span
-            style={{ letterSpacing: "0.16em", lineHeight: 1 }}
-            className="text-2xl font-black uppercase hidden sm:block"
-          >
-            <span style={{ color: "var(--primary)" }}>SPLIT</span>
-            <span
-              style={{ color: "var(--foreground-muted)" }}
-              className="mx-1.5"
-            >
-              DUEL
-            </span>
-          </span>
+          <img src="/splitduel-logo.png" alt="Split Duel Logo" className="h-9 w-auto object-contain group-hover:scale-105 transition-transform" />
+          <span className="text-white font-bold text-xl tracking-widest hidden sm:block">SPLIT DUEL</span>
         </Link>
         <div className="flex items-center gap-3">
           {isConnected && address ? (
@@ -111,7 +100,7 @@ export default function Navbar() {
             !isMiniPay && (
               <button
                 onClick={() => open()}
-                className="bg-[#2FD07A] text-black font-bold py-2 px-4 rounded-xl text-xs sm:text-sm hover:opacity-90 transition-opacity"
+                className="bg-[#5DBF7E] text-[#102E2B] font-bold py-2 px-6 rounded-xl text-xs sm:text-sm hover:bg-[#00F28A] hover:shadow-[0_0_15px_rgba(0,242,138,0.4)] transition-all"
               >
                 CONNECT WALLET
               </button>

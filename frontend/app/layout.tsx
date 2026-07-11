@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/splitduel.svg",
     shortcut: "/splitduel.svg",
-    apple: "/splitduel.svg",
+    apple: "/splitduel-logo.png",
   },
   manifest: "/site.webmanifest",
   robots: { index: true, follow: true },
@@ -74,7 +74,7 @@ export default function AppLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-black text-white antialiased">
+      <body className="text-white antialiased">
         <Web3Providers>
           <AutoSplitProvider>
             <Navbar />

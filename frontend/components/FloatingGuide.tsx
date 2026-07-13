@@ -52,7 +52,7 @@ export default function FloatingGuide() {
               <div className="p-6 overflow-y-auto flex-1 space-y-8 text-[#E6F2EF]">
                 <div className="prose prose-invert prose-sm max-w-none">
                   <p className="text-lg text-[#7FA9A3] leading-relaxed">
-                    This interface is the heart of <strong className="text-[#2FD07A]">SplitDuel (Yield Tactics)</strong>. It is an Active, 1v1 Tactical Yield Battle Game. Unlike passive communal-pool games, SplitDuel is for highly competitive gamers. Two players deposit an equal stake into a smart contract where their principal is 100% protected. Over 5 rounds, they play a psychological game of Rock-Paper-Scissors by allocating a 100% resource matrix across three sliders: Attack, Defend, and Invest. After 5 rounds, whoever has the highest treasury score wins all the accrued yield, and both players get their initial principal back instantly.
+                    This interface is the heart of <strong className="text-[#2FD07A]">SplitDuel (Yield Tactics)</strong>. It is a 1v1 tactical yield battle game. Players battle across 5 rounds using Attack/Defend/Invest mechanics to win accumulated yield while keeping their principal 100% safe.
                   </p>
                   
                   <p className="font-bold text-white mt-4">Here is a step-by-step breakdown of how to interact with it:</p>

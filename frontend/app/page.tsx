@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import DuelWarRoom from '@/components/DuelWarRoom';
+import HelpModal from '@/components/HelpModal';
 
 export default function SplitDuelHome() {
   const [mounted, setMounted] = useState(false);
   const [inDuel, setInDuel] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const { address } = useAccount();
 
   useEffect(() => {
@@ -32,6 +34,16 @@ export default function SplitDuelHome() {
       {/* Holographic rings */}
       <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border-[1px] border-[var(--color-primary)] opacity-10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none" />
       <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-[1px] border-[var(--color-secondary)] opacity-[0.05] rounded-full animate-[spin_40s_linear_infinite_reverse] pointer-events-none" />
+
+      {/* Top Navigation */}
+      <div className="absolute top-0 w-full p-6 flex justify-end z-20">
+        <button 
+          onClick={() => setIsHelpOpen(true)}
+          className="border border-[var(--color-primary)]/50 text-[var(--color-primary)] px-6 py-2 rounded-full font-bold tracking-widest text-xs hover:bg-[var(--color-primary)] hover:text-black transition-all shadow-[0_0_15px_rgba(93,191,126,0.2)]"
+        >
+          HOW IT WORKS / INTEL
+        </button>
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center p-8 text-center relative z-10 pt-36 pb-20">
@@ -99,6 +111,8 @@ export default function SplitDuelHome() {
           )}
         </div>
       </main>
+
+      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </div>
   );
 }

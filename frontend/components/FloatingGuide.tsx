@@ -52,31 +52,46 @@ export default function FloatingGuide() {
               <div className="p-6 overflow-y-auto flex-1 space-y-8 text-[#E6F2EF]">
                 <div className="prose prose-invert prose-sm max-w-none">
                   <p className="text-lg text-[#7FA9A3] leading-relaxed">
-                    This is the heart of <strong>Split Duel</strong>. It operates as an elite Programmable Revenue Router. One Address → Many Outcomes. Instantly split incoming revenue among your team, creators, or DAO, while automatically diverting a percentage into a yield-generating shared treasury. No accountants. No spreadsheets.
+                    This interface is the heart of <strong className="text-[#2FD07A]">SplitDuel (Yield Tactics)</strong>. It is an Active, 1v1 Tactical Yield Battle Game. Unlike passive communal-pool games, SplitDuel is for highly competitive gamers. Two players deposit an equal stake into a smart contract where their principal is 100% protected. Over 5 rounds, they play a psychological game of Rock-Paper-Scissors by allocating a 100% resource matrix across three sliders: Attack, Defend, and Invest. After 5 rounds, whoever has the highest treasury score wins all the accrued yield, and both players get their initial principal back instantly.
                   </p>
                   
                   <p className="font-bold text-white mt-4">Here is a step-by-step breakdown of how to interact with it:</p>
 
-                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">1. Split Matrix Configurations</h3>
-                  <p className="mb-4 text-[#7FA9A3]">This section replaces traditional static transfers with dynamic routing.</p>
+                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">1. Enter Match</h3>
                   <ul className="space-y-3 list-disc pl-5 text-sm">
-                    <li><strong className="text-white">Add Destination:</strong> Click this to create a new split recipient. You can add as many as you want.</li>
-                    <li><strong className="text-white">Recipient Address:</strong> Enter the <code>0x...</code> address for each destination.</li>
-                    <li><strong className="text-white">Share (%):</strong> Define the exact percentage of the incoming transfer each address should receive. <em className="text-[#F4D935]">Important:</em> The sum of all splits must exactly equal 100%.</li>
-                    <li><strong className="text-white">Vault Toggle (Yield Treasury):</strong> By toggling the switch next to an address, you convert it from a "Direct Transfer" to "Routing to Yield Treasury." This automatically diverts those funds into compound savings instead of sending them to the wallet.</li>
-                    <li><strong className="text-white">Save On-Chain:</strong> Once configured, clicking this saves your exact split matrix into the smart contract permanently.</li>
+                    <li><strong className="text-white">Deposit Equal Stake:</strong> Players connect their wallet and deposit an equal stake of CELO, USDm, EURm, USDT, or USDC into the DuelManager.</li>
+                    <li><strong className="text-[#2FD07A]">Lossless Guarantee:</strong> The principal staked is <em>never</em> put at risk. Players only fight for the accumulated yield generated during the match.</li>
                   </ul>
 
-                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">2. Execute Routing</h3>
+                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">2. Allocate Round (The Core Strategy)</h3>
                   <ul className="space-y-3 list-disc pl-5 text-sm">
-                    <li><strong className="text-white">Route Payment:</strong> Once your rules are saved on-chain, you use this execution panel. Input a total amount and select an asset (CELO or cUSD).</li>
-                    <li>When you click <strong className="text-white">Execute Routing</strong>, the smart contract instantly distributes the funds to the various recipients and diverts the specified percentage directly into the Shared Treasury.</li>
+                    <li>In each of the 5 rounds, players are presented with three sliders: <strong className="text-red-400">Attack %</strong>, <strong className="text-blue-400">Defend %</strong>, and <strong className="text-yellow-400">Invest %</strong>.</li>
+                    <li>The sum of all three sliders must exactly equal 100%.</li>
+                    <li><strong className="text-white">Commit:</strong> Players submit their allocation secretly on-chain (commit-reveal scheme) so the opponent cannot front-run or see their move.</li>
                   </ul>
 
-                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">3. Shared Treasury (Moola Market Integrated)</h3>
+                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">3. Visual Routing & Resolution</h3>
                   <ul className="space-y-3 list-disc pl-5 text-sm">
-                    <li>This widget tracks the balances (cUSD and CELO) that you've routed into the compound treasury vault.</li>
-                    <li><strong className="text-white">Vault Interactions:</strong> You can manually deposit more funds or withdraw your existing savings anytime. Behind the scenes, the VaultAdapter seamlessly deposits your CELO and ERC20 tokens natively into Moola Market for real, decentralized yield generation while maintaining your 1:1 parity and accounting!</li>
+                    <li>Once both players commit, the reveal phase triggers a <strong className="text-white">Visual Routing Animation</strong>, showing energy flowing from the player to the three vaults.</li>
+                    <li><strong className="text-white">Combat Mechanics (Rock-Paper-Scissors logic):</strong>
+                      <ul className="pl-5 mt-2 space-y-1 text-white/60 list-disc">
+                        <li><strong>Attack</strong> vs <strong>Defend</strong>: Blocked — attack wasted.</li>
+                        <li><strong>Attack</strong> vs <strong>Invest</strong>: Hit — drain a % of their yield gain this round.</li>
+                        <li><strong>Invest</strong> vs <strong>Invest</strong>: Both grow cleanly.</li>
+                      </ul>
+                    </li>
+                  </ul>
+
+                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">4. Winner Takes Yield</h3>
+                  <ul className="space-y-3 list-disc pl-5 text-sm">
+                    <li>After 5 rounds, the player with the higher treasury score wins the accumulated yield (the prize pool).</li>
+                    <li>Both players instantly receive their initial principal back intact.</li>
+                  </ul>
+
+                  <h3 className="text-xl font-bold text-[#2FD07A] mt-8 mb-4">5. Daily Split Pool & Reputation</h3>
+                  <ul className="space-y-3 list-disc pl-5 text-sm">
+                    <li><strong className="text-[#F4D935]">Daily Pool:</strong> Alongside 1v1 duels, there is a Daily Split Pool where the top 10% most efficient allocators share the daily yield.</li>
+                    <li><strong className="text-[#F4D935]">Reputation Buffs:</strong> Completing fights earns reputation, granting small % efficiency buffs (e.g., Novice to Legend).</li>
                   </ul>
                 </div>
               </div>

@@ -14,7 +14,7 @@ export default function DuelWarRoom() {
   };
 
   return (
-    <div className="min-h-screen font-sans flex flex-col items-center pt-32 pb-20 relative overflow-hidden">
+    <div className="min-h-screen font-sans flex flex-col items-center pt-24 sm:pt-32 pb-16 sm:pb-20 relative overflow-hidden">
       {/* Background visual effects */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none mix-blend-screen"
@@ -22,12 +22,12 @@ export default function DuelWarRoom() {
       />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-px h-full bg-gradient-to-b from-transparent via-[var(--color-primary)] to-transparent opacity-20 shadow-[0_0_30px_rgba(93,191,126,0.8)]" />
 
-      <div className="w-full max-w-[1200px] px-6 md:px-10 relative z-10">
+      <div className="w-full max-w-[1200px] px-4 sm:px-6 md:px-10 relative z-10">
         
         {/* Header */}
         <div className="flex justify-between items-start border-b border-[#5DBF7E]/20 pb-6 mb-8">
           <div>
-            <h1 className="text-3xl font-black tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(93,191,126,0.6)] flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(93,191,126,0.6)] flex items-center gap-2 sm:gap-3">
               SPLIT DUEL
             </h1>
             <div className="text-[#5DBF7E]/60 text-xs font-bold tracking-widest mt-2">SECURE BATTLEFIELD LINK ESTABLISHED</div>
@@ -35,7 +35,7 @@ export default function DuelWarRoom() {
           <div className="text-right">
             <div className="text-[#E6F2EF]/50 font-black tracking-widest text-xs mb-1">ROUND {round}</div>
             {/* Color changes to simulate time running out */}
-            <div className="text-3xl font-mono font-bold text-[#F4D935] drop-shadow-[0_0_15px_rgba(244,217,53,0.5)] animate-pulse">
+            <div className="text-2xl sm:text-3xl font-mono font-bold text-[#F4D935] drop-shadow-[0_0_15px_rgba(244,217,53,0.5)] animate-pulse">
               00:42
             </div>
           </div>
@@ -113,7 +113,7 @@ export default function DuelWarRoom() {
         </div>
 
         {/* Matrix Allocator */}
-        <div className="bg-[#0A1A18] p-6 md:p-8 rounded-2xl border-2 border-[#5DBF7E]/20 relative overflow-hidden shadow-[inset_0_0_20px_rgba(0,0,0,0.3)]">
+        <div className="bg-[#0A1A18] p-4 sm:p-6 md:p-8 rounded-2xl border-2 border-[#5DBF7E]/20 relative overflow-hidden shadow-[inset_0_0_20px_rgba(0,0,0,0.3)]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#5DBF7E] text-[#102E2B] px-6 py-1 rounded-b-2xl font-black tracking-[0.2em] text-xs shadow-[0_0_15px_rgba(0,242,138,0.4)]">
             ALLOCATE RESOURCES
           </div>
@@ -122,7 +122,7 @@ export default function DuelWarRoom() {
             {/* Attack Slider */}
             <div className="flex flex-col gap-2 group">
               <div className="flex justify-between items-end">
-                <div className="flex items-center gap-2 text-[var(--color-attack)] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(255,10,120,0.8)]">
+                <div className="flex items-center gap-2 text-[var(--color-attack)] font-black tracking-[0.2em] text-base sm:text-lg md:text-xl drop-shadow-[0_0_15px_rgba(255,10,120,0.8)]">
                   <img src="/assets/attack_icon.png" alt="Attack" className="w-6 h-6 object-contain" /> ATTACK
                 </div>
                 <div className="text-2xl md:text-3xl font-mono font-black text-[#FF4D6D] drop-shadow-[0_0_10px_rgba(255,77,109,0.5)]">{attackPct}%</div>
@@ -138,7 +138,7 @@ export default function DuelWarRoom() {
             {/* Defend Slider */}
             <div className="flex flex-col gap-2 group">
               <div className="flex justify-between items-end">
-                <div className="flex items-center gap-2 text-[var(--color-defense)] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(47,155,255,0.8)]">
+                <div className="flex items-center gap-2 text-[var(--color-defense)] font-black tracking-[0.2em] text-base sm:text-lg md:text-xl drop-shadow-[0_0_15px_rgba(47,155,255,0.8)]">
                   <img src="/assets/defense_icon.png" alt="Defend" className="w-6 h-6 object-contain" /> DEFEND
                 </div>
                 <div className="text-2xl md:text-3xl font-mono font-black text-[#4DA3FF] drop-shadow-[0_0_10px_rgba(77,163,255,0.5)]">{defendPct}%</div>
@@ -154,7 +154,7 @@ export default function DuelWarRoom() {
             {/* Invest Slider */}
             <div className="flex flex-col gap-2 group">
               <div className="flex justify-between items-end">
-                <div className="flex items-center gap-2 text-[var(--color-invest)] font-black tracking-[0.2em] text-lg md:text-xl drop-shadow-[0_0_15px_rgba(0,245,138,0.8)]">
+                <div className="flex items-center gap-2 text-[var(--color-invest)] font-black tracking-[0.2em] text-base sm:text-lg md:text-xl drop-shadow-[0_0_15px_rgba(0,245,138,0.8)]">
                   <img src="/assets/invest_icon.png" alt="Invest" className="w-6 h-6 object-contain" /> INVEST
                 </div>
                 <div className="text-2xl md:text-3xl font-mono font-black text-[#5DBF7E] drop-shadow-[0_0_10px_rgba(0,242,138,0.5)]">{investPct}%</div>
@@ -170,7 +170,7 @@ export default function DuelWarRoom() {
 
           <div className="mt-8 flex flex-col md:flex-row justify-between items-center border-t border-[#5DBF7E]/20 pt-6 gap-6">
             <div className="flex flex-col w-full md:w-auto">
-              <div className={`text-2xl md:text-3xl font-black tracking-[0.2em] ${total === 100 ? 'text-[#00F28A] drop-shadow-[0_0_15px_rgba(0,242,138,0.8)]' : 'text-[#FF4D6D] drop-shadow-[0_0_15px_rgba(255,77,109,0.8)]'}`}>
+              <div className={`text-xl sm:text-2xl md:text-3xl font-black tracking-[0.2em] ${total === 100 ? 'text-[#00F28A] drop-shadow-[0_0_15px_rgba(0,242,138,0.8)]' : 'text-[#FF4D6D] drop-shadow-[0_0_15px_rgba(255,77,109,0.8)]'}`}>
                 TOTAL: <span className="font-mono">{total}%</span> {total === 100 ? '✅' : <AlertTriangle className="inline text-[#FF4D6D] ml-2 mb-1 animate-pulse" size={24}/>}
               </div>
               {/* Psychological suspense text */}
@@ -181,7 +181,7 @@ export default function DuelWarRoom() {
             
             <button 
               disabled={total !== 100}
-              className="btn-cyber w-full md:w-auto bg-[var(--color-surface)] border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:border-gray-800 disabled:bg-gray-900 disabled:text-gray-600 text-[var(--color-primary)] hover:text-[var(--color-surface)] px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black tracking-[0.2em] text-lg shadow-[0_0_20px_rgba(93,191,126,0.2)] disabled:shadow-none"
+              className="btn-cyber w-full md:w-auto bg-[var(--color-surface)] border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] disabled:border-gray-800 disabled:bg-gray-900 disabled:text-gray-600 text-[var(--color-primary)] hover:text-[var(--color-surface)] px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl font-black tracking-[0.1em] sm:tracking-[0.2em] text-base sm:text-lg shadow-[0_0_20px_rgba(93,191,126,0.2)] disabled:shadow-none"
             >
               COMMIT ALLOCATION →
             </button>

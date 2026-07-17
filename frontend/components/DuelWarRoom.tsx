@@ -1,11 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Zap, TrendingUp, AlertTriangle } from 'lucide-react';
+import { useReadContract } from 'wagmi';
+import { parseAbi } from 'viem';
+
+const SPLIT_POOL_ADDRESS = "0x1D3184144fC75f4912a2805eeD7a218f2B48b4e9";
+const CELO_ERC20 = "0x471EcE3750Da237f93B8E339c536989b8978a438";
+
+const SPLIT_POOL_ABI = parseAbi([
+  "function currentTournamentId() external view returns (uint256)",
+  "function tournaments(uint256, address) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 totalStaked, uint256 totalPrize, uint256 lastYieldUpdate, bool settled)"
+]);
 
 export default function DuelWarRoom() {
   const [attackPct, setAttackPct] = useState(40);
   const [defendPct, setDefendPct] = useState(20);
   const [investPct, setInvestPct] = useState(40);
-  const [round, setRound] = useState(3);
+
+  const { data: currentTid } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'currentTournamentId',
+  });
+
+  const { data: tournamentData } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'tournaments',
+    args: currentTid ? [currentTid, CELO_ERC20] : undefined,
+  });
+
+  const [countdown, setCountdown] = useState<string>('00:00');
+  const [hasEnded, setHasEnded] = useState(false);
+
+  useEffect(() => {
+    if (!tournamentData) return;
+    const [, startTime, endTime, , , , settled] = tournamentData as any;
+    
+    if (startTime === 0n) {
+      setCountdown('NOT STARTED');
+      setHasEnded(true);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const now = Math.floor(Date.now() / 1000);
+      const end = Number(endTime);
+      
+      if (settled) {
+        setCountdown('SETTLED');
+        setHasEnded(true);
+        clearInterval(interval);
+      } else if (now >= end) {
+        setCountdown('ENDED');
+        setHasEnded(true);
+        clearInterval(interval);
+      } else {
+        setHasEnded(false);
+        const diff = end - now;
+        const h = Math.floor(diff / 3600);
+        const m = Math.floor((diff % 3600) / 60);
+        const s = diff % 60;
+        setCountdown(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [tournamentData]);
 
   const total = attackPct + defendPct + investPct;
 
@@ -33,10 +93,10 @@ export default function DuelWarRoom() {
             <div className="text-[#5DBF7E]/60 text-xs font-bold tracking-widest mt-2">SECURE BATTLEFIELD LINK ESTABLISHED</div>
           </div>
           <div className="text-right">
-            <div className="text-[#E6F2EF]/50 font-black tracking-widest text-xs mb-1">ROUND {round}</div>
+            <div className="text-[#E6F2EF]/50 font-black tracking-widest text-xs mb-1">ROUND {currentTid?.toString() || '...'}</div>
             {/* Color changes to simulate time running out */}
-            <div className="text-2xl sm:text-3xl font-mono font-bold text-[#F4D935] drop-shadow-[0_0_15px_rgba(244,217,53,0.5)] animate-pulse">
-              00:42
+            <div className={`text-2xl sm:text-3xl font-mono font-bold ${hasEnded ? 'text-[var(--color-warning)]' : 'text-[#F4D935]'} drop-shadow-[0_0_15px_rgba(244,217,53,0.5)] ${hasEnded ? 'animate-pulse' : ''}`}>
+              {countdown}
             </div>
           </div>
         </div>

@@ -15,7 +15,8 @@ const SPLIT_POOL_ABI = parseAbi([
   "function setApyBasisPoints(uint256 _apy) external",
   "function setTournamentDuration(uint256 _duration) external",
   "function setTokenSupport(address token, bool supported, uint256 minAmount) external",
-  "function currentTournamentId() external view returns (uint256)"
+  "function currentTournamentId() external view returns (uint256)",
+  "function tournaments(uint256, address) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 totalStaked, uint256 totalPrize, uint256 lastYieldUpdate, bool settled)"
 ]);
 
 export default function AdminConsole() {
@@ -44,6 +45,47 @@ export default function AdminConsole() {
     abi: SPLIT_POOL_ABI,
     functionName: 'currentTournamentId',
   });
+
+  const { data: tournamentData } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'tournaments',
+    args: currentTid ? [currentTid, tokenAddress as `0x${string}`] : undefined,
+  });
+
+  const [countdown, setCountdown] = useState<string>('');
+
+  useEffect(() => {
+    if (!tournamentData) return;
+    const [, startTime, endTime, , , , settled] = tournamentData as any;
+    
+    if (startTime === 0n) {
+      setCountdown('NOT STARTED');
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const now = Math.floor(Date.now() / 1000);
+      const end = Number(endTime);
+      
+      if (settled) {
+        setCountdown('SETTLED');
+        clearInterval(interval);
+      } else if (now >= end) {
+        setCountdown('TOURNAMENT ENDED');
+        clearInterval(interval);
+      } else {
+        const diff = end - now;
+        const d = Math.floor(diff / 86400);
+        const h = Math.floor((diff % 86400) / 3600);
+        const m = Math.floor((diff % 3600) / 60);
+        const s = diff % 60;
+        setCountdown(`${d > 0 ? `${d}d ` : ''}${h}h ${m}m ${s}s`);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [tournamentData]);
 
   const formatDuration = (hoursStr: string) => {
     const hrs = parseInt(hoursStr, 10);
@@ -124,6 +166,10 @@ export default function AdminConsole() {
               <div className="flex items-center justify-between">
                 <span className="font-mono text-white/70">Current Tournament ID:</span>
                 <span className="text-2xl font-black text-[var(--color-primary)]">{currentTid?.toString() || 'Loading...'}</span>
+              </div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-mono text-white/70">Status / Time Left:</span>
+                <span className={`text-lg font-black font-mono ${countdown === 'TOURNAMENT ENDED' ? 'text-[var(--color-warning)] animate-pulse' : countdown === 'NOT STARTED' ? 'text-gray-500' : 'text-[#F4D935]'}`}>{countdown || 'LOADING...'}</span>
               </div>
               <button onClick={handleStart} disabled={isPending || isWaiting} className="w-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-black font-bold tracking-widest py-3 rounded-xl transition-all">
                 START TOURNAMENT

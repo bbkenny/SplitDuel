@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Shield, Zap, TrendingUp, AlertTriangle } from 'lucide-react';
 import { useReadContract } from 'wagmi';

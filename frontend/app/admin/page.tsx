@@ -16,7 +16,11 @@ const SPLIT_POOL_ABI = parseAbi([
   "function setTournamentDuration(uint256 _duration) external",
   "function setTokenSupport(address token, bool supported, uint256 minAmount) external",
   "function currentTournamentId() external view returns (uint256)",
-  "function tournaments(uint256, address) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 totalStaked, uint256 totalPrize, uint256 lastYieldUpdate, bool settled)"
+  "function tournaments(uint256, address) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 totalStaked, uint256 totalPrize, uint256 lastYieldUpdate, bool settled)",
+  "function apyBasisPoints() external view returns (uint256)",
+  "function tournamentDuration() external view returns (uint256)",
+  "function minEntryAmount(address) external view returns (uint256)",
+  "function supportedTokens(address) external view returns (bool)"
 ]);
 
 export default function AdminConsole() {
@@ -51,6 +55,32 @@ export default function AdminConsole() {
     abi: SPLIT_POOL_ABI,
     functionName: 'tournaments',
     args: currentTid ? [currentTid, tokenAddress as `0x${string}`] : undefined,
+  });
+
+  const { data: currentApy } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'apyBasisPoints',
+  });
+
+  const { data: currentDurationSecs } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'tournamentDuration',
+  });
+
+  const { data: currentMinEntry } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'minEntryAmount',
+    args: [tokenAddress as `0x${string}`],
+  });
+
+  const { data: isTokenSupported } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'supportedTokens',
+    args: [tokenAddress as `0x${string}`],
   });
 
   const [countdown, setCountdown] = useState<string>('');
@@ -190,7 +220,7 @@ export default function AdminConsole() {
             <div className="space-y-6">
               <div className="flex gap-4 items-end">
                 <div className="flex-1">
-                  <label className="block text-xs font-mono text-white/50 mb-1">APY BASIS POINTS (e.g. 500 = 5%)</label>
+                  <label className="block text-xs font-mono text-white/50 mb-1">APY BASIS POINTS <span className="text-[var(--color-primary)] ml-2 bg-[var(--color-primary)]/10 px-2 py-0.5 rounded border border-[var(--color-primary)]/30">Current: {currentApy?.toString() || '...'}</span></label>
                   <input type="number" value={apy} onChange={e => setApy(e.target.value)} className="w-full bg-black/50 border border-[var(--color-primary)]/30 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-[var(--color-primary)]" />
                 </div>
                 <button onClick={handleSetApy} disabled={isPending || isWaiting} className="px-6 py-2 bg-[var(--color-primary)] text-black font-bold rounded-lg hover:shadow-[0_0_15px_rgba(93,191,126,0.5)]">UPDATE</button>
@@ -198,14 +228,17 @@ export default function AdminConsole() {
 
               <div className="flex gap-4 items-end">
                 <div className="flex-1">
-                  <label className="block text-xs font-mono text-white/50 mb-1">DURATION (HOURS) <span className="text-[var(--color-primary)] font-bold">{formatDuration(durationHrs)}</span></label>
+                  <label className="block text-xs font-mono text-white/50 mb-1">DURATION (HOURS) <span className="text-[var(--color-primary)] font-bold">{formatDuration(durationHrs)}</span> <span className="text-[var(--color-primary)] ml-2 bg-[var(--color-primary)]/10 px-2 py-0.5 rounded border border-[var(--color-primary)]/30">Current: {currentDurationSecs ? (Number(currentDurationSecs) / 3600).toString() : '...'}</span></label>
                   <input type="number" value={durationHrs} onChange={e => setDurationHrs(e.target.value)} className="w-full bg-black/50 border border-[var(--color-primary)]/30 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-[var(--color-primary)]" />
                 </div>
                 <button onClick={handleSetDuration} disabled={isPending || isWaiting} className="px-6 py-2 bg-[var(--color-primary)] text-black font-bold rounded-lg hover:shadow-[0_0_15px_rgba(93,191,126,0.5)]">UPDATE</button>
               </div>
 
               <div className="border border-white/10 p-4 rounded-xl space-y-3">
-                <label className="block text-xs font-mono text-white/80 font-bold mb-2">UPDATE TOKEN SUPPORT & MIN ENTRY</label>
+                <label className="block text-xs font-mono text-white/80 font-bold mb-2 flex items-center">
+                  UPDATE TOKEN SUPPORT & MIN ENTRY 
+                  {isTokenSupported ? <span className="text-[var(--color-primary)] text-[10px] ml-3 px-2 py-0.5 rounded-full bg-[var(--color-primary)]/20 border border-[var(--color-primary)]/50">ACTIVE</span> : <span className="text-[var(--color-warning)] text-[10px] ml-3 px-2 py-0.5 rounded-full bg-[var(--color-warning)]/20 border border-[var(--color-warning)]/50">NOT SUPPORTED</span>}
+                </label>
                 <input type="text" value={tokenAddress} onChange={e => setTokenAddress(e.target.value)} placeholder="Token Address" className="w-full bg-black/50 border border-[var(--color-primary)]/30 rounded-lg p-2 font-mono text-white text-xs focus:outline-none focus:border-[var(--color-primary)]" />
                 <div className="flex gap-4">
                   <div className="flex-1">

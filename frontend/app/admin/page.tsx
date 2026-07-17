@@ -58,7 +58,7 @@ export default function AdminConsole() {
   const isAdmin = address && adminAddress && address.toLowerCase() === (adminAddress as string).toLowerCase();
 
   const handleStart = () => {
-    writeContract({ address: SPLIT_POOL_ADDRESS, abi: SPLIT_POOL_ABI, functionName: 'startTournament', args: [CELO_ERC20] });
+    writeContract({ address: SPLIT_POOL_ADDRESS, abi: SPLIT_POOL_ABI, functionName: 'startTournament', args: [tokenAddress as `0x${string}`] });
   };
 
   const handleAdvance = () => {
@@ -66,7 +66,7 @@ export default function AdminConsole() {
   };
 
   const handleSettle = () => {
-    writeContract({ address: SPLIT_POOL_ADDRESS, abi: SPLIT_POOL_ABI, functionName: 'settlePool', args: [CELO_ERC20] });
+    writeContract({ address: SPLIT_POOL_ADDRESS, abi: SPLIT_POOL_ABI, functionName: 'settlePool', args: [tokenAddress as `0x${string}`] });
   };
 
   const handleSetApy = () => {
@@ -126,13 +126,13 @@ export default function AdminConsole() {
                 <span className="text-2xl font-black text-[var(--color-primary)]">{currentTid?.toString() || 'Loading...'}</span>
               </div>
               <button onClick={handleStart} disabled={isPending || isWaiting} className="w-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-black font-bold tracking-widest py-3 rounded-xl transition-all">
-                START TOURNAMENT (CELO)
+                START TOURNAMENT
               </button>
               <button onClick={handleAdvance} disabled={isPending || isWaiting} className="w-full bg-[var(--color-warning)]/10 border border-[var(--color-warning)] text-[var(--color-warning)] hover:bg-[var(--color-warning)] hover:text-black font-bold tracking-widest py-3 rounded-xl transition-all">
                 ADVANCE TOURNAMENT CYCLE
               </button>
               <button onClick={handleSettle} disabled={isPending || isWaiting} className="w-full bg-[var(--color-defense)]/10 border border-[var(--color-defense)] text-[var(--color-defense)] hover:bg-[var(--color-defense)] hover:text-black font-bold tracking-widest py-3 rounded-xl transition-all">
-                SETTLE CURRENT POOL (CELO)
+                SETTLE CURRENT POOL
               </button>
             </div>
           </div>

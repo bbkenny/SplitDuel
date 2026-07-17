@@ -45,6 +45,14 @@ export default function AdminConsole() {
     functionName: 'currentTournamentId',
   });
 
+  const formatDuration = (hoursStr: string) => {
+    const hrs = parseInt(hoursStr, 10);
+    if (isNaN(hrs) || hrs <= 24) return '';
+    const days = Math.floor(hrs / 24);
+    const remainingHrs = hrs % 24;
+    return `(${days} day${days > 1 ? 's' : ''}${remainingHrs > 0 ? ` ${remainingHrs} hr${remainingHrs > 1 ? 's' : ''}` : ''})`;
+  };
+
   if (!mounted) return null;
 
   const isAdmin = address && adminAddress && address.toLowerCase() === (adminAddress as string).toLowerCase();
@@ -144,7 +152,7 @@ export default function AdminConsole() {
 
               <div className="flex gap-4 items-end">
                 <div className="flex-1">
-                  <label className="block text-xs font-mono text-white/50 mb-1">DURATION (HOURS)</label>
+                  <label className="block text-xs font-mono text-white/50 mb-1">DURATION (HOURS) <span className="text-[var(--color-primary)] font-bold">{formatDuration(durationHrs)}</span></label>
                   <input type="number" value={durationHrs} onChange={e => setDurationHrs(e.target.value)} className="w-full bg-black/50 border border-[var(--color-primary)]/30 rounded-lg p-2 font-mono text-white focus:outline-none focus:border-[var(--color-primary)]" />
                 </div>
                 <button onClick={handleSetDuration} disabled={isPending || isWaiting} className="px-6 py-2 bg-[var(--color-primary)] text-black font-bold rounded-lg hover:shadow-[0_0_15px_rgba(93,191,126,0.5)]">UPDATE</button>

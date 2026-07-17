@@ -123,7 +123,8 @@ export function useAutoSplitRouter({
   const executeRoutePayment = async () => {
     if (!amount || !isReady || !isConnected || !routerAddress) return;
 
-    const parsedAmount = parseUnits(amount, 18);
+    const decimals = (token === 'USDT' || token === 'USDC') ? 6 : 18;
+    const parsedAmount = parseUnits(amount, decimals);
     const isNative = token === 'CELO';
     const targetToken = tokenAddresses[token];
 

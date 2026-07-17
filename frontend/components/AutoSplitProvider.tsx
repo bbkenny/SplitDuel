@@ -158,7 +158,7 @@ export const AutoSplitProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   const balances = {
-    tokenBalance: tokenBalanceRaw != null ? Number(formatUnits(tokenBalanceRaw as bigint, 18)) : 0,
+    tokenBalance: tokenBalanceRaw != null ? Number(formatUnits(tokenBalanceRaw as bigint, (routerHook?.token === 'USDT' || routerHook?.token === 'USDC') ? 6 : 18)) : 0,
     CELO: celoBalanceResult ? Number(formatUnits(celoBalanceResult.value, celoBalanceResult.decimals)) : 0,
   };
 

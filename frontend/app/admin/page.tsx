@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { parseEther, parseAbi } from 'viem';
+import { parseEther, parseUnits, parseAbi } from 'viem';
 
 const SPLIT_POOL_ADDRESS = "0x1D3184144fC75f4912a2805eeD7a218f2B48b4e9";
 const CELO_ERC20 = "0x471EcE3750Da237f93B8E339c536989b8978a438";
@@ -70,7 +70,8 @@ export default function AdminConsole() {
   };
 
   const handleSetToken = () => {
-    writeContract({ address: SPLIT_POOL_ADDRESS, abi: SPLIT_POOL_ABI, functionName: 'setTokenSupport', args: [tokenAddress as `0x${string}`, true, parseEther(minEntry)] });
+    const isStable = tokenAddress.toLowerCase() === "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e".toLowerCase() || tokenAddress.toLowerCase() === "0xcebA9300f2b948710d2653dD7B07f33A8B32118C".toLowerCase();
+    writeContract({ address: SPLIT_POOL_ADDRESS, abi: SPLIT_POOL_ABI, functionName: 'setTokenSupport', args: [tokenAddress as `0x${string}`, true, parseUnits(minEntry, isStable ? 6 : 18)] });
   };
 
   if (!address) {

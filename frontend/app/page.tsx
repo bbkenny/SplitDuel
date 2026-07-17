@@ -1,15 +1,104 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
+import { parseAbi } from 'viem';
 import DuelWarRoom from '@/components/DuelWarRoom';
 import HelpModal from '@/components/HelpModal';
 
+const SPLIT_POOL_ADDRESS = "0x1D3184144fC75f4912a2805eeD7a218f2B48b4e9";
+const SPLIT_POOL_ABI = parseAbi([
+  "function currentTournamentId() external view returns (uint256)",
+  "function tournaments(uint256, address) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 totalStaked, uint256 totalPrize, uint256 lastYieldUpdate, bool settled)",
+  "function supportedTokens(address) external view returns (bool)",
+  "function tournamentDuration() external view returns (uint256)"
+]);
+
+const DEFAULT_TOKENS = [
+  { name: 'CELO', address: '0x471EcE3750Da237f93B8E339c536989b8978a438' },
+  { name: 'USDM', address: '0x765DE816845861e75A25fCA122bb6898B8B1282a' },
+  { name: 'EURM', address: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73' },
+  { name: 'USDT', address: '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e' },
+  { name: 'USDC', address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C' }
+];
+
+function ArenaCard({ token, currentTid, onJoin }: { token: any, currentTid: bigint | undefined, onJoin: (addr: string) => void }) {
+  const { data: isSupported } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'supportedTokens',
+    args: [token.address as `0x${string}`],
+  });
+
+  const { data: tournamentData } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'tournaments',
+    args: currentTid ? [currentTid, token.address as `0x${string}`] : undefined,
+  });
+
+  const [, startTime, endTime, , , , settled] = (tournamentData as any) || [];
+  
+  let status = "LOADING...";
+  let isJoinable = false;
+
+  if (tournamentData) {
+    if (startTime === 0n) {
+      status = "NOT STARTED";
+    } else if (settled) {
+      status = "SETTLED";
+    } else {
+      const now = Math.floor(Date.now() / 1000);
+      if (now >= Number(endTime)) {
+        status = "ENDED";
+      } else {
+        status = "LIVE";
+        isJoinable = true;
+      }
+    }
+  }
+
+  if (!isSupported) return null;
+
+  return (
+    <div className="bg-[#050D0C]/80 backdrop-blur-md p-5 rounded-2xl border border-[var(--color-primary)]/20 shadow-[0_0_15px_rgba(93,191,126,0.05)] flex flex-col items-center gap-3 transition-transform hover:scale-105">
+      <div className="text-xl font-black text-white tracking-widest">{token.name} ARENA</div>
+      <div className="flex w-full justify-between items-center border-b border-white/10 pb-2">
+        <span className="text-xs font-mono text-white/50">ROUND ID:</span>
+        <span className="text-sm font-bold text-white">{currentTid?.toString() || '...'}</span>
+      </div>
+      <div className="flex w-full justify-between items-center">
+        <span className="text-xs font-mono text-white/50">STATUS:</span>
+        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${status === 'LIVE' ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)] border border-[var(--color-primary)]/50 animate-pulse' : 'bg-gray-800 text-gray-400 border border-gray-600'}`}>
+          {status}
+        </div>
+      </div>
+      <button 
+        disabled={!isJoinable}
+        onClick={() => onJoin(token.address)}
+        className={`w-full py-3 mt-2 font-bold tracking-widest text-xs rounded-xl transition-all ${isJoinable ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-black hover:shadow-[0_0_15px_rgba(93,191,126,0.5)]' : 'bg-gray-800/30 text-gray-600 border border-gray-800 cursor-not-allowed'}`}
+      >
+        {isJoinable ? 'JOIN POOL' : 'UNAVAILABLE'}
+      </button>
+    </div>
+  );
+}
+
 export default function SplitDuelHome() {
   const [mounted, setMounted] = useState(false);
-  const [inDuel, setInDuel] = useState(false);
+  const [selectedArena, setSelectedArena] = useState<string | null>(null);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const { address } = useAccount();
+
+  const { data: currentTid } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'currentTournamentId',
+  });
+
+  const { data: currentDurationSecs } = useReadContract({
+    address: SPLIT_POOL_ADDRESS,
+    abi: SPLIT_POOL_ABI,
+    functionName: 'tournamentDuration',
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -17,8 +106,8 @@ export default function SplitDuelHome() {
 
   if (!mounted) return null;
 
-  if (inDuel) {
-    return <DuelWarRoom />;
+  if (selectedArena) {
+    return <DuelWarRoom activeTokenAddress={selectedArena} onBack={() => setSelectedArena(null)} />;
   }
 
   return (
@@ -100,19 +189,24 @@ export default function SplitDuelHome() {
               CONNECT WALLET TO ENTER
             </div>
           ) : (
-            <div className="max-w-2xl mx-auto px-4">
-              <button 
-                onClick={() => setInDuel(true)}
-                className="btn-cyber w-full bg-[#05100D] border-2 border-[var(--color-primary)] text-[var(--color-primary)] px-4 py-4 md:py-6 rounded-2xl font-black tracking-[0.2em] md:tracking-[0.4em] text-base sm:text-lg md:text-xl shadow-[0_0_20px_rgba(93,191,126,0.2)] flex items-center justify-center gap-2 sm:gap-4 hover:bg-[var(--color-primary)] hover:text-[#05100D]"
-              >
-                <span className="hidden md:inline">██████</span> ENTER DUEL <span className="hidden md:inline">██████</span>
-              </button>
+            <div className="w-full max-w-4xl mx-auto mt-8">
+              <h3 className="text-xl font-bold tracking-widest text-white mb-6 border-b border-white/10 pb-2">SELECT ARENA LOBBY</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {DEFAULT_TOKENS.map((token) => (
+                  <ArenaCard 
+                    key={token.address} 
+                    token={token} 
+                    currentTid={currentTid as bigint | undefined} 
+                    onJoin={(addr) => setSelectedArena(addr)} 
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
       </main>
 
-      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} durationSecs={currentDurationSecs as bigint | undefined} />
     </div>
   );
 }

@@ -11,7 +11,8 @@ const SPLIT_POOL_ABI = parseAbi([
   "function tournaments(uint256, address) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 totalStaked, uint256 totalPrize, uint256 lastYieldUpdate, bool settled)"
 ]);
 
-export default function DuelWarRoom() {
+export default function DuelWarRoom({ activeTokenAddress, onBack }: { activeTokenAddress?: string, onBack?: () => void }) {
+  const tokenToUse = activeTokenAddress || CELO_ERC20;
   const [attackPct, setAttackPct] = useState(40);
   const [defendPct, setDefendPct] = useState(20);
   const [investPct, setInvestPct] = useState(40);
@@ -26,7 +27,7 @@ export default function DuelWarRoom() {
     address: SPLIT_POOL_ADDRESS,
     abi: SPLIT_POOL_ABI,
     functionName: 'tournaments',
-    args: currentTid ? [currentTid, CELO_ERC20] : undefined,
+    args: currentTid ? [currentTid, tokenToUse as `0x${string}`] : undefined,
   });
 
   const [countdown, setCountdown] = useState<string>('00:00');
@@ -88,6 +89,11 @@ export default function DuelWarRoom() {
         <div className="flex justify-between items-start border-b border-[#5DBF7E]/20 pb-6 mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(93,191,126,0.6)] flex items-center gap-2 sm:gap-3">
+              {onBack && (
+                <button onClick={onBack} className="text-white/50 hover:text-white text-lg mr-2 transition-colors">
+                  ←
+                </button>
+              )}
               SPLIT DUEL
             </h1>
             <div className="text-[#5DBF7E]/60 text-xs font-bold tracking-widest mt-2">SECURE BATTLEFIELD LINK ESTABLISHED</div>

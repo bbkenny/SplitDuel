@@ -1,7 +1,19 @@
 import React from 'react';
 
-export default function HelpModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+export default function HelpModal({ isOpen, onClose, durationSecs }: { isOpen: boolean, onClose: () => void, durationSecs?: bigint }) {
   if (!isOpen) return null;
+
+  let formattedDuration = "the duration set in the smart contract";
+  if (durationSecs !== undefined) {
+    const hrs = Number(durationSecs) / 3600;
+    if (hrs >= 24) {
+      const days = Math.floor(hrs / 24);
+      const remHrs = hrs % 24;
+      formattedDuration = `${days} day${days > 1 ? 's' : ''}${remHrs > 0 ? ` and ${remHrs} hour${remHrs > 1 ? 's' : ''}` : ''}`;
+    } else {
+      formattedDuration = `${hrs} hour${hrs > 1 ? 's' : ''}`;
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -20,53 +32,39 @@ export default function HelpModal({ isOpen, onClose }: { isOpen: boolean, onClos
         <div className="p-8 text-white/80 font-sans space-y-8">
           
           <div className="text-sm text-white/70 leading-relaxed text-center italic border-b border-white/10 pb-6">
-            This interface is the heart of <strong className="text-[var(--color-primary)]">SplitDuel (Yield Tactics)</strong>. It is a 1v1 tactical yield battle game. Players battle across 5 rounds using Attack/Defend/Invest mechanics to win accumulated yield while keeping their principal 100% safe.
+            This interface is the heart of <strong className="text-[var(--color-primary)]">SplitDuel (Yield Tactics)</strong>. It is a Global Yield Pool Tournament where players compete to be the most efficient capital allocators. Each tournament round lasts exactly for the duration set by the live smart contract. Players battle using Attack/Defend/Invest mechanics to win a share of the accumulated yield while keeping their principal 100% safe.
           </div>
 
           <section>
-            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[var(--color-primary)] pl-3">1. ENTER MATCH</h3>
+            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[var(--color-primary)] pl-3">1. JOIN A POOL</h3>
             <ul className="space-y-3 pl-4 text-sm">
-              <li><strong className="text-white">Deposit Equal Stake:</strong> Players connect their wallet and deposit an equal stake of CELO, USDm, EURm, USDT, or USDC into the DuelManager.</li>
-              <li><strong className="text-[var(--color-primary)]">Lossless Guarantee:</strong> The principal staked is <em>never</em> put at risk. Players only fight for the accumulated yield generated during the match.</li>
+              <li><strong className="text-white">Choose Your Arena:</strong> Players connect their wallet and pick an active token arena from the lobby (e.g., CELO, USDm, USDT).</li>
+              <li><strong className="text-[var(--color-primary)]">Lossless Guarantee:</strong> The principal staked is <em>never</em> put at risk. Players only fight for the accumulated yield generated during the round.</li>
             </ul>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[#FF4D6D] pl-3">2. ALLOCATE ROUND (THE CORE STRATEGY)</h3>
+            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[#FF4D6D] pl-3">2. ALLOCATE STRATEGY</h3>
             <ul className="space-y-3 pl-4 text-sm">
-              <li>In each of the 5 rounds, players are presented with three sliders: <strong className="text-[#FF4D6D]">Attack %</strong>, <strong className="text-[#4DA3FF]">Defend %</strong>, and <strong className="text-[var(--color-invest)]">Invest %</strong>.</li>
+              <li>You are presented with three sliders: <strong className="text-[#FF4D6D]">Attack %</strong>, <strong className="text-[#4DA3FF]">Defend %</strong>, and <strong className="text-[var(--color-invest)]">Invest %</strong>.</li>
               <li>The sum of all three sliders must exactly equal 100%.</li>
-              <li><strong className="text-white">Commit:</strong> Players submit their allocation secretly on-chain (commit-reveal scheme) so the opponent cannot front-run or see their move.</li>
+              <li><strong className="text-white">Secret Commit:</strong> Players submit their allocation secretly on-chain exactly once per round. Your opponent cannot front-run or see your move until the reveal.</li>
             </ul>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[#4DA3FF] pl-3">3. VISUAL ROUTING & RESOLUTION</h3>
+            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[#4DA3FF] pl-3">3. ROUND DURATION & SETTLEMENT</h3>
             <ul className="space-y-3 pl-4 text-sm">
-              <li>Once both players commit, the reveal phase triggers a <strong className="text-white">Visual Routing Animation</strong>, showing energy flowing from the player to the three vaults.</li>
-              <li><strong className="text-white">Combat Mechanics (Rock-Paper-Scissors logic):</strong>
-                <ul className="pl-5 mt-2 space-y-1 text-white/60">
-                  <li><strong>Attack</strong> vs <strong>Defend</strong>: Blocked — attack wasted.</li>
-                  <li><strong>Attack</strong> vs <strong>Invest</strong>: Hit — drain a % of their yield gain this round.</li>
-                  <li><strong>Invest</strong> vs <strong>Invest</strong>: Both grow cleanly.</li>
-                </ul>
-              </li>
+              <li><strong className="text-white">Live Timer:</strong> A Tournament Round currently lasts exactly <strong className="text-[var(--color-primary)]">{formattedDuration}</strong>. You can watch the real-time countdown on your dashboard.</li>
+              <li><strong className="text-white">Settlement:</strong> When the timer hits zero, the pool is settled. The smart contract evaluates everyone's Invest % (efficiency score).</li>
             </ul>
           </section>
 
           <section>
-            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[var(--color-warning)] pl-3">4. WINNER TAKES YIELD</h3>
+            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-[var(--color-warning)] pl-3">4. TOP 10% TAKE THE YIELD</h3>
             <ul className="space-y-3 pl-4 text-sm">
-              <li>After 5 rounds, the player with the higher treasury score wins the accumulated yield (the prize pool).</li>
-              <li>Both players instantly receive their initial principal back intact.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="text-xl font-bold text-white mb-3 tracking-widest border-l-4 border-purple-400 pl-3">5. DAILY SPLIT POOL & REPUTATION</h3>
-            <ul className="space-y-3 pl-4 text-sm">
-              <li><strong className="text-purple-400">Daily Pool:</strong> Alongside 1v1 duels, there is a Daily Split Pool where the top 10% most efficient allocators share the daily yield.</li>
-              <li><strong className="text-purple-400">Reputation Buffs:</strong> Completing fights earns reputation, granting small % efficiency buffs (e.g., Novice to Legend).</li>
+              <li>The Top 10% most efficient allocators (highest Invest %) split the entire yielded prize pool generated across all participants during that round!</li>
+              <li>Everyone (both winners and losers) can immediately withdraw their initial principal back completely intact.</li>
             </ul>
           </section>
         </div>

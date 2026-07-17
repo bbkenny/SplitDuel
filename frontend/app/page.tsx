@@ -146,36 +146,39 @@ export default function SplitDuelHome() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center p-8 text-center relative z-10 pt-36 pb-20">
-        <div className="w-full max-w-[1200px] mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 text-center relative z-10 pt-24 sm:pt-36 pb-10 sm:pb-20 w-full">
+        <div className="w-full max-w-[1200px] mx-auto h-full flex flex-col justify-center relative">
           
           {step === 1 ? (
-            <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
+            <div className="flex flex-col items-center justify-center flex-1 animate-in fade-in zoom-in duration-500">
               {/* Hero Illustration */}
-              <div className="w-full max-w-4xl mx-auto flex items-center justify-center mb-10 relative animate-[pulse_6s_ease-in-out_infinite]">
+              <div className="w-full max-w-2xl mx-auto flex items-center justify-center mb-6 sm:mb-10 relative animate-[pulse_6s_ease-in-out_infinite]">
                 <img 
                   src="/assets/hero_illustration.png" 
                   alt="War Room Command Center" 
-                  className="w-full h-auto drop-shadow-[0_0_50px_rgba(93,191,126,0.3)] object-contain"
+                  className="w-full h-auto max-h-[40vh] drop-shadow-[0_0_50px_rgba(93,191,126,0.3)] object-contain"
                 />
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[var(--color-text)] mb-4 sm:mb-6 tracking-widest leading-tight px-2">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-[var(--color-text)] mb-3 sm:mb-6 tracking-widest leading-tight px-2">
                 BUILD YOUR TREASURY.<br/>
                 DEFEAT YOUR RIVAL.
               </h2>
               
-              <p className="text-base sm:text-lg md:text-xl text-[var(--color-primary)] opacity-80 mb-12 leading-relaxed max-w-3xl mx-auto font-medium px-4">
+              <p className="text-sm sm:text-lg md:text-xl text-[var(--color-primary)] opacity-80 mb-6 sm:mb-12 leading-relaxed max-w-3xl mx-auto font-medium px-4">
                 A 1v1 real-time strategy battle where two players compete to grow their treasury the fastest.
               </p>
 
-              <button 
-                onClick={() => setStep(2)}
-                className="mt-4 w-20 h-20 rounded-full border-2 border-[var(--color-primary)]/50 flex items-center justify-center animate-bounce hover:bg-[var(--color-primary)] hover:text-black hover:border-[var(--color-primary)] transition-all shadow-[0_0_20px_rgba(93,191,126,0.2)] text-[var(--color-primary)]"
-              >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-              </button>
-              <div className="text-[10px] tracking-widest mt-4 opacity-50 uppercase font-bold">PROCEED TO ARENA</div>
+              {/* Proceed Button (Bottom on Mobile, Fixed Right on Desktop) */}
+              <div className="flex flex-col items-center mt-4 md:mt-0 md:fixed md:right-8 md:top-1/2 md:-translate-y-1/2 z-50">
+                <button 
+                  onClick={() => setStep(2)}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-[var(--color-primary)]/50 flex items-center justify-center animate-bounce md:animate-[pulse_2s_ease-in-out_infinite] hover:bg-[var(--color-primary)] hover:text-black hover:border-[var(--color-primary)] transition-all shadow-[0_0_20px_rgba(93,191,126,0.4)] text-[var(--color-primary)] md:hover:scale-110"
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="sm:w-8 sm:h-8"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                </button>
+                <div className="text-[10px] tracking-widest mt-4 opacity-70 uppercase font-bold text-center text-[var(--color-primary)]">PROCEED<br className="hidden md:block"/>TO ARENA</div>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center w-full animate-in slide-in-from-right-8 fade-in duration-500">

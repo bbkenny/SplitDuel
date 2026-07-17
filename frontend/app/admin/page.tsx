@@ -7,6 +7,14 @@ import { parseEther, parseUnits, parseAbi } from 'viem';
 const SPLIT_POOL_ADDRESS = "0x1D3184144fC75f4912a2805eeD7a218f2B48b4e9";
 const CELO_ERC20 = "0x471EcE3750Da237f93B8E339c536989b8978a438";
 
+const DEFAULT_TOKENS = [
+  { name: 'CELO', address: '0x471EcE3750Da237f93B8E339c536989b8978a438' },
+  { name: 'USDM', address: '0x765DE816845861e75A25fCA122bb6898B8B1282a' },
+  { name: 'EURM', address: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73' },
+  { name: 'USDT', address: '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e' },
+  { name: 'USDC', address: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C' }
+];
+
 const SPLIT_POOL_ABI = parseAbi([
   "function admin() external view returns (address)",
   "function startTournament(address token) external",
@@ -245,6 +253,30 @@ export default function AdminConsole() {
                      <input type="number" value={minEntry} step="0.01" onChange={e => setMinEntry(e.target.value)} placeholder="Min Entry (Ether)" className="w-full bg-black/50 border border-[var(--color-primary)]/30 rounded-lg p-2 font-mono text-white text-xs focus:outline-none focus:border-[var(--color-primary)]" />
                   </div>
                   <button onClick={handleSetToken} disabled={isPending || isWaiting} className="px-4 py-2 bg-[var(--color-invest)] text-black font-bold text-xs rounded-lg hover:shadow-[0_0_15px_rgba(0,245,138,0.5)]">SET SUPPORT</button>
+                </div>
+              </div>
+
+              <div className="border border-white/10 p-4 rounded-xl space-y-3 mt-4">
+                <label className="block text-xs font-mono text-white/80 font-bold mb-3">NATIVE SUPPORTED TOKENS DIRECTORY</label>
+                <div className="space-y-2">
+                  {DEFAULT_TOKENS.map((t) => (
+                    <div key={t.name} className="flex items-center justify-between bg-black/30 p-2 rounded border border-white/5">
+                      <span className="text-[var(--color-primary)] font-bold text-xs w-10">{t.name}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-white/50 text-[10px] hidden sm:inline">{t.address}</span>
+                        <span className="font-mono text-white/50 text-[10px] sm:hidden">{t.address.slice(0, 6)}...{t.address.slice(-4)}</span>
+                        <button 
+                          onClick={() => {
+                            navigator.clipboard.writeText(t.address);
+                            setTokenAddress(t.address);
+                          }} 
+                          className="bg-white/10 hover:bg-[var(--color-primary)]/20 text-white/70 hover:text-[var(--color-primary)] px-3 py-1 rounded text-[10px] transition-colors font-bold tracking-wider"
+                        >
+                          COPY & USE
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 

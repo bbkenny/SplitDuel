@@ -18,6 +18,7 @@ const TOKEN_DECIMALS = 18;
 interface DuelLobbyProps {
   tokenAddress: string;
   tokenName: string;
+  initialJoinId?: bigint;
   onEnterDuel: (duelId: bigint) => void;
   onBack?: () => void;
 }
@@ -25,6 +26,7 @@ interface DuelLobbyProps {
 export default function DuelLobby({
   tokenAddress,
   tokenName,
+  initialJoinId,
   onEnterDuel,
   onBack,
 }: DuelLobbyProps) {
@@ -32,9 +34,11 @@ export default function DuelLobby({
   const token = tokenAddress as Address;
   const isNative = token.toLowerCase() === NATIVE_CELO;
 
-  const [mode, setMode] = useState<'choose' | 'create' | 'join'>('choose');
+  const [mode, setMode] = useState<'choose' | 'create' | 'join'>(
+    initialJoinId ? 'join' : 'choose',
+  );
   const [stakeInput, setStakeInput] = useState('0.1');
-  const [joinId, setJoinId] = useState('');
+  const [joinId, setJoinId] = useState(initialJoinId ? initialJoinId.toString() : '');
   const [createdDuelId, setCreatedDuelId] = useState<bigint | undefined>();
   const [copied, setCopied] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);

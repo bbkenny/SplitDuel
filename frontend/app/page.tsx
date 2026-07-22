@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAccount, useReadContract } from 'wagmi';
 import { parseAbi } from 'viem';
 import DuelWarRoom from '@/components/DuelWarRoom';
+import DuelLobby from '@/components/DuelLobby';
 import HelpModal from '@/components/HelpModal';
 
 const SPLIT_POOL_ADDRESS = "0x1D3184144fC75f4912a2805eeD7a218f2B48b4e9";
@@ -96,8 +97,13 @@ export default function SplitDuelHome() {
   const [step, setStep] = useState(1);
   const [selectedTokenAddress, setSelectedTokenAddress] = useState<string | null>(null);
   const [enteredDuel, setEnteredDuel] = useState(false);
+  const [activeDuelId, setActiveDuelId] = useState<bigint | null>(null);
+  const [deepLinkDuelId, setDeepLinkDuelId] = useState<bigint | null>(null);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const { address } = useAccount();
+
+  const selectedTokenName =
+    DEFAULT_TOKENS.find((t) => t.address === selectedTokenAddress)?.name ?? 'CELO';
 
   const { data: currentTid } = useReadContract({
     address: SPLIT_POOL_ADDRESS,
@@ -115,10 +121,52 @@ export default function SplitDuelHome() {
     setMounted(true);
   }, []);
 
+  // Deep-link support: a shared challenge link (?duel=<id>) drops the joiner
+  // straight into the lobby with that duel pre-filled once they pick an arena.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const duelParam = params.get('duel');
+    if (duelParam) {
+      try {
+        const id = BigInt(duelParam);
+        if (id > 0n) {
+          setStep(2);
+          setDeepLinkDuelId(id);
+        }
+      } catch {
+        /* ignore malformed ids */
+      }
+    }
+  }, []);
+
   if (!mounted) return null;
 
+  // Once a duel is live, show the war room.
+  if (activeDuelId !== null) {
+    return (
+      <DuelWarRoom
+        duelId={activeDuelId}
+        tokenName={selectedTokenName}
+        onBack={() => {
+          setActiveDuelId(null);
+          setEnteredDuel(false);
+        }}
+      />
+    );
+  }
+
+  // Arena chosen → show the create/join lobby.
   if (enteredDuel && selectedTokenAddress) {
-    return <DuelWarRoom activeTokenAddress={selectedTokenAddress} onBack={() => setEnteredDuel(false)} />;
+    return (
+      <DuelLobby
+        tokenAddress={selectedTokenAddress}
+        tokenName={selectedTokenName}
+        initialJoinId={deepLinkDuelId ?? undefined}
+        onEnterDuel={(id) => setActiveDuelId(id)}
+        onBack={() => setEnteredDuel(false)}
+      />
+    );
   }
 
   return (

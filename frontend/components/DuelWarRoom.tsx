@@ -5,6 +5,7 @@ import { AlertTriangle, Loader2, Trophy, Shield as ShieldIcon } from 'lucide-rea
 import { useAccount } from 'wagmi';
 import { formatUnits, type Address } from 'viem';
 import { useDuelData, useDuelActions } from '@/lib/hooks/useDuel';
+import EnergyRoutingOverlay from '@/components/EnergyRoutingOverlay';
 import {
   computeCommitHash,
   generateSalt,
@@ -60,6 +61,8 @@ export default function DuelWarRoom({
   const [investPct, setInvestPct] = useState(40);
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000));
   const [routing, setRouting] = useState(false);
+  const [commitAnimating, setCommitAnimating] = useState(false);
+  const [lastCommitPcts, setLastCommitPcts] = useState({ attack: 40, defend: 20, invest: 40 });
   const [notice, setNotice] = useState<string | null>(null);
   const prevRoundRef = useRef<number>(0);
 
@@ -137,10 +140,16 @@ export default function DuelWarRoom({
     const hash = computeCommitHash(alloc, salt, address as Address);
     // Persist BEFORE sending so a refresh mid-tx can still reveal.
     saveCommit(duelId, currentRound, address as Address, { ...alloc, salt });
+    // 🎬 Fire the cinematic energy routing animation
+    setLastCommitPcts({ attack: attackPct, defend: defendPct, invest: investPct });
+    setCommitAnimating(true);
+    const animTimer = setTimeout(() => setCommitAnimating(false), 2600);
     try {
       await commitRound(duelId, hash);
       refetch();
     } catch {
+      clearTimeout(animTimer);
+      setCommitAnimating(false);
       /* surfaced via error effect */
     }
   }
@@ -180,6 +189,14 @@ export default function DuelWarRoom({
   const hasOpponent = !!duel?.player2 && duel.player2.toLowerCase() !== ZERO_ADDR;
 
   return (
+    <>
+    {/* 🎬 Cinematic energy routing overlay — fires on commit */}
+    <EnergyRoutingOverlay
+      active={commitAnimating}
+      attackPct={lastCommitPcts.attack}
+      defendPct={lastCommitPcts.defend}
+      investPct={lastCommitPcts.invest}
+    />
     <div className="min-h-screen font-sans flex flex-col items-center pt-24 sm:pt-32 pb-16 sm:pb-20 relative overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none mix-blend-screen"
@@ -413,6 +430,7 @@ export default function DuelWarRoom({
         )}
       </div>
     </div>
+    </>
   );
 }
 

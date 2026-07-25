@@ -103,6 +103,7 @@ contract DuelManager is ReentrancyGuard {
     uint256 public nextDuelId = 1;
 
     mapping(address => uint256) public activeDuel;  // player → duelId (0 = not in duel)
+    mapping(address => uint256) public fightsCompleted; // player -> total finished duels
 
     // ─── Prize Pool (simulated yield on staked principals) ───────────────────
     mapping(address => uint256) public prizePool;    // token → accumulated yield
@@ -334,25 +335,41 @@ contract DuelManager is ReentrancyGuard {
         Duel storage d  = duels[duelId];
         RoundCommit storage rc = duelRounds[duelId][d.currentRound];
 
+        // ── Reputation Efficiency Buffs ───────────────────────────────────────
+        uint256 p1Fights = fightsCompleted[d.player1];
+        uint256 p2Fights = fightsCompleted[d.player2];
+
+        // Base 1000 = 100%
+        uint256 p1AtkMod = 1000 + (p1Fights >= 100 ? 20 : (p1Fights >= 50 ? 15 : 0));
+        uint256 p1DefMod = 1000 + (p1Fights >= 100 ? 20 : (p1Fights >= 20 ? 10 : 0));
+        uint256 p1InvMod = 1000 + (p1Fights >= 100 ? 20 : (p1Fights >= 5 ? 5 : 0));
+
+        uint256 p2AtkMod = 1000 + (p2Fights >= 100 ? 20 : (p2Fights >= 50 ? 15 : 0));
+        uint256 p2DefMod = 1000 + (p2Fights >= 100 ? 20 : (p2Fights >= 20 ? 10 : 0));
+        uint256 p2InvMod = 1000 + (p2Fights >= 100 ? 20 : (p2Fights >= 5 ? 5 : 0));
+
         // ── Attack vs Defend ──────────────────────────────────────────────────
         uint256 p1AttackPower = (d.p1YieldScore * rc.p1Attack) / 100;
+        p1AttackPower = (p1AttackPower * p1AtkMod) / 1000;
+
         uint256 p2AttackPower = (d.p2YieldScore * rc.p2Attack) / 100;
+        p2AttackPower = (p2AttackPower * p2AtkMod) / 1000;
 
         uint256 p1DefendPower = (d.p1YieldScore * rc.p1Defend) / 100 + d.p1Shield;
+        p1DefendPower = (p1DefendPower * p1DefMod) / 1000;
+
         uint256 p2DefendPower = (d.p2YieldScore * rc.p2Defend) / 100 + d.p2Shield;
+        p2DefendPower = (p2DefendPower * p2DefMod) / 1000;
 
         uint256 p1Damage = p2AttackPower > p1DefendPower ? p2AttackPower - p1DefendPower : 0;
         uint256 p2Damage = p1AttackPower > p2DefendPower ? p1AttackPower - p2DefendPower : 0;
 
         // ── Invest Growth (5% on invested portion) ────────────────────────────
         uint256 p1Growth = (d.p1YieldScore * rc.p1Invest * 5) / (100 * 100);
-        uint256 p2Growth = (d.p2YieldScore * rc.p2Invest * 5) / (100 * 100);
+        p1Growth = (p1Growth * p1InvMod) / 1000;
 
-        // ── Reputation buff (capped at 10 rep points = +10% to growth) ────────
-        uint256 p1Rep = _safeGetRep(d.player1);
-        uint256 p2Rep = _safeGetRep(d.player2);
-        p1Growth += (p1Growth * (p1Rep > 10 ? 10 : p1Rep)) / 100;
-        p2Growth += (p2Growth * (p2Rep > 10 ? 10 : p2Rep)) / 100;
+        uint256 p2Growth = (d.p2YieldScore * rc.p2Invest * 5) / (100 * 100);
+        p2Growth = (p2Growth * p2InvMod) / 1000;
 
         // ── Apply to scores (floor at 0) ──────────────────────────────────────
         uint256 p1New = d.p1YieldScore + p1Growth;
@@ -382,6 +399,8 @@ contract DuelManager is ReentrancyGuard {
         d.state = DuelState.Resolved;
         activeDuel[d.player1] = 0;
         activeDuel[d.player2] = 0;
+        fightsCompleted[d.player1]++;
+        fightsCompleted[d.player2]++;
 
         address token  = d.token;
         uint256 stake  = d.stakePerPlayer;
@@ -456,14 +475,6 @@ contract DuelManager is ReentrancyGuard {
             require(s, "ERR: Native transfer failed");
         } else {
             require(IERC20(token).transfer(to, amount), "ERR: ERC20 transfer failed");
-        }
-    }
-
-    function _safeGetRep(address player) internal view returns (uint256) {
-        try router.reputationScore(player) returns (uint256 rep) {
-            return rep;
-        } catch {
-            return 0;
         }
     }
 

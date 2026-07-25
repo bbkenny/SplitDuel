@@ -14,6 +14,7 @@ import {
   clearCommit,
 } from '@/lib/duelCommit';
 import { DuelState, REVEAL_WINDOW, TOTAL_ROUNDS } from '@/lib/duelManager';
+import ReputationBadge from '@/components/ReputationBadge';
 
 const TOKEN_DECIMALS = 18;
 const ZERO = '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -257,7 +258,10 @@ export default function DuelWarRoom({
             <div className="absolute top-0 right-0 px-3 py-1 bg-[var(--color-primary)] text-[var(--color-surface)] font-black text-[10px] tracking-widest rounded-bl-2xl">
               YOU {isP1 ? '(P1)' : isP2 ? '(P2)' : ''}
             </div>
-            <h2 className="text-lg md:text-xl font-black text-white mb-4 tracking-widest">YOUR TREASURY</h2>
+            <h2 className="text-lg md:text-xl font-black text-white mb-2 tracking-widest">YOUR TREASURY</h2>
+            <div className="mb-4">
+              <ReputationBadge playerAddress={address as Address} />
+            </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-[#050D0C] p-2.5 rounded-lg border border-[#5DBF7E]/20">
                 <span className="flex items-center gap-2 text-[var(--color-primary)] font-bold text-xs tracking-widest">
@@ -314,7 +318,10 @@ export default function DuelWarRoom({
             <div className="absolute top-0 right-0 px-3 py-1 bg-[var(--color-attack)] text-[var(--color-text)] font-black text-[10px] tracking-widest rounded-bl-2xl">
               ENEMY
             </div>
-            <h2 className="text-lg md:text-xl font-black text-white mb-4 tracking-widest">ENEMY TREASURY</h2>
+            <h2 className="text-lg md:text-xl font-black text-white mb-2 tracking-widest">ENEMY TREASURY</h2>
+            <div className="mb-4">
+              <ReputationBadge playerAddress={(isP1 ? duel?.player2 : duel?.player1) as Address} />
+            </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-[#0A0507] p-2.5 rounded-lg border border-[#FF4D6D]/20">
                 <span className="flex items-center gap-2 text-[var(--color-attack)] font-bold text-xs tracking-widest">

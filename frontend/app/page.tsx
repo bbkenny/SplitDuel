@@ -7,6 +7,7 @@ import DuelWarRoom from '@/components/DuelWarRoom';
 import DuelLobby from '@/components/DuelLobby';
 import HelpModal from '@/components/HelpModal';
 import DailySplitPoolWidget from '@/components/DailySplitPoolWidget';
+import Leaderboard from '@/components/Leaderboard';
 
 const SPLIT_POOL_ADDRESS = "0x1D3184144fC75f4912a2805eeD7a218f2B48b4e9";
 const SPLIT_POOL_ABI = parseAbi([
@@ -298,10 +299,18 @@ export default function SplitDuelHome() {
                   <div className="max-w-2xl mx-auto px-4 mt-8 w-full">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--color-primary)]/30 to-transparent" />
-                      <span className="text-[10px] font-black tracking-[0.3em] text-[var(--color-primary)]/40">OR</span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--color-primary)]/30 to-transparent" />
+                      <div className="text-[10px] tracking-[0.2em] font-bold text-[var(--color-primary)] opacity-50 uppercase whitespace-nowrap">
+                        GLOBAL OPERATIONS
+                      </div>
+                      <div className="h-px flex-1 bg-gradient-to-r from-[var(--color-primary)]/30 via-[var(--color-primary)]/30 to-transparent" />
                     </div>
-                    <DailySplitPoolWidget />
+                    <DailySplitPoolWidget
+                      poolAddress={SPLIT_POOL_ADDRESS}
+                      currentTid={currentTid as bigint | undefined}
+                      durationSecs={currentDurationSecs as bigint | undefined}
+                    />
+                    
+                    <Leaderboard />
                   </div>
                 </div>
               )}

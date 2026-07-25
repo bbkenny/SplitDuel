@@ -304,11 +304,7 @@ export default function SplitDuelHome() {
                       </div>
                       <div className="h-px flex-1 bg-gradient-to-r from-[var(--color-primary)]/30 via-[var(--color-primary)]/30 to-transparent" />
                     </div>
-                    <DailySplitPoolWidget
-                      poolAddress={SPLIT_POOL_ADDRESS}
-                      currentTid={currentTid as bigint | undefined}
-                      durationSecs={currentDurationSecs as bigint | undefined}
-                    />
+                    <DailySplitPoolWidget />
                     
                     <Leaderboard />
                   </div>

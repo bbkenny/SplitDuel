@@ -3,7 +3,7 @@
 import React from 'react';
 import { useReadContract } from 'wagmi';
 import { Shield } from 'lucide-react';
-import { DUEL_MANAGER_ADDRESS, DUEL_MANAGER_ABI } from '@/lib/contracts';
+import { DUEL_MANAGER_ADDRESS, DUEL_MANAGER_ABI } from '@/lib/duelManager';
 import { type Address } from 'viem';
 
 // The tiers based on fights completed
